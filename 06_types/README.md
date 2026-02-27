@@ -27,4 +27,4 @@ cargo test -p types
 
 ## Scope note
 
-This module keeps the core path focused on enum design and pattern matching. Extra conversion drills are intentionally excluded from the main test progression.
+This module is intentionally beyond Rust Book Chapter 6 core. Use `05_patterns` for the canonical Chapter-6 foundation; this module extends into larger recursive and domain-driven enum models.

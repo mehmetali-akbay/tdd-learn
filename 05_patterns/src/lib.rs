@@ -134,6 +134,27 @@ pub fn total_value(coins: &[Coin]) -> u32 {
     coins.iter().map(coin_value).sum()
 }
 
+/// A Chapter-6-style message enum with mixed variant shapes.
+#[derive(Debug, PartialEq)]
+pub enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+impl Message {
+    /// Simulate handling a message as a readable string.
+    pub fn call(&self) -> String {
+        match self {
+            Message::Quit => "Quit".to_string(),
+            Message::Move { x, y } => format!("Move to ({x}, {y})"),
+            Message::Write(text) => format!("Text: {text}"),
+            Message::ChangeColor(r, g, b) => format!("Color: ({r}, {g}, {b})"),
+        }
+    }
+}
+
 // ============================================
 // Topic 3: Option Matching
 // Learn: Working with Option<T>
@@ -144,11 +165,7 @@ pub fn total_value(coins: &[Coin]) -> u32 {
 
 /// Divide two numbers, return None if divisor is zero
 pub fn safe_divide(a: f64, b: f64) -> Option<f64> {
-    if b == 0.0 {
-        None
-    } else {
-        Some(a / b)
-    }
+    if b == 0.0 { None } else { Some(a / b) }
 }
 
 /// Get the first element of a slice, or return a default
@@ -177,6 +194,14 @@ pub fn option_string_length(opt: Option<&str>) -> usize {
 /// Find the first even number in a slice
 pub fn first_even(v: &[i32]) -> Option<i32> {
     v.iter().find(|&&x| x % 2 == 0).copied()
+}
+
+/// Book-style exercise: add one to an optional number.
+pub fn plus_one(opt: Option<i32>) -> Option<i32> {
+    match opt {
+        Some(i) => Some(i + 1),
+        None => None,
+    }
 }
 
 // ============================================
@@ -221,6 +246,75 @@ pub fn is_in_range(n: i32) -> bool {
 /// Check if an Option contains an even number
 pub fn is_even_option(opt: Option<i32>) -> bool {
     matches!(opt, Some(x) if x % 2 == 0)
+}
+
+/// U.S. state payload used by quarter variants.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UsState {
+    Alabama,
+    Alaska,
+    California,
+    Texas,
+}
+
+/// Coin example that carries extra data in one variant.
+#[derive(Debug, PartialEq)]
+pub enum CoinWithState {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
+}
+
+/// Extract quarter state using `if let`, otherwise return None.
+pub fn quarter_state(coin: &CoinWithState) -> Option<UsState> {
+    if let CoinWithState::Quarter(state) = coin {
+        Some(*state)
+    } else {
+        None
+    }
+}
+
+/// Parse exactly two integers from whitespace-separated input using `let...else`.
+pub fn parse_pair(input: &str) -> Option<(i32, i32)> {
+    let mut parts = input.split_whitespace();
+    let Some(a_raw) = parts.next() else {
+        return None;
+    };
+    let Some(b_raw) = parts.next() else {
+        return None;
+    };
+
+    if parts.next().is_some() {
+        return None;
+    }
+
+    let Ok(a) = a_raw.parse::<i32>() else {
+        return None;
+    };
+    let Ok(b) = b_raw.parse::<i32>() else {
+        return None;
+    };
+
+    Some((a, b))
+}
+
+/// Demonstrates that non-exhaustive `match` expressions do not compile.
+///
+/// ```compile_fail
+/// enum Coin {
+///     Penny,
+///     Nickel,
+/// }
+///
+/// fn cents(c: Coin) -> u8 {
+///     match c {
+///         Coin::Penny => 1,
+///     }
+/// }
+/// ```
+pub fn exhaustiveness_demo() -> &'static str {
+    "match expressions must be exhaustive"
 }
 
 // ============================================
