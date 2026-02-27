@@ -1,18 +1,34 @@
 # Patterns
 
-Pattern matching on numbers, chars
+Pattern matching practice with `match`, `if let`, `while let`, destructuring, and recursive enums.
 
-**39 functions | 44 tests**
+**39 functions | 40 tests**
 
 ```bash
 cargo test -p patterns
 ```
 
-## Topics
+## Learning goals
 
-1. **Match Basics** — Pattern matching on numbers, chars
-2. **Enums with Match** — Defining enums, matching on variants
-3. **Option Matching** — Working with Option<T>
-4. **If Let, While Let, Matches!** — Concise pattern matching alternatives
-5. **Destructuring** — Breaking apart tuples, structs
-6. **Advanced Pattern Challenges** — Recursive enums, state machines, complex matching
+1. Use `match` deliberately:
+   - exact values
+   - ranges
+   - wildcard (`_`)
+   - match guards
+2. Destructure enums and tuples to model behavior cleanly.
+3. Move from `Option<T>`/`Result<T, E>` basics to nested matching.
+4. Practice recursive pattern matching on expression trees and binary trees.
+5. Keep tests concept-focused: each test validates one pattern idea.
+
+## Recommended TDD order
+
+1. **Topic 1** — pure `match` basics (`describe_number`, `day_name`, `fizzbuzz`)
+2. **Topic 2** — enum variants and payload destructuring
+3. **Topic 3** — `Option` matching and short chains (`parse_and_double`)
+4. **Topic 4** — `if let`, `while let`, `matches!`
+5. **Topic 5** — tuple/struct destructuring
+6. **Topic 6** — recursive enums + command parsing
+
+## Scope note
+
+This project intentionally avoids "extra practice" APIs in the core test suite so the main path stays focused on pattern matching fundamentals.
