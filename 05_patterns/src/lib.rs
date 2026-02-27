@@ -2,6 +2,9 @@
 // Topic 1: Match Basics
 // Learn: Pattern matching on numbers, chars
 // ============================================
+// Guidance:
+// - Prefer a single `match` expression where possible.
+// - Use ranges for classification instead of long if/else chains.
 
 /// Describe a number: "zero", "positive", or "negative"
 pub fn describe_number(n: i32) -> &'static str {
@@ -88,6 +91,9 @@ pub fn total_value(coins: &[Coin]) -> u32 {
 // Topic 3: Option Matching
 // Learn: Working with Option<T>
 // ============================================
+// Guidance:
+// - Solve with explicit pattern matching first (`match` / `if let`).
+// - Refactor to combinators only after tests pass.
 
 /// Divide two numbers, return None if divisor is zero
 pub fn safe_divide(a: f64, b: f64) -> Option<f64> {
@@ -194,6 +200,9 @@ pub fn rect_area((width, height): (f64, f64)) -> f64 {
 // Topic 6: Advanced Pattern Challenges
 // Learn: Recursive enums, state machines, complex matching
 // ============================================
+// Guidance:
+// - Keep recursive cases tiny and delegate to helper calls.
+// - Ensure every enum variant has an explicit behavior path.
 
 #[derive(Debug, PartialEq)]
 pub enum Temperature {
@@ -285,35 +294,5 @@ pub fn collect_successes(results: Vec<Result<i32, String>>) -> Vec<i32> {
 
 /// Apply a function to the value inside an Option, or return default
 pub fn map_or_default(opt: Option<i32>, f: fn(i32) -> i32, default: i32) -> i32 {
-        todo!()
-}
-
-// ============================================
-// Topic 7: Extra Practice
-// Learn: More pattern matching and destructuring exercises
-// ============================================
-
-/// Describe a point's quadrant using pattern matching on (x, y) signs.
-pub fn quadrant(x: f64, y: f64) -> &'static str {
-        todo!()
-}
-
-/// Classify a character as vowel, consonant, digit, or other.
-pub fn classify_ascii(c: char) -> &'static str {
-        todo!()
-}
-
-/// Parse a simple command string: "quit" -> Some(("quit","")), "" -> None
-pub fn parse_cmd_str(input: &str) -> Option<(&str, &str)> {
-        todo!()
-}
-
-/// Nested pattern: extract value from Option<Option<T>>
-pub fn flatten_nested_option<T>(opt: Option<Option<T>>) -> Option<T> {
-        todo!()
-}
-
-/// Return the sum if both are Some and positive.
-pub fn sum_if_both_positive(a: Option<i32>, b: Option<i32>) -> Option<i32> {
         todo!()
 }

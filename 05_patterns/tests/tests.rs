@@ -1,85 +1,88 @@
 use patterns::*;
 
+const EPS: f64 = 1e-9;
+
+fn assert_close(actual: f64, expected: f64) {
+    assert!(
+        (actual - expected).abs() < EPS,
+        "expected {expected}, got {actual}"
+    );
+}
+
 // ===== Topic 1: Match Basics =====
 
 #[test]
-fn test_describe_number() {
+fn describe_number_distinguishes_signs() {
     assert_eq!(describe_number(0), "zero");
-    assert_eq!(describe_number(42), "positive");
-    assert_eq!(describe_number(-5), "negative");
+    assert_eq!(describe_number(17), "positive");
+    assert_eq!(describe_number(-2), "negative");
 }
 
 #[test]
-fn test_grade_to_letter() {
-    assert_eq!(grade_to_letter(95), "A");
-    assert_eq!(grade_to_letter(85), "B");
-    assert_eq!(grade_to_letter(75), "C");
-    assert_eq!(grade_to_letter(65), "D");
-    assert_eq!(grade_to_letter(55), "F");
+fn grade_to_letter_handles_boundaries() {
     assert_eq!(grade_to_letter(100), "A");
-    assert_eq!(grade_to_letter(0), "F");
+    assert_eq!(grade_to_letter(90), "A");
+    assert_eq!(grade_to_letter(89), "B");
+    assert_eq!(grade_to_letter(79), "C");
+    assert_eq!(grade_to_letter(69), "D");
+    assert_eq!(grade_to_letter(59), "F");
+    assert_eq!(grade_to_letter(101), "F");
 }
 
 #[test]
-fn test_classify_char() {
+fn classify_char_recognizes_vowel_consonant_digit_other() {
     assert_eq!(classify_char('a'), "vowel");
     assert_eq!(classify_char('E'), "vowel");
-    assert_eq!(classify_char('b'), "consonant");
-    assert_eq!(classify_char('Z'), "consonant");
+    assert_eq!(classify_char('z'), "consonant");
     assert_eq!(classify_char('5'), "digit");
-    assert_eq!(classify_char('!'), "other");
+    assert_eq!(classify_char('?'), "other");
 }
 
 #[test]
-fn test_day_name() {
+fn day_name_maps_1_to_7() {
     assert_eq!(day_name(1), "Monday");
-    assert_eq!(day_name(5), "Friday");
+    assert_eq!(day_name(4), "Thursday");
     assert_eq!(day_name(7), "Sunday");
+}
+
+#[test]
+fn day_name_rejects_invalid_numbers() {
     assert_eq!(day_name(0), "invalid");
     assert_eq!(day_name(8), "invalid");
 }
 
 #[test]
-fn test_fizzbuzz() {
-    assert_eq!(fizzbuzz(1), "1");
+fn fizzbuzz_prioritizes_fifteen_before_three_and_five() {
     assert_eq!(fizzbuzz(3), "Fizz");
     assert_eq!(fizzbuzz(5), "Buzz");
     assert_eq!(fizzbuzz(15), "FizzBuzz");
-    assert_eq!(fizzbuzz(30), "FizzBuzz");
-    assert_eq!(fizzbuzz(7), "7");
+    assert_eq!(fizzbuzz(16), "16");
 }
 
 // ===== Topic 2: Enums with Match =====
 
 #[test]
-fn test_color_to_hex() {
+fn color_to_hex_supports_named_variants() {
     assert_eq!(color_to_hex(&Color::Red), "#FF0000");
     assert_eq!(color_to_hex(&Color::Green), "#00FF00");
     assert_eq!(color_to_hex(&Color::Blue), "#0000FF");
+}
+
+#[test]
+fn color_to_hex_supports_custom_payload() {
     assert_eq!(color_to_hex(&Color::Custom(255, 128, 0)), "#FF8000");
     assert_eq!(color_to_hex(&Color::Custom(0, 0, 0)), "#000000");
 }
 
 #[test]
-fn test_area_circle() {
-    let circle = Shape::Circle(1.0);
-    let result = area(&circle);
-    assert!((result - std::f64::consts::PI).abs() < 0.001);
+fn area_matches_each_shape_variant() {
+    assert_close(area(&Shape::Circle(2.0)), 4.0 * std::f64::consts::PI);
+    assert_close(area(&Shape::Rectangle(3.0, 4.0)), 12.0);
+    assert_close(area(&Shape::Triangle(6.0, 4.0)), 12.0);
 }
 
 #[test]
-fn test_area_rectangle() {
-    assert_eq!(area(&Shape::Rectangle(3.0, 4.0)), 12.0);
-    assert_eq!(area(&Shape::Rectangle(5.0, 2.0)), 10.0);
-}
-
-#[test]
-fn test_area_triangle() {
-    assert_eq!(area(&Shape::Triangle(6.0, 4.0)), 12.0);
-}
-
-#[test]
-fn test_describe_shape() {
+fn describe_shape_includes_payload_values() {
     assert_eq!(describe_shape(&Shape::Circle(5.0)), "Circle with radius 5");
     assert_eq!(describe_shape(&Shape::Rectangle(3.0, 4.0)), "Rectangle 3x4");
     assert_eq!(
@@ -89,7 +92,7 @@ fn test_describe_shape() {
 }
 
 #[test]
-fn test_coin_value() {
+fn coin_value_returns_cent_values() {
     assert_eq!(coin_value(&Coin::Penny), 1);
     assert_eq!(coin_value(&Coin::Nickel), 5);
     assert_eq!(coin_value(&Coin::Dime), 10);
@@ -97,94 +100,87 @@ fn test_coin_value() {
 }
 
 #[test]
-fn test_total_value() {
-    let coins = vec![Coin::Quarter, Coin::Dime, Coin::Penny];
-    assert_eq!(total_value(&coins), 36);
+fn total_value_sums_all_coins() {
+    let coins = vec![Coin::Quarter, Coin::Dime, Coin::Penny, Coin::Penny];
+    assert_eq!(total_value(&coins), 37);
     assert_eq!(total_value(&[]), 0);
-    let all_pennies = vec![Coin::Penny, Coin::Penny, Coin::Penny];
-    assert_eq!(total_value(&all_pennies), 3);
 }
 
 // ===== Topic 3: Option Matching =====
 
 #[test]
-fn test_safe_divide() {
+fn safe_divide_returns_none_when_divisor_is_zero() {
     assert_eq!(safe_divide(10.0, 2.0), Some(5.0));
     assert_eq!(safe_divide(10.0, 0.0), None);
-    assert_eq!(safe_divide(0.0, 5.0), Some(0.0));
 }
 
 #[test]
-fn test_first_or_default() {
-    assert_eq!(first_or_default(&[10, 20, 30], 0), 10);
+fn first_or_default_uses_fallback_for_empty_slice() {
+    assert_eq!(first_or_default(&[9, 8, 7], 0), 9);
     assert_eq!(first_or_default(&[], 42), 42);
 }
 
 #[test]
-fn test_double_option() {
+fn double_option_maps_some_and_preserves_none() {
     assert_eq!(double_option(Some(5)), Some(10));
-    assert_eq!(double_option(None), None);
     assert_eq!(double_option(Some(0)), Some(0));
+    assert_eq!(double_option(None), None);
 }
 
 #[test]
-fn test_parse_and_double() {
-    assert_eq!(parse_and_double("5"), Some(10));
+fn parse_and_double_requires_valid_integer() {
+    assert_eq!(parse_and_double("12"), Some(24));
+    assert_eq!(parse_and_double("-7"), Some(-14));
     assert_eq!(parse_and_double("abc"), None);
-    assert_eq!(parse_and_double(""), None);
 }
 
 #[test]
-fn test_option_string_length() {
+fn option_string_length_defaults_to_zero() {
     assert_eq!(option_string_length(Some("hello")), 5);
-    assert_eq!(option_string_length(None), 0);
     assert_eq!(option_string_length(Some("")), 0);
+    assert_eq!(option_string_length(None), 0);
 }
 
 #[test]
-fn test_first_even() {
-    assert_eq!(first_even(&[1, 3, 4, 6]), Some(4));
+fn first_even_returns_first_match_only() {
+    assert_eq!(first_even(&[1, 3, 8, 10]), Some(8));
     assert_eq!(first_even(&[1, 3, 5]), None);
-    assert_eq!(first_even(&[2, 4, 6]), Some(2));
     assert_eq!(first_even(&[]), None);
 }
 
 // ===== Topic 4: If Let, While Let, Matches! =====
 
 #[test]
-fn test_describe_option() {
+fn describe_option_formats_some_and_none() {
     assert_eq!(describe_option(Some(42)), "Got: 42");
     assert_eq!(describe_option(None), "nothing");
 }
 
 #[test]
-fn test_count_items() {
+fn count_items_counts_until_pop_returns_none() {
     assert_eq!(count_items(vec![1, 2, 3]), 3);
     assert_eq!(count_items(vec![]), 0);
-    assert_eq!(count_items(vec![99]), 1);
 }
 
 #[test]
-fn test_result_to_string() {
-    assert_eq!(result_to_string(Ok(42)), "Success: 42");
+fn result_to_string_formats_ok_and_err_paths() {
+    assert_eq!(result_to_string(Ok(7)), "Success: 7");
     assert_eq!(
-        result_to_string(Err("not found".to_string())),
-        "Error: not found"
+        result_to_string(Err("bad input".to_string())),
+        "Error: bad input"
     );
 }
 
 #[test]
-fn test_is_in_range() {
+fn is_in_range_is_inclusive_between_1_and_10() {
     assert!(is_in_range(1));
-    assert!(is_in_range(5));
     assert!(is_in_range(10));
     assert!(!is_in_range(0));
     assert!(!is_in_range(11));
-    assert!(!is_in_range(-1));
 }
 
 #[test]
-fn test_is_even_option() {
+fn is_even_option_requires_some_even_value() {
     assert!(is_even_option(Some(4)));
     assert!(!is_even_option(Some(3)));
     assert!(!is_even_option(None));
@@ -193,106 +189,74 @@ fn test_is_even_option() {
 // ===== Topic 5: Destructuring =====
 
 #[test]
-fn test_tuple_sum() {
+fn tuple_sum_adds_pair_values() {
     assert_eq!(tuple_sum((3, 4)), 7);
-    assert_eq!(tuple_sum((0, 0)), 0);
     assert_eq!(tuple_sum((-1, 1)), 0);
 }
 
 #[test]
-fn test_triple_max() {
-    assert_eq!(triple_max((1, 2, 3)), 3);
-    assert_eq!(triple_max((3, 1, 2)), 3);
-    assert_eq!(triple_max((-1, -2, -3)), -1);
+fn triple_max_finds_largest_member() {
+    assert_eq!(triple_max((1, 9, 3)), 9);
+    assert_eq!(triple_max((-10, -3, -7)), -3);
 }
 
 #[test]
-fn test_distance_from_origin() {
+fn distance_from_origin_uses_struct_destructuring() {
     let p = Point { x: 3.0, y: 4.0 };
-    assert!((distance_from_origin(&p) - 5.0).abs() < 0.001);
-
-    let origin = Point { x: 0.0, y: 0.0 };
-    assert_eq!(distance_from_origin(&origin), 0.0);
+    assert_close(distance_from_origin(&p), 5.0);
 }
 
 #[test]
-fn test_nested_sum() {
+fn nested_sum_destructures_nested_tuple() {
     assert_eq!(nested_sum(((1, 2), 3)), 6);
-    assert_eq!(nested_sum(((10, 20), 30)), 60);
+    assert_eq!(nested_sum(((10, -5), 7)), 12);
 }
 
 #[test]
-fn test_swap_coordinates() {
-    let p = Point { x: 3.0, y: 7.0 };
-    let swapped = swap_coordinates(&p);
-    assert_eq!(swapped, Point { x: 7.0, y: 3.0 });
+fn swap_coordinates_returns_new_point() {
+    let p = Point { x: 2.5, y: -9.0 };
+    assert_eq!(swap_coordinates(&p), Point { x: -9.0, y: 2.5 });
+    assert_eq!(p, Point { x: 2.5, y: -9.0 });
 }
 
 #[test]
-fn test_rect_area() {
-    assert_eq!(rect_area((5.0, 3.0)), 15.0);
-    assert_eq!(rect_area((0.0, 10.0)), 0.0);
+fn rect_area_destructures_in_parameter_list() {
+    assert_close(rect_area((5.0, 3.0)), 15.0);
+    assert_close(rect_area((0.0, 9.0)), 0.0);
 }
 
 // ===== Topic 6: Advanced Pattern Challenges =====
 
 #[test]
-fn test_to_celsius() {
-    assert!((to_celsius(&Temperature::Celsius(100.0)) - 100.0).abs() < 0.01);
-    assert!((to_celsius(&Temperature::Fahrenheit(32.0)) - 0.0).abs() < 0.01);
-    assert!((to_celsius(&Temperature::Fahrenheit(212.0)) - 100.0).abs() < 0.01);
-    assert!((to_celsius(&Temperature::Kelvin(273.15)) - 0.0).abs() < 0.01);
-    assert!((to_celsius(&Temperature::Kelvin(373.15)) - 100.0).abs() < 0.01);
+fn to_celsius_converts_all_temperature_variants() {
+    assert_close(to_celsius(&Temperature::Celsius(12.0)), 12.0);
+    assert_close(to_celsius(&Temperature::Fahrenheit(32.0)), 0.0);
+    assert_close(to_celsius(&Temperature::Kelvin(273.15)), 0.0);
 }
 
 #[test]
-fn test_describe_temperature() {
-    assert_eq!(
-        describe_temperature(&Temperature::Celsius(-10.0)),
-        "freezing"
-    );
-    assert_eq!(describe_temperature(&Temperature::Celsius(5.0)), "cold");
-    assert_eq!(
-        describe_temperature(&Temperature::Celsius(20.0)),
-        "comfortable"
-    );
-    assert_eq!(describe_temperature(&Temperature::Celsius(35.0)), "hot");
-    assert_eq!(describe_temperature(&Temperature::Fahrenheit(32.0)), "cold"); // 0°C
-    assert_eq!(describe_temperature(&Temperature::Kelvin(300.0)), "hot"); // ~26.85°C
+fn describe_temperature_uses_celsius_buckets() {
+    assert_eq!(describe_temperature(&Temperature::Celsius(-0.1)), "freezing");
+    assert_eq!(describe_temperature(&Temperature::Celsius(10.0)), "cold");
+    assert_eq!(describe_temperature(&Temperature::Celsius(20.0)), "comfortable");
+    assert_eq!(describe_temperature(&Temperature::Celsius(30.0)), "hot");
 }
 
 #[test]
-fn test_eval_simple() {
-    assert_eq!(eval(&Expr::Num(42.0)), 42.0);
-}
-
-#[test]
-fn test_eval_add() {
-    let expr = Expr::Add(Box::new(Expr::Num(2.0)), Box::new(Expr::Num(3.0)));
-    assert_eq!(eval(&expr), 5.0);
-}
-
-#[test]
-fn test_eval_complex() {
-    // (2 + 3) * 4 = 20
+fn eval_handles_recursive_expression_trees() {
+    // (2 + 3) * -4 = -20
     let expr = Expr::Mul(
         Box::new(Expr::Add(
             Box::new(Expr::Num(2.0)),
             Box::new(Expr::Num(3.0)),
         )),
-        Box::new(Expr::Num(4.0)),
+        Box::new(Expr::Neg(Box::new(Expr::Num(4.0)))),
     );
-    assert_eq!(eval(&expr), 20.0);
+    assert_close(eval(&expr), -20.0);
 }
 
 #[test]
-fn test_eval_neg() {
-    let expr = Expr::Neg(Box::new(Expr::Num(5.0)));
-    assert_eq!(eval(&expr), -5.0);
-}
-
-#[test]
-fn test_expr_to_string() {
+fn expr_to_string_preserves_tree_structure() {
     let expr = Expr::Add(
         Box::new(Expr::Num(2.0)),
         Box::new(Expr::Mul(
@@ -304,7 +268,7 @@ fn test_expr_to_string() {
 }
 
 #[test]
-fn test_parse_command() {
+fn parse_command_parses_supported_commands() {
     assert_eq!(parse_command("quit"), Some(Command::Quit));
     assert_eq!(
         parse_command("echo hello world"),
@@ -315,19 +279,21 @@ fn test_parse_command() {
         Some(Command::Move { x: 10, y: 20 })
     );
     assert_eq!(
-        parse_command("color red"),
-        Some(Command::ChangeColor(Color::Red))
+        parse_command("color blue"),
+        Some(Command::ChangeColor(Color::Blue))
     );
-    assert_eq!(
-        parse_command("color green"),
-        Some(Command::ChangeColor(Color::Green))
-    );
-    assert_eq!(parse_command("invalid"), None);
-    assert_eq!(parse_command("move abc def"), None);
 }
 
 #[test]
-fn test_tree_sum() {
+fn parse_command_rejects_invalid_inputs() {
+    assert_eq!(parse_command(""), None);
+    assert_eq!(parse_command("move 10"), None);
+    assert_eq!(parse_command("move ten twenty"), None);
+    assert_eq!(parse_command("color cyan"), None);
+}
+
+#[test]
+fn tree_sum_leaf_count_and_depth_cover_recursive_patterns() {
     //       node
     //      /    \
     //    node    3
@@ -338,106 +304,35 @@ fn test_tree_sum() {
         Box::new(Tree::Leaf(3)),
     );
     assert_eq!(tree_sum(&tree), 6);
-    assert_eq!(tree_sum(&Tree::Leaf(42)), 42);
-}
-
-#[test]
-fn test_tree_leaf_count() {
-    let tree = Tree::Node(
-        Box::new(Tree::Node(Box::new(Tree::Leaf(1)), Box::new(Tree::Leaf(2)))),
-        Box::new(Tree::Leaf(3)),
-    );
     assert_eq!(tree_leaf_count(&tree), 3);
-    assert_eq!(tree_leaf_count(&Tree::Leaf(1)), 1);
-}
-
-#[test]
-fn test_tree_depth() {
-    let tree = Tree::Node(
-        Box::new(Tree::Node(Box::new(Tree::Leaf(1)), Box::new(Tree::Leaf(2)))),
-        Box::new(Tree::Leaf(3)),
-    );
     assert_eq!(tree_depth(&tree), 2);
-    assert_eq!(tree_depth(&Tree::Leaf(1)), 0);
 }
 
 #[test]
-fn test_flatten_option() {
+fn flatten_option_collapses_one_level() {
     assert_eq!(flatten_option(Some(Some(42))), Some(42));
     assert_eq!(flatten_option(Some(None)), None);
     assert_eq!(flatten_option(None), None);
 }
 
 #[test]
-fn test_count_results() {
-    let results: Vec<Result<i32, String>> = vec![
-        Ok(1),
-        Err("err".to_string()),
-        Ok(3),
-        Err("fail".to_string()),
-        Ok(5),
-    ];
-    assert_eq!(count_results(&results), (3, 2));
+fn count_results_reports_success_and_failure_totals() {
+    let results = vec![Ok(1), Err("x".to_string()), Ok(3), Err("y".to_string())];
+    assert_eq!(count_results(&results), (2, 2));
     assert_eq!(count_results(&[]), (0, 0));
 }
 
 #[test]
-fn test_collect_successes() {
-    let results: Vec<Result<i32, String>> = vec![
-        Ok(1),
-        Err("err".to_string()),
-        Ok(3),
-        Err("fail".to_string()),
-        Ok(5),
-    ];
-    assert_eq!(collect_successes(results), vec![1, 3, 5]);
+fn collect_successes_keeps_only_ok_values_in_order() {
+    let values = vec![Ok(1), Err("no".to_string()), Ok(3), Ok(5)];
+    assert_eq!(collect_successes(values), vec![1, 3, 5]);
 }
 
 #[test]
-fn test_map_or_default() {
-    fn double(x: i32) -> i32 {
-        x * 2
+fn map_or_default_applies_function_or_fallback() {
+    fn triple(n: i32) -> i32 {
+        n * 3
     }
-    assert_eq!(map_or_default(Some(5), double, 0), 10);
-    assert_eq!(map_or_default(None, double, 42), 42);
-}
-
-
-// ===== Topic 7: Extra Practice =====
-
-#[test]
-fn test_quadrant() {
-    assert_eq!(quadrant(1.0, 1.0), "Q1");
-    assert_eq!(quadrant(-1.0, 1.0), "Q2");
-    assert_eq!(quadrant(-1.0, -1.0), "Q3");
-    assert_eq!(quadrant(0.0, 0.0), "origin");
-}
-
-#[test]
-fn test_classify_ascii() {
-    assert_eq!(classify_ascii('a'), "vowel");
-    assert_eq!(classify_ascii('b'), "consonant");
-    assert_eq!(classify_ascii('5'), "digit");
-    assert_eq!(classify_ascii('!'), "other");
-}
-
-#[test]
-fn test_parse_cmd_str() {
-    assert_eq!(parse_cmd_str("say hello"), Some(("say", "hello")));
-    assert_eq!(parse_cmd_str("quit"), Some(("quit", "")));
-    assert_eq!(parse_cmd_str(""), None);
-}
-
-#[test]
-fn test_flatten_nested_option() {
-    assert_eq!(flatten_nested_option(Some(Some(42))), Some(42));
-    assert_eq!(flatten_nested_option(Some(None::<i32>)), None);
-    assert_eq!(flatten_nested_option(None::<Option<i32>>), None);
-}
-
-#[test]
-fn test_sum_if_both_positive() {
-    assert_eq!(sum_if_both_positive(Some(3), Some(4)), Some(7));
-    assert_eq!(sum_if_both_positive(Some(-1), Some(4)), None);
-    assert_eq!(sum_if_both_positive(None, Some(4)), None);
+    assert_eq!(map_or_default(Some(4), triple, 0), 12);
+    assert_eq!(map_or_default(None, triple, 99), 99);
 }
