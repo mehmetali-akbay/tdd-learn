@@ -1,6 +1,6 @@
 # TDD Rust Learning Path
 
-A progressive Rust learning path with **987 tests** across **34 projects**, organized into 9 levels of increasing difficulty. Learn by implementing functions to make failing tests pass.
+A progressive Rust learning path with hundreds of tests across **40 projects**, organized into levels of increasing difficulty. Learn by implementing functions to make failing tests pass.
 
 ## How to Use
 
@@ -22,8 +22,8 @@ git checkout main
 
 | Level | Projects | Focus |
 |-------|----------|-------|
-| **1** | `01_vecs` `02_strings` `03_ownership` `04_patterns` | Fundamentals |
-| **2** | `05_shapes` `06_types` `07_traits` `08_generics` | Type system |
+| **1** | `01_vecs` `02_strings` `03_ownership` | Fundamentals |
+| **2** | `04_structs` `05_patterns` `06_types` `07_traits` `08_generics` | Type system |
 | **3** | `09_results` `10_hashmaps` `11_iterators` `12_files` | Collections & I/O |
 | **4** | `13_todolist` `14_calculator` `15_enums_deep` `16_modules` `17_testing` `18_lifetimes` `19_smartptrs` | Intermediate |
 | **5** | `20_closures` `21_macros` `22_threads` | Closures, macros, concurrency |

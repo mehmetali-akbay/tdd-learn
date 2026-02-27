@@ -3,7 +3,7 @@ members = [
     "01_vecs",
     "02_strings",
     "03_ownership",
-    "04_shapes",
+    "04_structs",
     "05_patterns",
     "06_types",
     "07_traits",
