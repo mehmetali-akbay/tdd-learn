@@ -530,3 +530,40 @@ impl Account {
         format!("#{} {} ({state})", self.id.0, self.owner)
     }
 }
+
+#[cfg(test)]
+mod helper_tests {
+    use super::{is_valid_email, normalize_token};
+
+    #[test]
+    fn normalize_token_trims_and_lowercases_ascii_input() {
+        assert_eq!(normalize_token("  Admin  "), Some("admin".to_string()));
+        assert_eq!(normalize_token("Read Only"), Some("read only".to_string()));
+    }
+
+    #[test]
+    fn normalize_token_rejects_empty_or_whitespace_only_values() {
+        assert_eq!(normalize_token(""), None);
+        assert_eq!(normalize_token("   \t\n  "), None);
+    }
+
+    #[test]
+    fn is_valid_email_accepts_simple_project_valid_cases() {
+        assert!(is_valid_email("alice@example.com"));
+        assert!(is_valid_email("bob.smith+ops@sub.example.com"));
+    }
+
+    #[test]
+    fn is_valid_email_rejects_missing_parts_or_multiple_at_symbols() {
+        assert!(!is_valid_email("@example.com"));
+        assert!(!is_valid_email("alice@"));
+        assert!(!is_valid_email("alice@example"));
+        assert!(!is_valid_email("alice@@example.com"));
+    }
+
+    #[test]
+    fn is_valid_email_rejects_domain_starting_or_ending_with_dot() {
+        assert!(!is_valid_email("alice@.example.com"));
+        assert!(!is_valid_email("alice@example.com."));
+    }
+}
