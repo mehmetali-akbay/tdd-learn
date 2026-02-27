@@ -7,6 +7,9 @@
 // Topic 1: JSON Value — Enums with Mixed Data
 // Learn: Enum variants with different data types
 // ============================================
+// Guidance:
+// - Keep behavior variant-driven with exhaustive `match`.
+// - Prefer small helper methods over duplicated matching logic.
 
 /// A simplified JSON value
 #[derive(Debug, Clone, PartialEq)]
@@ -91,6 +94,9 @@ impl TrafficLight {
 // Topic 3: Linked List — Recursive Enums
 // Learn: Recursive enums, Box, pattern matching
 // ============================================
+// Guidance:
+// - Write one recursive branch at a time (`Nil` base case first).
+// - Reuse previously implemented recursive methods when possible.
 
 /// A singly-linked list of i32 values
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -151,6 +157,9 @@ impl List {
 // Topic 4: Expression Tree — Recursive Matching
 // Learn: Complex recursive enums, Box, evaluation
 // ============================================
+// Guidance:
+// - Handle each operator variant explicitly.
+// - Use `?` to propagate `None` when evaluation fails.
 
 /// A math expression tree with more operations than Level 1
 #[derive(Debug, Clone, PartialEq)]
@@ -194,6 +203,9 @@ impl Expr {
 // Topic 5: Custom Error Types
 // Learn: Error enums, Result with custom errors
 // ============================================
+// Guidance:
+// - Keep error variants descriptive and behavior-specific.
+// - Convert parsing failures into `AppError` close to the source.
 
 /// Application-level errors
 #[derive(Debug, PartialEq)]
@@ -240,6 +252,9 @@ pub fn parse_and_check_adult(s: &str) -> Result<bool, AppError> {
 // Topic 6: Payload — Advanced Nested Enums
 // Learn: Complex variants, methods on enums
 // ============================================
+// Guidance:
+// - Define and preserve clear merge semantics per variant pair.
+// - Be explicit about emptiness rules for each payload form.
 
 /// A data payload with different formats
 #[derive(Debug, Clone, PartialEq)]
@@ -275,29 +290,4 @@ impl Payload {
     pub fn merge(self, other: Payload) -> Payload {
         todo!()
     }
-}
-
-// ============================================
-// Topic 7: Extra Practice
-// Learn: More type conversion and newtype exercises
-// ============================================
-
-/// Clamp a value to the range [min, max].
-pub fn clamp(value: f64, min: f64, max: f64) -> f64 {
-        todo!()
-}
-
-/// Safely convert u32 to u8, returning None if out of range.
-pub fn safe_u32_to_u8(n: u32) -> Option<u8> {
-        todo!()
-}
-
-/// Convert a temperature from Fahrenheit to Celsius and classify it.
-pub fn temp_classify(fahrenheit: f64) -> &'static str {
-        todo!()
-}
-
-/// Map a value from one range to another (linear interpolation).
-pub fn map_range(value: f64, from_min: f64, from_max: f64, to_min: f64, to_max: f64) -> f64 {
-        todo!()
 }

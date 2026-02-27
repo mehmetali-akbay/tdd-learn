@@ -1,6 +1,6 @@
 # Types — Complex Enums
 
-Enums with data, recursive enums, state machines
+Enum-focused practice: data-carrying variants, recursive enums, and state-machine style modeling.
 
 **35 functions | 38 tests**
 
@@ -8,11 +8,23 @@ Enums with data, recursive enums, state machines
 cargo test -p types
 ```
 
-## Topics
+## Learning goals
 
-1. **JSON Value — Enums with Mixed Data** — Enum variants with different data types
-2. **Traffic Light — State Machine** — State transitions, methods on enums
-3. **Linked List — Recursive Enums** — Recursive enums, Box, pattern matching
-4. **Expression Tree — Recursive Matching** — Complex recursive enums, Box, evaluation
-5. **Custom Error Types** — Error enums, Result with custom errors
-6. **Payload — Advanced Nested Enums** — Complex variants, methods on enums
+1. Model mixed data with enums and attach behavior via `impl`.
+2. Practice exhaustive matching on variants with payloads.
+3. Build recursive types with `Box` and evaluate them recursively.
+4. Use enum-based error modeling with `Result<T, AppError>`.
+5. Compose nested enums (`Payload` containing `JsonValue`) with clear semantics.
+
+## Recommended TDD order
+
+1. **JsonValue**: variant semantics (`truthy`, type names, display).
+2. **TrafficLight**: transition/state behavior.
+3. **List**: recursive enum basics (`len`, `sum`, `contains`, conversions).
+4. **Expr**: recursive evaluation + rendering.
+5. **AppError** + helpers: explicit error paths.
+6. **Payload**: nested enum composition and merge rules.
+
+## Scope note
+
+This module keeps the core path focused on enum design and pattern matching. Extra conversion drills are intentionally excluded from the main test progression.
