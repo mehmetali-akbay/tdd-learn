@@ -17,25 +17,23 @@ pub struct SpinLock {
 
 impl SpinLock {
     pub fn new() -> Self {
-        SpinLock { locked: AtomicBool::new(false) }
+        todo!()
     }
 
     pub fn lock(&self) {
-        while self.locked.compare_exchange_weak(false, true, Ordering::Acquire, Ordering::Relaxed).is_err() {
-            std::hint::spin_loop();
-        }
+        todo!()
     }
 
     pub fn try_lock(&self) -> bool {
-        self.locked.compare_exchange(false, true, Ordering::Acquire, Ordering::Relaxed).is_ok()
+        todo!()
     }
 
     pub fn unlock(&self) {
-        self.locked.store(false, Ordering::Release);
+        todo!()
     }
 
     pub fn is_locked(&self) -> bool {
-        self.locked.load(Ordering::Relaxed)
+        todo!()
     }
 }
 
@@ -58,17 +56,11 @@ unsafe impl<T: Send> Sync for SpinMutex<T> {}
 
 impl<T> SpinMutex<T> {
     pub fn new(value: T) -> Self {
-        SpinMutex {
-            lock: SpinLock::new(),
-            data: std::cell::UnsafeCell::new(value),
-        }
+        todo!()
     }
 
     pub fn with_lock<R>(&self, f: impl FnOnce(&mut T) -> R) -> R {
-        self.lock.lock();
-        let result = f(unsafe { &mut *self.data.get() });
-        self.lock.unlock();
-        result
+        todo!()
     }
 }
 
@@ -85,28 +77,15 @@ pub struct Barrier {
 
 impl Barrier {
     pub fn new(count: usize) -> Self {
-        Barrier {
-            count,
-            waiting: Mutex::new(0),
-            condvar: Condvar::new(),
-        }
+        todo!()
     }
 
     /// Wait until all N threads reach this point.
     pub fn wait(&self) {
-        let mut waiting = self.waiting.lock().unwrap();
-        *waiting += 1;
-        if *waiting >= self.count {
-            *waiting = 0;
-            self.condvar.notify_all();
-        } else {
-            while *waiting != 0 {
-                waiting = self.condvar.wait(waiting).unwrap();
-            }
-        }
+        todo!()
     }
 
-    pub fn count(&self) -> usize { self.count }
+    pub fn count(&self) -> usize { todo!() }
 }
 
 // ============================================
@@ -122,39 +101,23 @@ pub struct Semaphore {
 
 impl Semaphore {
     pub fn new(permits: usize) -> Self {
-        Semaphore {
-            permits: Mutex::new(permits),
-            condvar: Condvar::new(),
-            max_permits: permits,
-        }
+        todo!()
     }
 
     pub fn acquire(&self) {
-        let mut permits = self.permits.lock().unwrap();
-        while *permits == 0 {
-            permits = self.condvar.wait(permits).unwrap();
-        }
-        *permits -= 1;
+        todo!()
     }
 
     pub fn try_acquire(&self) -> bool {
-        let mut permits = self.permits.lock().unwrap();
-        if *permits > 0 {
-            *permits -= 1;
-            true
-        } else {
-            false
-        }
+        todo!()
     }
 
     pub fn release(&self) {
-        let mut permits = self.permits.lock().unwrap();
-        *permits = (*permits + 1).min(self.max_permits);
-        self.condvar.notify_one();
+        todo!()
     }
 
     pub fn available(&self) -> usize {
-        *self.permits.lock().unwrap()
+        todo!()
     }
 }
 
@@ -169,39 +132,33 @@ pub struct AtomicCounter {
 
 impl AtomicCounter {
     pub fn new(initial: usize) -> Self {
-        AtomicCounter { value: AtomicUsize::new(initial) }
+        todo!()
     }
 
     pub fn increment(&self) -> usize {
-        self.value.fetch_add(1, Ordering::SeqCst)
+        todo!()
     }
 
     pub fn decrement(&self) -> usize {
-        self.value.fetch_sub(1, Ordering::SeqCst)
+        todo!()
     }
 
     pub fn get(&self) -> usize {
-        self.value.load(Ordering::SeqCst)
+        todo!()
     }
 
     /// Atomically set to new_val if current == expected. Returns true if swapped.
     pub fn compare_and_swap(&self, expected: usize, new_val: usize) -> bool {
-        self.value.compare_exchange(expected, new_val, Ordering::SeqCst, Ordering::SeqCst).is_ok()
+        todo!()
     }
 
     /// Atomically update using a function.
     pub fn fetch_update(&self, f: impl Fn(usize) -> usize) -> usize {
-        loop {
-            let current = self.get();
-            let new_val = f(current);
-            if self.compare_and_swap(current, new_val) {
-                return current;
-            }
-        }
+        todo!()
     }
 
     pub fn share(&self) -> Arc<AtomicCounter> {
-        Arc::new(AtomicCounter::new(self.get()))
+        todo!()
     }
 }
 
@@ -219,64 +176,34 @@ pub struct BoundedChannel<T> {
 
 impl<T> BoundedChannel<T> {
     pub fn new(capacity: usize) -> Arc<Self> {
-        Arc::new(BoundedChannel {
-            buffer: Mutex::new(Vec::new()),
-            capacity,
-            not_empty: Condvar::new(),
-            not_full: Condvar::new(),
-        })
+        todo!()
     }
 
     pub fn send(&self, item: T) {
-        let mut buf = self.buffer.lock().unwrap();
-        while buf.len() >= self.capacity {
-            buf = self.not_full.wait(buf).unwrap();
-        }
-        buf.push(item);
-        self.not_empty.notify_one();
+        todo!()
     }
 
     pub fn try_send(&self, item: T) -> Result<(), T> {
-        let mut buf = self.buffer.lock().unwrap();
-        if buf.len() >= self.capacity {
-            Err(item)
-        } else {
-            buf.push(item);
-            self.not_empty.notify_one();
-            Ok(())
-        }
+        todo!()
     }
 
     pub fn recv(&self) -> T {
-        let mut buf = self.buffer.lock().unwrap();
-        while buf.is_empty() {
-            buf = self.not_empty.wait(buf).unwrap();
-        }
-        let item = buf.remove(0);
-        self.not_full.notify_one();
-        item
+        todo!()
     }
 
     pub fn try_recv(&self) -> Option<T> {
-        let mut buf = self.buffer.lock().unwrap();
-        if buf.is_empty() {
-            None
-        } else {
-            let item = buf.remove(0);
-            self.not_full.notify_one();
-            Some(item)
-        }
+        todo!()
     }
 
     pub fn len(&self) -> usize {
-        self.buffer.lock().unwrap().len()
+        todo!()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.buffer.lock().unwrap().is_empty()
+        todo!()
     }
 
     pub fn capacity(&self) -> usize {
-        self.capacity
+        todo!()
     }
 }

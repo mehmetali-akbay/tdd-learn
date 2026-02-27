@@ -24,10 +24,7 @@ pub struct Pet {
 
 impl Pet {
     pub fn new(name: &str, species: &str) -> Self {
-        Pet {
-            name: name.to_string(),
-            species: species.to_string(),
-        }
+        todo!()
     }
 }
 
@@ -47,11 +44,7 @@ pub struct Car {
 
 impl Car {
     pub fn new(make: &str, model: &str, year: u32) -> Self {
-        Car {
-            make: make.to_string(),
-            model: model.to_string(),
-            year,
-        }
+        todo!()
     }
 }
 
@@ -71,11 +64,7 @@ pub struct Book {
 
 impl Book {
     pub fn new(title: &str, author: &str, pages: u32) -> Self {
-        Book {
-            title: title.to_string(),
-            author: author.to_string(),
-            pages,
-        }
+        todo!()
     }
 }
 
@@ -90,7 +79,7 @@ impl Describable for Book {
 
 /// A generic function that takes anything Describable
 pub fn print_description(item: &dyn Describable) -> String {
-    item.describe()
+        todo!()
 }
 
 // ============================================
@@ -107,7 +96,7 @@ pub struct Coord {
 
 impl Coord {
     pub fn new(x: f64, y: f64) -> Self {
-        Coord { x, y }
+        todo!()
     }
 }
 
@@ -132,17 +121,11 @@ pub struct Temperature {
 
 impl Temperature {
     pub fn celsius(value: f64) -> Self {
-        Temperature {
-            value,
-            unit: TempUnit::Celsius,
-        }
+        todo!()
     }
 
     pub fn fahrenheit(value: f64) -> Self {
-        Temperature {
-            value,
-            unit: TempUnit::Fahrenheit,
-        }
+        todo!()
     }
 }
 
@@ -182,23 +165,19 @@ impl Default for Config {
 
 impl Config {
     pub fn with_host(mut self, host: &str) -> Self {
-        self.host = host.to_string();
-        self
+        todo!()
     }
 
     pub fn with_port(mut self, port: u16) -> Self {
-        self.port = port;
-        self
+        todo!()
     }
 
     pub fn with_debug(mut self, debug: bool) -> Self {
-        self.debug = debug;
-        self
+        todo!()
     }
 
     pub fn with_max_connections(mut self, max: u32) -> Self {
-        self.max_connections = max;
-        self
+        todo!()
     }
 }
 
@@ -288,34 +267,27 @@ impl From<Rgb> for (u8, u8, u8) {
 
 /// Print all items (requires Display)
 pub fn format_all<T: fmt::Display>(items: &[T]) -> String {
-    items
-        .iter()
-        .map(|item| format!("{}", item))
-        .collect::<Vec<_>>()
-        .join(", ")
+        todo!()
 }
 
 /// Find the largest item (requires PartialOrd + Copy)
 pub fn largest<T: PartialOrd + Copy>(items: &[T]) -> Option<T> {
-    items
-        .iter()
-        .copied()
-        .reduce(|a, b| if a >= b { a } else { b })
+        todo!()
 }
 
 /// Find the first item matching a target (requires PartialEq)
 pub fn find_match<T: PartialEq>(items: &[T], target: &T) -> Option<usize> {
-    items.iter().position(|item| item == target)
+        todo!()
 }
 
 /// Count items matching a predicate
 pub fn count_where<T>(items: &[T], predicate: fn(&T) -> bool) -> usize {
-    items.iter().filter(|item| predicate(item)).count()
+        todo!()
 }
 
 /// Check if all items satisfy a predicate
 pub fn all_match<T>(items: &[T], predicate: fn(&T) -> bool) -> bool {
-    items.iter().all(predicate)
+        todo!()
 }
 
 // ============================================
@@ -386,12 +358,12 @@ impl Measurable for Duration {
 
 /// Sum the measurements of a slice of trait objects
 pub fn total_measurement(items: &[&dyn Measurable]) -> f64 {
-    items.iter().map(|item| item.measure()).sum()
+        todo!()
 }
 
 /// Find the largest measurement in a slice of trait objects
 pub fn max_measurement(items: &[&dyn Measurable]) -> Option<f64> {
-    items.iter().map(|item| item.measure()).reduce(f64::max)
+        todo!()
 }
 
 // ============================================
@@ -420,20 +392,11 @@ impl Taggable for Photo {
 
 /// Collect all unique tags from a slice of Taggable items.
 pub fn all_tags(items: &[&dyn Taggable]) -> Vec<String> {
-    let mut seen = std::collections::HashSet::new();
-    let mut result = Vec::new();
-    for item in items {
-        for tag in item.tags() {
-            if seen.insert(tag.to_string()) {
-                result.push(tag.to_string());
-            }
-        }
-    }
-    result
+        todo!()
 }
 
 /// Filter taggable items that have a specific tag.
 pub fn filter_by_tag<'a>(items: &[&'a dyn Taggable], tag: &str) -> Vec<&'a dyn Taggable> {
-    items.iter().filter(|i| i.has_tag(tag)).copied().collect()
+        todo!()
 }
 

@@ -15,31 +15,25 @@ pub struct BumpAllocator {
 
 impl BumpAllocator {
     pub fn new(capacity: usize) -> Self {
-        BumpAllocator { memory: vec![0; capacity], offset: 0 }
+        todo!()
     }
 
     pub fn alloc(&mut self, size: usize) -> Option<usize> {
-        if self.offset + size > self.memory.len() { return None; }
-        let ptr = self.offset;
-        self.offset += size;
-        Some(ptr)
+        todo!()
     }
 
-    pub fn used(&self) -> usize { self.offset }
-    pub fn remaining(&self) -> usize { self.memory.len() - self.offset }
-    pub fn capacity(&self) -> usize { self.memory.len() }
+    pub fn used(&self) -> usize { todo!() }
+    pub fn remaining(&self) -> usize { todo!() }
+    pub fn capacity(&self) -> usize { todo!() }
 
-    pub fn reset(&mut self) { self.offset = 0; }
+    pub fn reset(&mut self) { todo!() }
 
     pub fn write(&mut self, offset: usize, data: &[u8]) -> bool {
-        if offset + data.len() > self.memory.len() { return false; }
-        self.memory[offset..offset+data.len()].copy_from_slice(data);
-        true
+        todo!()
     }
 
     pub fn read(&self, offset: usize, len: usize) -> Option<&[u8]> {
-        if offset + len > self.memory.len() { return None; }
-        Some(&self.memory[offset..offset+len])
+        todo!()
     }
 }
 
@@ -55,22 +49,19 @@ pub struct TypedArena<T> {
 
 impl<T> TypedArena<T> {
     pub fn new(capacity: usize) -> Self {
-        TypedArena { items: Vec::with_capacity(capacity), capacity }
+        todo!()
     }
 
     pub fn alloc(&mut self, value: T) -> Option<usize> {
-        if self.items.len() >= self.capacity { return None; }
-        let idx = self.items.len();
-        self.items.push(value);
-        Some(idx)
+        todo!()
     }
 
-    pub fn get(&self, index: usize) -> Option<&T> { self.items.get(index) }
-    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> { self.items.get_mut(index) }
-    pub fn len(&self) -> usize { self.items.len() }
-    pub fn is_empty(&self) -> bool { self.items.is_empty() }
-    pub fn capacity(&self) -> usize { self.capacity }
-    pub fn remaining(&self) -> usize { self.capacity - self.items.len() }
+    pub fn get(&self, index: usize) -> Option<&T> { todo!() }
+    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> { todo!() }
+    pub fn len(&self) -> usize { todo!() }
+    pub fn is_empty(&self) -> bool { todo!() }
+    pub fn capacity(&self) -> usize { todo!() }
+    pub fn remaining(&self) -> usize { todo!() }
 }
 
 // ============================================
@@ -85,31 +76,24 @@ pub struct PoolAllocator<T: Default + Clone> {
 
 impl<T: Default + Clone> PoolAllocator<T> {
     pub fn new(capacity: usize) -> Self {
-        let slots = vec![None; capacity];
-        let free_list: Vec<usize> = (0..capacity).rev().collect();
-        PoolAllocator { slots, free_list }
+        todo!()
     }
 
     pub fn alloc(&mut self, value: T) -> Option<usize> {
-        let idx = self.free_list.pop()?;
-        self.slots[idx] = Some(value);
-        Some(idx)
+        todo!()
     }
 
     pub fn dealloc(&mut self, index: usize) -> Option<T> {
-        if index >= self.slots.len() { return None; }
-        let item = self.slots[index].take()?;
-        self.free_list.push(index);
-        Some(item)
+        todo!()
     }
 
     pub fn get(&self, index: usize) -> Option<&T> {
-        self.slots.get(index)?.as_ref()
+        todo!()
     }
 
-    pub fn available(&self) -> usize { self.free_list.len() }
-    pub fn in_use(&self) -> usize { self.slots.len() - self.free_list.len() }
-    pub fn capacity(&self) -> usize { self.slots.len() }
+    pub fn available(&self) -> usize { todo!() }
+    pub fn in_use(&self) -> usize { todo!() }
+    pub fn capacity(&self) -> usize { todo!() }
 }
 
 // ============================================
@@ -128,45 +112,23 @@ pub enum SlabClass { Small, Medium, Large }
 
 impl SlabAllocator {
     pub fn new(small_slots: usize, medium_slots: usize, large_slots: usize) -> Self {
-        SlabAllocator {
-            small: PoolAllocator::new(small_slots),
-            medium: PoolAllocator::new(medium_slots),
-            large: PoolAllocator::new(large_slots),
-        }
+        todo!()
     }
 
     pub fn classify(size: usize) -> Option<SlabClass> {
-        if size <= 64 { Some(SlabClass::Small) }
-        else if size <= 256 { Some(SlabClass::Medium) }
-        else if size <= 1024 { Some(SlabClass::Large) }
-        else { None }
+        todo!()
     }
 
     pub fn alloc(&mut self, size: usize) -> Option<(SlabClass, usize)> {
-        let class = Self::classify(size)?;
-        let data = vec![0u8; size];
-        let idx = match class {
-            SlabClass::Small => self.small.alloc(data)?,
-            SlabClass::Medium => self.medium.alloc(data)?,
-            SlabClass::Large => self.large.alloc(data)?,
-        };
-        Some((class, idx))
+        todo!()
     }
 
     pub fn dealloc(&mut self, class: SlabClass, index: usize) -> bool {
-        match class {
-            SlabClass::Small => self.small.dealloc(index).is_some(),
-            SlabClass::Medium => self.medium.dealloc(index).is_some(),
-            SlabClass::Large => self.large.dealloc(index).is_some(),
-        }
+        todo!()
     }
 
     pub fn available(&self, class: SlabClass) -> usize {
-        match class {
-            SlabClass::Small => self.small.available(),
-            SlabClass::Medium => self.medium.available(),
-            SlabClass::Large => self.large.available(),
-        }
+        todo!()
     }
 }
 
@@ -194,38 +156,23 @@ pub struct GenerationalArena<T> {
 
 impl<T> GenerationalArena<T> {
     pub fn new() -> Self {
-        GenerationalArena { entries: Vec::new(), free_list: Vec::new(), len: 0 }
+        todo!()
     }
 
     pub fn insert(&mut self, value: T) -> GenIndex {
-        self.len += 1;
-        if let Some(idx) = self.free_list.pop() {
-            let next_gen = self.entries[idx].generation + 1;
-            self.entries[idx] = GenEntry { value: Some(value), generation: next_gen };
-            GenIndex { index: idx, generation: next_gen }
-        } else {
-            let idx = self.entries.len();
-            self.entries.push(GenEntry { value: Some(value), generation: 0 });
-            GenIndex { index: idx, generation: 0 }
-        }
+        todo!()
     }
 
     pub fn remove(&mut self, idx: GenIndex) -> Option<T> {
-        let entry = self.entries.get_mut(idx.index)?;
-        if entry.generation != idx.generation || entry.value.is_none() { return None; }
-        self.len -= 1;
-        self.free_list.push(idx.index);
-        entry.value.take()
+        todo!()
     }
 
     pub fn get(&self, idx: GenIndex) -> Option<&T> {
-        let entry = self.entries.get(idx.index)?;
-        if entry.generation != idx.generation { return None; }
-        entry.value.as_ref()
+        todo!()
     }
 
-    pub fn len(&self) -> usize { self.len }
-    pub fn is_empty(&self) -> bool { self.len == 0 }
+    pub fn len(&self) -> usize { todo!() }
+    pub fn is_empty(&self) -> bool { todo!() }
 }
 
 impl<T> Default for GenerationalArena<T> {
@@ -253,29 +200,18 @@ pub struct TrackedAllocator {
 
 impl TrackedAllocator {
     pub fn new(capacity: usize) -> Self {
-        TrackedAllocator { bump: BumpAllocator::new(capacity), allocation_count: 0 }
+        todo!()
     }
 
     pub fn alloc(&mut self, size: usize) -> Option<usize> {
-        let result = self.bump.alloc(size);
-        if result.is_some() { self.allocation_count += 1; }
-        result
+        todo!()
     }
 
     pub fn stats(&self) -> AllocStats {
-        let cap = self.bump.capacity();
-        let used = self.bump.used();
-        AllocStats {
-            total_capacity: cap,
-            used,
-            free: cap - used,
-            allocation_count: self.allocation_count,
-            utilization: if cap == 0 { 0.0 } else { used as f64 / cap as f64 },
-        }
+        todo!()
     }
 
     pub fn reset(&mut self) {
-        self.bump.reset();
-        self.allocation_count = 0;
+        todo!()
     }
 }

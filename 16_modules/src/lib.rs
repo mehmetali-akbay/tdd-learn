@@ -1,79 +1,108 @@
 // ============================================
 // Level 4, Project 2: Modules — Crates & Visibility
+// Learn: mod, pub, use, re-exports, visibility rules
+// ============================================
+
+// ============================================
+// Topic 1: Module Basics
+// Learn: mod, inline modules, pub, private by default
 // ============================================
 
 mod math {
     /// Add two numbers (public function in a module).
     pub fn add(a: i32, b: i32) -> i32 {
-        a + b
+        todo!()
     }
+
     /// Multiply two numbers (public).
     pub fn multiply(a: i32, b: i32) -> i32 {
-        a * b
+        todo!()
     }
+
+    /// Internal helper — not pub, only accessible within the module.
     fn _square(x: i32) -> i32 {
-        x * x
+        todo!()
     }
+
     /// Uses the private helper internally.
     pub fn sum_of_squares(a: i32, b: i32) -> i32 {
-        _square(a) + _square(b)
+        todo!()
     }
 }
+
+// ============================================
+// Topic 2: Nested Modules
+// Learn: Module hierarchy, super, path resolution
+// ============================================
 
 mod geometry {
     pub mod shapes {
         /// Calculate circle area.
         pub fn circle_area(radius: f64) -> f64 {
-            std::f64::consts::PI * radius * radius
+            todo!()
         }
+
         /// Calculate rectangle area.
         pub fn rectangle_area(width: f64, height: f64) -> f64 {
-            width * height
+            todo!()
         }
     }
+
     pub mod utils {
         /// Use super to access sibling module's function.
         /// Returns the area of a square (uses rectangle_area from shapes).
         pub fn square_area(side: f64) -> f64 {
-            super::shapes::rectangle_area(side, side)
+            todo!()
         }
+
         /// Format the area with 2 decimal places.
         pub fn format_area(area: f64) -> String {
-            format!("{:.2}", area)
+            todo!()
         }
     }
 }
 
+// ============================================
+// Topic 3: use and Aliases
+// Learn: use, as, glob imports
+// ============================================
+
 mod converters {
     /// Celsius to Fahrenheit.
     pub fn celsius_to_fahrenheit(c: f64) -> f64 {
-        c * 9.0 / 5.0 + 32.0
+        todo!()
     }
+
     /// Fahrenheit to Celsius.
     pub fn fahrenheit_to_celsius(f: f64) -> f64 {
-        (f - 32.0) * 5.0 / 9.0
+        todo!()
     }
+
     /// Kilometers to miles.
     pub fn km_to_miles(km: f64) -> f64 {
-        km * 0.621371
+        todo!()
     }
+
     /// Miles to kilometers.
     pub fn miles_to_km(miles: f64) -> f64 {
-        miles / 0.621371
+        todo!()
     }
 }
 
 /// Demonstrate use with alias — convert temperature and format.
 pub fn describe_temperature(celsius: f64) -> String {
-    let f = converters::celsius_to_fahrenheit(celsius);
-    format!("{:.0}°C = {:.0}°F", celsius, f)
+    todo!()
 }
 
 /// Convert distance using the converters module.
 pub fn describe_distance_km(km: f64) -> String {
-    let miles = converters::km_to_miles(km);
-    format!("{:.0} km = {:.2} miles", km, miles)
+    todo!()
 }
+
+// ============================================
+// Topic 4: Visibility Rules
+// Learn: pub(crate), pub(super), struct field visibility
+// ============================================
 
 mod database {
     /// A record with mixed visibility fields.
@@ -83,63 +112,71 @@ mod database {
         pub(crate) internal_score: f64,
         created_at: String,
     }
+
     impl Record {
         /// Constructor — only way to set private fields.
         pub fn new(id: u32, name: String, score: f64) -> Self {
-            Self {
-                id,
-                name,
-                internal_score: score,
-                created_at: "2024-01-01".to_string(),
-            }
+            todo!()
         }
+
         /// Public getter for the private created_at field.
         pub fn created_at(&self) -> &str {
-            &self.created_at
+            todo!()
         }
+
         /// Only accessible within the crate.
         pub(crate) fn update_score(&mut self, new_score: f64) {
-            self.internal_score = new_score;
+            todo!()
         }
     }
+
     pub(super) fn create_default_record() -> Record {
-        Record::new(0, "default".to_string(), 0.0)
+        todo!()
     }
 }
 
 /// Demonstrates access to pub and pub(crate) fields.
 pub fn get_record_summary(id: u32, name: &str, score: f64) -> String {
-    let r = database::Record::new(id, name.to_string(), score);
-    format!(
-        "Record #{}: {} (score: {:.1})",
-        r.id, r.name, r.internal_score
-    )
+    todo!()
 }
+
+// ============================================
+// Topic 5: Re-exports
+// Learn: pub use, creating a clean public API
+// ============================================
 
 mod engine {
     mod parser {
         pub fn parse(input: &str) -> Vec<&str> {
-            input.split_whitespace().collect()
+            todo!()
         }
     }
+
     mod evaluator {
         pub fn evaluate(tokens: &[&str]) -> String {
-            tokens.join(" ").to_uppercase()
+            todo!()
         }
     }
+
+    // Re-export so users don't need to know about internal modules.
     pub use evaluator::evaluate;
     pub use parser::parse;
+
     /// Process input by parsing and evaluating.
     pub fn process(input: &str) -> String {
-        let tokens = parse(input);
-        evaluate(&tokens)
+        todo!()
     }
 }
 
 /// Uses the re-exported functions from engine.
 pub fn run_engine(input: &str) -> String {
-    engine::process(input)
+    todo!()
 }
+
+// ============================================
+// Topic 6: Advanced — Plugin Architecture
+// Learn: Modules + traits for extensible systems
+// ============================================
 
 /// A trait that plugins implement.
 pub trait Plugin {
@@ -149,68 +186,81 @@ pub trait Plugin {
 
 mod plugins {
     use super::Plugin;
+
     pub struct UppercasePlugin;
+
     impl Plugin for UppercasePlugin {
         fn name(&self) -> &str {
-            "uppercase"
+            todo!()
         }
         fn execute(&self, input: &str) -> String {
-            input.to_uppercase()
+            todo!()
         }
     }
+
     pub struct ReversePlugin;
+
     impl Plugin for ReversePlugin {
         fn name(&self) -> &str {
-            "reverse"
+            todo!()
         }
         fn execute(&self, input: &str) -> String {
-            input.chars().rev().collect()
+            todo!()
         }
     }
+
     pub struct RepeatPlugin {
         pub times: usize,
     }
+
     impl Plugin for RepeatPlugin {
         fn name(&self) -> &str {
-            "repeat"
+            todo!()
         }
         fn execute(&self, input: &str) -> String {
-            input.repeat(self.times)
+            todo!()
         }
     }
 }
 
+// Re-export plugins
 pub use plugins::{RepeatPlugin, ReversePlugin, UppercasePlugin};
 
 /// A plugin runner that executes all registered plugins in order.
 pub struct PluginRunner {
     plugins: Vec<Box<dyn Plugin>>,
 }
+
 impl PluginRunner {
-        /// Constructor — only way to set private fields.
+    /// Constructor — only way to set private fields.
     pub fn new() -> Self {
-        Self {
-            plugins: Vec::new(),
-        }
+        todo!()
     }
+
     pub fn register(&mut self, plugin: Box<dyn Plugin>) {
-        self.plugins.push(plugin);
+        todo!()
     }
+
     /// Run all plugins sequentially, each receiving the output of the previous.
     pub fn run(&self, input: &str) -> String {
-        self.plugins
-            .iter()
-            .fold(input.to_string(), |acc, p| p.execute(&acc))
+        todo!()
     }
+
     /// List all registered plugin names.
     pub fn plugin_names(&self) -> Vec<&str> {
-        self.plugins.iter().map(|p| p.name()).collect()
+        todo!()
     }
 }
+
+// ============================================
+// Tests
+// ============================================
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // --- Topic 1: Module Basics ---
 
     #[test]
     fn test_math_add() {
@@ -227,9 +277,12 @@ mod tests {
         assert_eq!(math::sum_of_squares(3, 4), 25);
     }
 
+    // --- Topic 2: Nested Modules ---
+
     #[test]
     fn test_circle_area() {
-        assert!((geometry::shapes::circle_area(5.0) - 78.53981633974483).abs() < 1e-6);
+        let area = geometry::shapes::circle_area(5.0);
+        assert!((area - 78.53981633974483).abs() < 1e-6);
     }
 
     #[test]
@@ -246,6 +299,8 @@ mod tests {
     fn test_format_area() {
         assert_eq!(geometry::utils::format_area(12.3456), "12.35");
     }
+
+    // --- Topic 3: use and Aliases ---
 
     #[test]
     fn test_celsius_to_fahrenheit() {
@@ -269,8 +324,10 @@ mod tests {
     fn test_describe_distance() {
         let desc = describe_distance_km(10.0);
         assert!(desc.contains("10"));
-        assert!(desc.contains("6.21"));
+        assert!(desc.contains("6.21")); // approx miles
     }
+
+    // --- Topic 4: Visibility ---
 
     #[test]
     fn test_record_creation() {
@@ -304,6 +361,8 @@ mod tests {
         assert!(summary.contains("Alice"));
     }
 
+    // --- Topic 5: Re-exports ---
+
     #[test]
     fn test_engine_parse() {
         let tokens = engine::parse("hello world");
@@ -327,6 +386,8 @@ mod tests {
         let result = run_engine("hello world");
         assert!(!result.is_empty());
     }
+
+    // --- Topic 6: Plugin Architecture ---
 
     #[test]
     fn test_uppercase_plugin() {

@@ -1,127 +1,147 @@
 // ============================================
 // Level 7, Project 4: Unsafe Rust
+// Learn: Raw pointers, unsafe fn, static mut, Send/Sync, safe abstractions
 // ============================================
+
 use std::sync::atomic::{AtomicU64, Ordering};
 
+// ============================================
 // Topic 1: Raw Pointers
+// Learn: *const T, *mut T, creating from references
+// ============================================
+
 /// Create a raw const pointer from a reference, dereference it safely.
 pub fn read_via_raw_pointer(value: &i32) -> i32 {
-    let ptr = value as *const i32;
-    unsafe { *ptr }
+    todo!()
 }
+
 /// Create a raw mutable pointer and modify the value.
 pub fn modify_via_raw_pointer(value: &mut i32, new_value: i32) {
-    let ptr = value as *mut i32;
-    unsafe {
-        *ptr = new_value;
-    }
+    todo!()
 }
+
 /// Get the memory address of a value as a usize.
 pub fn address_of(value: &i32) -> usize {
-    value as *const i32 as usize
+    todo!()
 }
+
 /// Check if two references point to the same memory location.
 pub fn same_address<T>(a: &T, b: &T) -> bool {
-    std::ptr::eq(a, b)
+    todo!()
 }
 
-// Topic 2: Unsafe Functions
+// ============================================
+// Topic 2: Unsafe Functions & Blocks
+// Learn: unsafe fn, calling unsafe code
+// ============================================
+
+/// An unsafe function that reads from a raw pointer.
+/// # Safety
+/// The caller must ensure `ptr` is valid and properly aligned.
 pub unsafe fn read_ptr(ptr: *const i32) -> i32 {
-    *ptr
+    todo!()
 }
+
+/// An unsafe function that writes to a raw pointer.
+/// # Safety
+/// The caller must ensure `ptr` is valid, properly aligned, and not aliased.
 pub unsafe fn write_ptr(ptr: *mut i32, value: i32) {
-    *ptr = value;
+    todo!()
 }
+
+/// Swap two values using raw pointers.
+/// # Safety
+/// Both pointers must be valid and non-overlapping.
 pub unsafe fn swap_raw(a: *mut i32, b: *mut i32) {
-    let tmp = *a;
-    *a = *b;
-    *b = tmp;
+    todo!()
 }
+
 /// Safe wrapper around swap_raw.
 pub fn safe_swap(a: &mut i32, b: &mut i32) {
-    unsafe {
-        swap_raw(a as *mut i32, b as *mut i32);
-    }
+    todo!()
 }
 
+// ============================================
 // Topic 3: Dereferencing Raw Pointers
+// Learn: Building safe abstractions
+// ============================================
+
 /// Find the index of a value in a slice using raw pointer arithmetic.
 pub fn find_index(slice: &[i32], target: i32) -> Option<usize> {
-    let ptr = slice.as_ptr();
-    for i in 0..slice.len() {
-        unsafe {
-            if *ptr.add(i) == target {
-                return Some(i);
-            }
-        }
-    }
-    None
+    todo!()
 }
+
 /// Sum all elements in a slice using raw pointer iteration.
 pub fn sum_with_pointers(slice: &[i32]) -> i32 {
-    let mut sum = 0;
-    let ptr = slice.as_ptr();
-    for i in 0..slice.len() {
-        unsafe {
-            sum += *ptr.add(i);
-        }
-    }
-    sum
+    todo!()
 }
+
 /// Copy elements from one slice to another using raw pointers.
 /// Returns the number of elements copied (min of both lengths).
 pub fn copy_elements(src: &[i32], dst: &mut [i32]) -> usize {
-    let count = src.len().min(dst.len());
-    let src_ptr = src.as_ptr();
-    let dst_ptr = dst.as_mut_ptr();
-    for i in 0..count {
-        unsafe {
-            *dst_ptr.add(i) = *src_ptr.add(i);
-        }
-    }
-    count
+    todo!()
 }
 
-// Topic 4: Static Variables
+// ============================================
+// Topic 4: Mutable Static Variables
+// Learn: static mut alternatives, AtomicU64
+// ============================================
+
+/// A global counter using AtomicU64 (safe alternative to static mut).
 static COUNTER: AtomicU64 = AtomicU64::new(0);
+
 /// Increment the global counter and return new value.
 pub fn increment_counter() -> u64 {
-    COUNTER.fetch_add(1, Ordering::SeqCst) + 1
-}
-/// Get the current counter value.
-pub fn get_counter() -> u64 {
-    COUNTER.load(Ordering::SeqCst)
-}
-/// Reset the counter to zero.
-pub fn reset_counter() {
-    COUNTER.store(0, Ordering::SeqCst);
-}
-static MAX_RETRIES: AtomicU64 = AtomicU64::new(3);
-pub fn get_max_retries() -> u64 {
-    MAX_RETRIES.load(Ordering::SeqCst)
-}
-pub fn set_max_retries(n: u64) {
-    MAX_RETRIES.store(n, Ordering::SeqCst);
+    todo!()
 }
 
-// Topic 5: Send & Sync
+/// Get the current counter value.
+pub fn get_counter() -> u64 {
+    todo!()
+}
+
+/// Reset the counter to zero.
+pub fn reset_counter() {
+    todo!()
+}
+
+/// A configuration using a safe static with lazy initialization.
+static MAX_RETRIES: AtomicU64 = AtomicU64::new(3);
+
+pub fn get_max_retries() -> u64 {
+    todo!()
+}
+
+pub fn set_max_retries(n: u64) {
+    todo!()
+}
+
+// ============================================
+// Topic 5: Send & Sync Marker Traits
+// Learn: Thread safety guarantees
+// ============================================
+
+/// A type that is Send (can be transferred between threads).
 #[derive(Debug)]
 pub struct SendableData {
     pub value: String,
 }
+
 impl SendableData {
     pub fn new(value: &str) -> Self {
-        Self {
-            value: value.to_string(),
-        }
+        todo!()
     }
+
     /// Get a reference to a value by index.
     pub fn get(&self) -> &str {
-        &self.value
+        todo!()
     }
 }
+
+// Verify Send is implemented at compile time
 fn _assert_send<T: Send>() {}
 fn _assert_sync<T: Sync>() {}
+
 /// Demonstrate that standard types implement Send + Sync.
 pub fn check_send_sync() -> bool {
     _assert_send::<SendableData>();
@@ -137,64 +157,63 @@ pub struct NotSyncWrapper {
     data: *mut i32,
     _owned: Box<i32>,
 }
+
 impl NotSyncWrapper {
     pub fn new(value: i32) -> Self {
-        let mut b = Box::new(value);
-        let ptr = &mut *b as *mut i32;
-        Self {
-            data: ptr,
-            _owned: b,
-        }
+        todo!()
     }
-    /// Get a reference to a value by index.
+
+    /// Read the value (must be in the same thread that created it).
     pub fn get(&self) -> i32 {
-        unsafe { *self.data }
+        todo!()
     }
 }
 
-// Topic 6: Safe Abstractions
+// ============================================
+// Topic 6: Advanced — Safe Abstraction: split_at_mut
+// Learn: Building safe APIs on top of unsafe
+// ============================================
+
 /// Split a mutable slice into two non-overlapping mutable slices.
 /// This is the classic example from the Rust Book.
 pub fn my_split_at_mut(slice: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
-    let len = slice.len();
-    assert!(mid <= len);
-    let ptr = slice.as_mut_ptr();
-    unsafe {
-        (
-            std::slice::from_raw_parts_mut(ptr, mid),
-            std::slice::from_raw_parts_mut(ptr.add(mid), len - mid),
-        )
-    }
+    todo!()
 }
 
 /// A simple arena allocator that hands out references to allocated values.
 pub struct Arena {
     storage: Vec<i32>,
 }
+
 impl Arena {
     pub fn new() -> Self {
-        Self {
-            storage: Vec::new(),
-        }
+        todo!()
     }
+
     /// Allocate a value and return its index.
     pub fn alloc(&mut self, value: i32) -> usize {
-        let idx = self.storage.len();
-        self.storage.push(value);
-        idx
+        todo!()
     }
+
     /// Get a reference to a value by index.
     pub fn get(&self, index: usize) -> Option<&i32> {
-        self.storage.get(index)
+        todo!()
     }
+
     /// Get all allocated values.
     pub fn all(&self) -> &[i32] {
-        &self.storage
+        todo!()
     }
+
     pub fn len(&self) -> usize {
-        self.storage.len()
+        todo!()
     }
+
     pub fn is_empty(&self) -> bool {
-        self.storage.is_empty()
+        todo!()
     }
 }
+
+// ============================================
+// Tests
+// ============================================

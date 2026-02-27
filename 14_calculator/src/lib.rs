@@ -38,62 +38,7 @@ impl fmt::Display for Token {
 
 /// Tokenize an expression string into a list of tokens
 pub fn tokenize(input: &str) -> Result<Vec<Token>, String> {
-    let mut tokens = Vec::new();
-    let mut chars = input.chars().peekable();
-
-    while let Some(&ch) = chars.peek() {
-        match ch {
-            ' ' | '\t' => {
-                chars.next();
-            }
-            '+' => {
-                tokens.push(Token::Plus);
-                chars.next();
-            }
-            '-' => {
-                // Negative number: if '-' is at the start or after an operator/LParen
-                let is_unary = tokens.is_empty()
-                    || matches!(
-                        tokens.last(),
-                        Some(Token::Plus)
-                            | Some(Token::Minus)
-                            | Some(Token::Star)
-                            | Some(Token::Slash)
-                            | Some(Token::LParen)
-                    );
-                if is_unary {
-                    chars.next();
-                    let num = read_number(&mut chars)?;
-                    tokens.push(Token::Number(-num));
-                } else {
-                    tokens.push(Token::Minus);
-                    chars.next();
-                }
-            }
-            '*' => {
-                tokens.push(Token::Star);
-                chars.next();
-            }
-            '/' => {
-                tokens.push(Token::Slash);
-                chars.next();
-            }
-            '(' => {
-                tokens.push(Token::LParen);
-                chars.next();
-            }
-            ')' => {
-                tokens.push(Token::RParen);
-                chars.next();
-            }
-            c if c.is_ascii_digit() || c == '.' => {
-                let num = read_number(&mut chars)?;
-                tokens.push(Token::Number(num));
-            }
-            c => return Err(format!("unexpected character: '{}'", c)),
-        }
-    }
-    Ok(tokens)
+        todo!()
 }
 
 fn read_number(chars: &mut std::iter::Peekable<std::str::Chars>) -> Result<f64, String> {
@@ -159,27 +104,12 @@ impl fmt::Display for BinOp {
 impl Expr {
     /// Pretty-print an expression
     pub fn to_string_expr(&self) -> String {
-        match self {
-            Expr::Number(n) => format!("{}", n),
-            Expr::BinOp { op, left, right } => {
-                format!(
-                    "({} {} {})",
-                    left.to_string_expr(),
-                    op,
-                    right.to_string_expr()
-                )
-            }
-            Expr::UnaryMinus(e) => format!("(-{})", e.to_string_expr()),
-        }
+        todo!()
     }
 
     /// Count the depth of nesting
     pub fn depth(&self) -> usize {
-        match self {
-            Expr::Number(_) => 0,
-            Expr::UnaryMinus(e) => 1 + e.depth(),
-            Expr::BinOp { left, right, .. } => 1 + left.depth().max(right.depth()),
-        }
+        todo!()
     }
 }
 
@@ -196,7 +126,7 @@ pub struct Parser {
 
 impl Parser {
     pub fn new(tokens: Vec<Token>) -> Self {
-        Parser { tokens, pos: 0 }
+        todo!()
     }
 
     fn peek(&self) -> Option<&Token> {
@@ -211,11 +141,7 @@ impl Parser {
 
     /// Parse a full expression
     pub fn parse(&mut self) -> Result<Expr, String> {
-        let expr = self.parse_add_sub()?;
-        if self.pos < self.tokens.len() {
-            return Err(format!("unexpected token: {}", self.tokens[self.pos]));
-        }
-        Ok(expr)
+        todo!()
     }
 
     // Addition and subtraction (lowest precedence)
@@ -281,12 +207,7 @@ impl Parser {
 
 /// Parse an expression string into an AST
 pub fn parse(input: &str) -> Result<Expr, String> {
-    let tokens = tokenize(input)?;
-    if tokens.is_empty() {
-        return Err("empty expression".to_string());
-    }
-    let mut parser = Parser::new(tokens);
-    parser.parse()
+        todo!()
 }
 
 // ============================================
@@ -312,26 +233,7 @@ impl fmt::Display for CalcError {
 
 /// Evaluate an AST
 pub fn eval_expr(expr: &Expr) -> Result<f64, CalcError> {
-    match expr {
-        Expr::Number(n) => Ok(*n),
-        Expr::UnaryMinus(e) => Ok(-eval_expr(e)?),
-        Expr::BinOp { op, left, right } => {
-            let l = eval_expr(left)?;
-            let r = eval_expr(right)?;
-            match op {
-                BinOp::Add => Ok(l + r),
-                BinOp::Sub => Ok(l - r),
-                BinOp::Mul => Ok(l * r),
-                BinOp::Div => {
-                    if r == 0.0 {
-                        Err(CalcError::DivisionByZero)
-                    } else {
-                        Ok(l / r)
-                    }
-                }
-            }
-        }
-    }
+        todo!()
 }
 
 // ============================================
@@ -341,17 +243,12 @@ pub fn eval_expr(expr: &Expr) -> Result<f64, CalcError> {
 
 /// Calculate the result of an expression string
 pub fn calc(input: &str) -> Result<f64, CalcError> {
-    let expr = parse(input).map_err(CalcError::ParseError)?;
-    eval_expr(&expr)
+        todo!()
 }
 
 /// Format a result nicely (remove trailing .0 for integers)
 pub fn format_result(value: f64) -> String {
-    if value == value.floor() && value.is_finite() {
-        format!("{}", value as i64)
-    } else {
-        format!("{:.6}", value)
-    }
+        todo!()
 }
 
 // ============================================
@@ -369,46 +266,31 @@ pub struct Env {
 
 impl Env {
     pub fn new() -> Self {
-        Env {
-            vars: HashMap::new(),
-        }
+        todo!()
     }
 
     pub fn set(&mut self, name: &str, value: f64) {
-        self.vars.insert(name.to_string(), value);
+        todo!()
     }
 
     pub fn get(&self, name: &str) -> Option<f64> {
-        self.vars.get(name).copied()
+        todo!()
     }
 
     /// Evaluate a simple "var = expr" assignment or an expression
     pub fn eval_line(&mut self, line: &str) -> Result<f64, CalcError> {
-        if let Some(eq_pos) = line.find('=') {
-            let name = line[..eq_pos].trim();
-            let expr_str = line[eq_pos + 1..].trim();
-            let value = calc(expr_str)?;
-            self.set(name, value);
-            Ok(value)
-        } else {
-            calc(line)
-        }
+        todo!()
     }
 
     /// Substitute known variables into an expression string
     /// (simple text replacement, variables must be single lowercase letters)
     pub fn substitute(&self, expr: &str) -> String {
-        let mut result = expr.to_string();
-        for (name, value) in &self.vars {
-            result = result.replace(name, &format!("{}", value));
-        }
-        result
+        todo!()
     }
 
     /// Evaluate with variable substitution
     pub fn eval_with_vars(&mut self, expr: &str) -> Result<f64, CalcError> {
-        let substituted = self.substitute(expr);
-        calc(&substituted)
+        todo!()
     }
 }
 
@@ -425,69 +307,15 @@ impl Default for Env {
 
 /// Evaluate a simple postfix expression: "3 4 +" -> 7
 pub fn eval_postfix(expr: &str) -> Result<f64, String> {
-    let mut stack: Vec<f64> = Vec::new();
-    for token in expr.split_whitespace() {
-        match token {
-            "+" | "-" | "*" | "/" => {
-                let b = stack.pop().ok_or("underflow")?;
-                let a = stack.pop().ok_or("underflow")?;
-                let result = match token {
-                    "+" => a + b,
-                    "-" => a - b,
-                    "*" => a * b,
-                    "/" => { if b == 0.0 { return Err("div by zero".into()); } a / b },
-                    _ => unreachable!(),
-                };
-                stack.push(result);
-            }
-            _ => {
-                let num: f64 = token.parse().map_err(|_| format!("bad token: {}", token))?;
-                stack.push(num);
-            }
-        }
-    }
-    stack.pop().ok_or("empty expression".into())
+        todo!()
 }
 
 /// Check if parentheses are balanced: "(())" -> true, "(()" -> false
 pub fn balanced_parens(s: &str) -> bool {
-    let mut depth = 0i32;
-    for c in s.chars() {
-        match c {
-            '(' => depth += 1,
-            ')' => { depth -= 1; if depth < 0 { return false; } }
-            _ => {}
-        }
-    }
-    depth == 0
+        todo!()
 }
 
 /// Convert infix single-digit "3+4*2" to postfix "3 4 2 * +"
 pub fn infix_to_postfix(expr: &str) -> String {
-    let mut output = Vec::new();
-    let mut ops: Vec<char> = Vec::new();
-    let precedence = |op: char| -> i32 {
-        match op { '+' | '-' => 1, '*' | '/' => 2, _ => 0 }
-    };
-    for c in expr.chars() {
-        if c.is_ascii_digit() || c == '.' {
-            output.push(c.to_string());
-        } else if "+-*/".contains(c) {
-            while let Some(&top) = ops.last() {
-                if top != '(' && precedence(top) >= precedence(c) {
-                    output.push(ops.pop().unwrap().to_string());
-                } else { break; }
-            }
-            ops.push(c);
-        } else if c == '(' {
-            ops.push(c);
-        } else if c == ')' {
-            while let Some(op) = ops.pop() {
-                if op == '(' { break; }
-                output.push(op.to_string());
-            }
-        }
-    }
-    while let Some(op) = ops.pop() { output.push(op.to_string()); }
-    output.join(" ")
+        todo!()
 }

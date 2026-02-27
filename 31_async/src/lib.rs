@@ -1,133 +1,130 @@
 // ============================================
 // Level 8, Project 1: Async — Async/Await, Futures & Streams
+// Learn: async fn, .await, tokio, join!, channels, timeouts
 // ============================================
+
 use std::time::Duration;
 use tokio::sync::{mpsc, oneshot};
 use tokio::time;
 
+// ============================================
 // Topic 1: Future Basics
+// Learn: async fn, .await, Future trait concept
+// ============================================
+
+/// An async function that returns a greeting.
 pub async fn async_greet(name: &str) -> String {
-    format!("Hello, {}!", name)
+    todo!()
 }
+
+/// An async function that computes the sum of a slice.
 pub async fn async_sum(items: &[i32]) -> i32 {
-    items.iter().sum()
+    todo!()
 }
+
+/// An async function that fetches a value after a simulated delay.
 pub async fn fetch_value(id: u32) -> String {
-    format!("value_{}", id)
+    todo!()
 }
+
+/// An async function that processes items sequentially.
 pub async fn process_sequential(items: &[i32]) -> Vec<i32> {
-    items.iter().map(|x| x * 2).collect()
+    todo!()
 }
 
+// ============================================
 // Topic 2: Tokio Runtime
+// Learn: #[tokio::test], spawning tasks
+// ============================================
+
+/// Spawn a task that computes a value and return the result.
 pub async fn spawn_computation(x: i32) -> i32 {
-    let handle = tokio::spawn(async move { x * x });
-    handle.await.unwrap()
+    todo!()
 }
+
+/// Spawn multiple tasks and collect their results.
 pub async fn spawn_multiple(values: Vec<i32>) -> Vec<i32> {
-    let mut handles = Vec::new();
-    for v in values {
-        handles.push(tokio::spawn(async move { v * v }));
-    }
-    let mut results = Vec::new();
-    for h in handles {
-        results.push(h.await.unwrap());
-    }
-    results
+    todo!()
 }
+
+/// Spawn a background task that does work and returns via a JoinHandle.
 pub async fn background_work(input: String) -> String {
-    let handle = tokio::spawn(async move { input.to_uppercase() });
-    handle.await.unwrap()
+    todo!()
 }
 
+// ============================================
 // Topic 3: Concurrent Futures
+// Learn: join!, running multiple futures
+// ============================================
+
+/// Run two async operations concurrently and return both results.
 pub async fn fetch_two(id1: u32, id2: u32) -> (String, String) {
-    let (a, b) = tokio::join!(fetch_value(id1), fetch_value(id2));
-    (a, b)
+    todo!()
 }
+
+/// Run three async operations concurrently with join!.
 pub async fn triple_fetch(a: u32, b: u32, c: u32) -> (String, String, String) {
-    let (ra, rb, rc) = tokio::join!(fetch_value(a), fetch_value(b), fetch_value(c));
-    (ra, rb, rc)
+    todo!()
 }
+
+/// Fetch multiple values concurrently using JoinSet or join_all.
 pub async fn fetch_all(ids: Vec<u32>) -> Vec<String> {
-    let mut handles = Vec::new();
-    for id in ids {
-        handles.push(tokio::spawn(async move { format!("value_{}", id) }));
-    }
-    let mut results = Vec::new();
-    for h in handles {
-        results.push(h.await.unwrap());
-    }
-    results
+    todo!()
 }
 
+// ============================================
 // Topic 4: Async Channels
+// Learn: mpsc, oneshot
+// ============================================
+
+/// Send messages through an mpsc channel and collect them.
 pub async fn channel_basic(messages: Vec<String>) -> Vec<String> {
-    let (tx, mut rx) = mpsc::channel(32);
-    for msg in messages {
-        tx.send(msg).await.unwrap();
-    }
-    drop(tx);
-    let mut received = Vec::new();
-    while let Some(msg) = rx.recv().await {
-        received.push(msg);
-    }
-    received
+    todo!()
 }
+
+/// Use a oneshot channel to send a single result back.
 pub async fn oneshot_result(input: i32) -> i32 {
-    let (tx, rx) = oneshot::channel();
-    tokio::spawn(async move {
-        tx.send(input * 2).unwrap();
-    });
-    rx.await.unwrap()
+    todo!()
 }
+
+/// Producer-consumer pattern with mpsc.
 pub async fn producer_consumer(items: Vec<i32>) -> Vec<i32> {
-    let (tx, mut rx) = mpsc::channel(32);
-    tokio::spawn(async move {
-        for item in items {
-            tx.send(item * 2).await.unwrap();
-        }
-    });
-    let mut results = Vec::new();
-    while let Some(v) = rx.recv().await {
-        results.push(v);
-    }
-    results
+    todo!()
 }
 
+// ============================================
 // Topic 5: Async Utilities
+// Learn: tokio::time::sleep, timeout
+// ============================================
+
+/// Delay execution for a given number of milliseconds.
 pub async fn delayed_value(ms: u64, value: i32) -> i32 {
-    time::sleep(Duration::from_millis(ms)).await;
-    value
-}
-pub async fn with_timeout(ms: u64) -> Result<String, String> {
-    match time::timeout(Duration::from_millis(ms), async {
-        time::sleep(Duration::from_millis(10)).await;
-        "done".to_string()
-    })
-    .await
-    {
-        Ok(v) => Ok(v),
-        Err(_) => Err("timeout".into()),
-    }
-}
-pub async fn retry_operation(max_retries: u32) -> Result<String, String> {
-    for i in 0..max_retries {
-        if i == max_retries - 1 {
-            return Ok("success".into());
-        }
-    }
-    Err("failed".into())
+    todo!()
 }
 
-// Topic 6: Streams
-use tokio_stream::StreamExt;
-use tokio_stream::Stream;
+/// Apply a timeout to an async operation.
+pub async fn with_timeout(ms: u64) -> Result<String, String> {
+    todo!()
+}
+
+/// Retry an operation up to `max_retries` times.
+pub async fn retry_operation(max_retries: u32) -> Result<String, String> {
+    todo!()
+}
+
+// ============================================
+// Topic 6: Advanced — Async Patterns
+// Learn: select!, graceful shutdown, error handling
+// ============================================
+
 use std::pin::Pin;
 use std::task::{Context, Poll};
+use tokio_stream::Stream;
+/// Topic 6: Streams
+use tokio_stream::StreamExt;
 
 pub struct Countdown {
-    current: u32,
+    pub current: u32,
 }
 
 impl Countdown {
@@ -139,29 +136,24 @@ impl Countdown {
 impl Stream for Countdown {
     type Item = u32;
 
-    fn poll_next(mut self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        if self.current == 0 {
-            Poll::Ready(None)
-        } else {
-            let val = self.current;
-            self.current -= 1;
-            Poll::Ready(Some(val))
-        }
+    fn poll_next(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        todo!()
     }
 }
 
-pub async fn consume_stream(mut stream: impl Stream<Item = u32> + Unpin) -> Vec<u32> {
-    let mut results = Vec::new();
-    while let Some(val) = stream.next().await {
-        results.push(val);
-    }
-    results
+pub async fn consume_stream(stream: impl Stream<Item = u32> + Unpin) -> Vec<u32> {
+    todo!()
 }
 
 pub async fn stream_operations(stream: impl Stream<Item = u32> + Unpin) -> Vec<u32> {
-    stream
-        .filter(|&x| x % 2 == 0)
-        .map(|x| x * 10)
-        .collect()
-        .await
+    todo!()
 }
+
+/// An async function that collects results, skipping errors.
+pub async fn collect_successes(inputs: Vec<&str>) -> Vec<i32> {
+    todo!()
+}
+
+// ============================================
+// Tests
+// ============================================

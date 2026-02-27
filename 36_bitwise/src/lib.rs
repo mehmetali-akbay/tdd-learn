@@ -9,27 +9,27 @@
 // ============================================
 
 pub fn set_bit(value: u32, bit: u8) -> u32 {
-    value | (1 << bit)
+        todo!()
 }
 
 pub fn clear_bit(value: u32, bit: u8) -> u32 {
-    value & !(1 << bit)
+        todo!()
 }
 
 pub fn toggle_bit(value: u32, bit: u8) -> u32 {
-    value ^ (1 << bit)
+        todo!()
 }
 
 pub fn check_bit(value: u32, bit: u8) -> bool {
-    (value >> bit) & 1 == 1
+        todo!()
 }
 
 pub fn count_ones(value: u32) -> u32 {
-    value.count_ones()
+        todo!()
 }
 
 pub fn count_zeros(value: u32) -> u32 {
-    value.count_zeros()
+        todo!()
 }
 
 // ============================================
@@ -42,47 +42,47 @@ pub struct BitFlags(u32);
 
 impl BitFlags {
     pub fn new() -> Self {
-        BitFlags(0)
+        todo!()
     }
 
     pub fn from_raw(bits: u32) -> Self {
-        BitFlags(bits)
+        todo!()
     }
 
     pub fn raw(&self) -> u32 {
-        self.0
+        todo!()
     }
 
     pub fn set(&mut self, flag: u32) {
-        self.0 |= flag;
+        todo!()
     }
 
     pub fn unset(&mut self, flag: u32) {
-        self.0 &= !flag;
+        todo!()
     }
 
     pub fn has(&self, flag: u32) -> bool {
-        self.0 & flag == flag
+        todo!()
     }
 
     pub fn toggle(&mut self, flag: u32) {
-        self.0 ^= flag;
+        todo!()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.0 == 0
+        todo!()
     }
 
     pub fn union(&self, other: &BitFlags) -> BitFlags {
-        BitFlags(self.0 | other.0)
+        todo!()
     }
 
     pub fn intersection(&self, other: &BitFlags) -> BitFlags {
-        BitFlags(self.0 & other.0)
+        todo!()
     }
 
     pub fn difference(&self, other: &BitFlags) -> BitFlags {
-        BitFlags(self.0 & !other.0)
+        todo!()
     }
 }
 
@@ -96,31 +96,28 @@ impl Default for BitFlags {
 // ============================================
 
 pub fn is_power_of_two(n: u32) -> bool {
-    n > 0 && (n & (n - 1)) == 0
+        todo!()
 }
 
 pub fn next_power_of_two(n: u32) -> u32 {
-    if n == 0 { return 1; }
-    n.next_power_of_two()
+        todo!()
 }
 
 pub fn floor_log2(n: u32) -> u32 {
-    assert!(n > 0);
-    31 - n.leading_zeros()
+        todo!()
 }
 
 pub fn leading_zeros(n: u32) -> u32 {
-    n.leading_zeros()
+        todo!()
 }
 
 pub fn trailing_zeros(n: u32) -> u32 {
-    n.trailing_zeros()
+        todo!()
 }
 
 /// Extract bits [low..=high] from value.
 pub fn extract_bits(value: u32, low: u8, high: u8) -> u32 {
-    let mask = ((1u64 << (high - low + 1)) - 1) as u32;
-    (value >> low) & mask
+        todo!()
 }
 
 // ============================================
@@ -130,42 +127,32 @@ pub fn extract_bits(value: u32, low: u8, high: u8) -> u32 {
 
 /// Pack an RGB color (8 bits each) into a u32.
 pub fn pack_rgb(r: u8, g: u8, b: u8) -> u32 {
-    ((r as u32) << 16) | ((g as u32) << 8) | (b as u32)
+        todo!()
 }
 
 /// Unpack a u32 into (r, g, b).
 pub fn unpack_rgb(packed: u32) -> (u8, u8, u8) {
-    let r = ((packed >> 16) & 0xFF) as u8;
-    let g = ((packed >> 8) & 0xFF) as u8;
-    let b = (packed & 0xFF) as u8;
-    (r, g, b)
+        todo!()
 }
 
 /// Pack two u16 values into a u32.
 pub fn pack_u16_pair(high: u16, low: u16) -> u32 {
-    ((high as u32) << 16) | (low as u32)
+        todo!()
 }
 
 /// Unpack a u32 into two u16 values.
 pub fn unpack_u16_pair(packed: u32) -> (u16, u16) {
-    let high = (packed >> 16) as u16;
-    let low = (packed & 0xFFFF) as u16;
-    (high, low)
+        todo!()
 }
 
 /// Pack four u8 values into a u32.
 pub fn pack_u8_quad(a: u8, b: u8, c: u8, d: u8) -> u32 {
-    ((a as u32) << 24) | ((b as u32) << 16) | ((c as u32) << 8) | (d as u32)
+        todo!()
 }
 
 /// Unpack a u32 into four u8 values.
 pub fn unpack_u8_quad(packed: u32) -> (u8, u8, u8, u8) {
-    (
-        (packed >> 24) as u8,
-        ((packed >> 16) & 0xFF) as u8,
-        ((packed >> 8) & 0xFF) as u8,
-        (packed & 0xFF) as u8,
-    )
+        todo!()
 }
 
 // ============================================
@@ -174,41 +161,30 @@ pub fn unpack_u8_quad(packed: u32) -> (u8, u8, u8, u8) {
 // ============================================
 
 pub fn reverse_bits(mut n: u32) -> u32 {
-    let mut result = 0u32;
-    for _ in 0..32 {
-        result = (result << 1) | (n & 1);
-        n >>= 1;
-    }
-    result
+        todo!()
 }
 
 pub fn rotate_left(value: u32, amount: u32) -> u32 {
-    value.rotate_left(amount)
+        todo!()
 }
 
 pub fn rotate_right(value: u32, amount: u32) -> u32 {
-    value.rotate_right(amount)
+        todo!()
 }
 
 /// Check if the number of set bits is even.
 pub fn has_even_parity(n: u32) -> bool {
-    n.count_ones() % 2 == 0
+        todo!()
 }
 
 /// Convert binary to Gray code.
 pub fn to_gray_code(n: u32) -> u32 {
-    n ^ (n >> 1)
+        todo!()
 }
 
 /// Convert Gray code back to binary.
 pub fn from_gray_code(mut gray: u32) -> u32 {
-    let mut n = gray;
-    gray >>= 1;
-    while gray != 0 {
-        n ^= gray;
-        gray >>= 1;
-    }
-    n
+        todo!()
 }
 
 // ============================================
@@ -222,61 +198,34 @@ pub struct BitSet {
 
 impl BitSet {
     pub fn new(size: usize) -> Self {
-        let block_count = (size + 63) / 64;
-        BitSet { blocks: vec![0; block_count] }
+        todo!()
     }
 
     pub fn set(&mut self, bit: usize) {
-        let block = bit / 64;
-        let offset = bit % 64;
-        if block < self.blocks.len() {
-            self.blocks[block] |= 1 << offset;
-        }
+        todo!()
     }
 
     pub fn clear(&mut self, bit: usize) {
-        let block = bit / 64;
-        let offset = bit % 64;
-        if block < self.blocks.len() {
-            self.blocks[block] &= !(1 << offset);
-        }
+        todo!()
     }
 
     pub fn test(&self, bit: usize) -> bool {
-        let block = bit / 64;
-        let offset = bit % 64;
-        if block < self.blocks.len() {
-            (self.blocks[block] >> offset) & 1 == 1
-        } else {
-            false
-        }
+        todo!()
     }
 
     pub fn count(&self) -> usize {
-        self.blocks.iter().map(|b| b.count_ones() as usize).sum()
+        todo!()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.blocks.iter().all(|&b| b == 0)
+        todo!()
     }
 
     pub fn union(&self, other: &BitSet) -> BitSet {
-        let len = self.blocks.len().max(other.blocks.len());
-        let mut blocks = vec![0u64; len];
-        for i in 0..len {
-            let a = self.blocks.get(i).copied().unwrap_or(0);
-            let b = other.blocks.get(i).copied().unwrap_or(0);
-            blocks[i] = a | b;
-        }
-        BitSet { blocks }
+        todo!()
     }
 
     pub fn intersection(&self, other: &BitSet) -> BitSet {
-        let len = self.blocks.len().min(other.blocks.len());
-        let mut blocks = vec![0u64; len];
-        for i in 0..len {
-            blocks[i] = self.blocks[i] & other.blocks[i];
-        }
-        BitSet { blocks }
+        todo!()
     }
 }

@@ -23,28 +23,13 @@ pub enum Method {
 
 impl Method {
     pub fn parse(s: &str) -> Option<Self> {
-        match s.to_uppercase().as_str() {
-            "GET" => Some(Method::Get),
-            "POST" => Some(Method::Post),
-            "PUT" => Some(Method::Put),
-            "DELETE" => Some(Method::Delete),
-            "HEAD" => Some(Method::Head),
-            "OPTIONS" => Some(Method::Options),
-            _ => None,
-        }
+        todo!()
     }
 }
 
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Method::Get => write!(f, "GET"),
-            Method::Post => write!(f, "POST"),
-            Method::Put => write!(f, "PUT"),
-            Method::Delete => write!(f, "DELETE"),
-            Method::Head => write!(f, "HEAD"),
-            Method::Options => write!(f, "OPTIONS"),
-        }
+        todo!()
     }
 }
 
@@ -53,44 +38,44 @@ pub struct StatusCode(pub u16, pub String);
 
 impl StatusCode {
     pub fn ok() -> Self {
-        StatusCode(200, "OK".to_string())
+        todo!()
     }
     pub fn created() -> Self {
-        StatusCode(201, "Created".to_string())
+        todo!()
     }
     pub fn bad_request() -> Self {
-        StatusCode(400, "Bad Request".to_string())
+        todo!()
     }
     pub fn not_found() -> Self {
-        StatusCode(404, "Not Found".to_string())
+        todo!()
     }
     pub fn method_not_allowed() -> Self {
-        StatusCode(405, "Method Not Allowed".to_string())
+        todo!()
     }
     pub fn internal_error() -> Self {
-        StatusCode(500, "Internal Server Error".to_string())
+        todo!()
     }
 
     pub fn code(&self) -> u16 {
-        self.0
+        todo!()
     }
 
     pub fn reason(&self) -> &str {
-        &self.1
+        todo!()
     }
 
     pub fn is_success(&self) -> bool {
-        (200..300).contains(&self.0)
+        todo!()
     }
 
     pub fn is_error(&self) -> bool {
-        self.0 >= 400
+        todo!()
     }
 }
 
 impl fmt::Display for StatusCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} {}", self.0, self.1)
+        todo!()
     }
 }
 
@@ -106,68 +91,50 @@ pub struct Headers {
 
 impl Headers {
     pub fn new() -> Self {
-        Headers {
-            entries: Vec::new(),
-        }
+        todo!()
     }
 
     pub fn set(&mut self, name: &str, value: &str) {
-        let lower = name.to_lowercase();
-        if let Some(entry) = self.entries.iter_mut().find(|(k, _)| k == &lower) {
-            entry.1 = value.to_string();
-        } else {
-            self.entries.push((lower, value.to_string()));
-        }
+        todo!()
     }
 
     pub fn get(&self, name: &str) -> Option<&str> {
-        let lower = name.to_lowercase();
-        self.entries
-            .iter()
-            .find(|(k, _)| k == &lower)
-            .map(|(_, v)| v.as_str())
+        todo!()
     }
 
     pub fn has(&self, name: &str) -> bool {
-        self.get(name).is_some()
+        todo!()
     }
 
     pub fn remove(&mut self, name: &str) -> bool {
-        let lower = name.to_lowercase();
-        let before = self.entries.len();
-        self.entries.retain(|(k, _)| k != &lower);
-        self.entries.len() < before
+        todo!()
     }
 
     pub fn len(&self) -> usize {
-        self.entries.len()
+        todo!()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.entries.is_empty()
+        todo!()
     }
 
     pub fn content_type(&self) -> Option<&str> {
-        self.get("content-type")
+        todo!()
     }
 
     pub fn content_length(&self) -> Option<usize> {
-        self.get("content-length")?.parse().ok()
+        todo!()
     }
 
     /// Serialize headers to HTTP format
     pub fn to_http(&self) -> String {
-        self.entries
-            .iter()
-            .map(|(k, v)| format!("{}: {}", k, v))
-            .collect::<Vec<_>>()
-            .join("\r\n")
+        todo!()
     }
 }
 
 impl Default for Headers {
     fn default() -> Self {
-        Self::new()
+        todo!()
     }
 }
 
@@ -189,77 +156,21 @@ pub struct Request {
 impl Request {
     /// Parse a raw HTTP request string
     pub fn parse(raw: &str) -> Result<Self, String> {
-        let mut sections = raw.splitn(2, "\r\n\r\n");
-        let header_section = sections.next().ok_or("empty request")?;
-        let body = sections.next().unwrap_or("").to_string();
-
-        let mut lines = header_section.lines();
-        let request_line = lines.next().ok_or("missing request line")?;
-        let parts: Vec<&str> = request_line.split_whitespace().collect();
-        if parts.len() != 3 {
-            return Err("invalid request line".to_string());
-        }
-
-        let method =
-            Method::parse(parts[0]).ok_or_else(|| format!("unknown method: {}", parts[0]))?;
-        let full_path = parts[1].to_string();
-        let version = parts[2].to_string();
-
-        // Parse path and query string
-        let (path, query_params) = if let Some(q_pos) = full_path.find('?') {
-            let path = full_path[..q_pos].to_string();
-            let query_str = &full_path[q_pos + 1..];
-            let params = parse_query_string(query_str);
-            (path, params)
-        } else {
-            (full_path, HashMap::new())
-        };
-
-        let mut headers = Headers::new();
-        for line in lines {
-            if line.is_empty() {
-                break;
-            }
-            if let Some(colon_pos) = line.find(':') {
-                let name = line[..colon_pos].trim();
-                let value = line[colon_pos + 1..].trim();
-                headers.set(name, value);
-            }
-        }
-
-        Ok(Request {
-            method,
-            path,
-            version,
-            headers,
-            body,
-            query_params,
-        })
+        todo!()
     }
 
     pub fn is_get(&self) -> bool {
-        self.method == Method::Get
+        todo!()
     }
 
     pub fn is_post(&self) -> bool {
-        self.method == Method::Post
+        todo!()
     }
 }
 
 /// Parse a query string like "key1=val1&key2=val2"
 pub fn parse_query_string(qs: &str) -> HashMap<String, String> {
-    qs.split('&')
-        .filter_map(|pair| {
-            let mut parts = pair.splitn(2, '=');
-            let key = parts.next()?.to_string();
-            let value = parts.next().unwrap_or("").to_string();
-            if key.is_empty() {
-                None
-            } else {
-                Some((key, value))
-            }
-        })
-        .collect()
+    todo!()
 }
 
 // ============================================
@@ -276,58 +187,36 @@ pub struct Response {
 
 impl Response {
     pub fn new(status: StatusCode) -> Self {
-        Response {
-            status,
-            headers: Headers::new(),
-            body: String::new(),
-        }
+        todo!()
     }
 
     pub fn ok() -> Self {
-        Self::new(StatusCode::ok())
+        todo!()
     }
 
     pub fn not_found() -> Self {
-        let mut resp = Self::new(StatusCode::not_found());
-        resp.body = "404 Not Found".to_string();
-        resp
+        todo!()
     }
 
     pub fn with_body(mut self, body: &str) -> Self {
-        self.body = body.to_string();
-        self.headers.set("content-length", &body.len().to_string());
-        self
+        todo!()
     }
 
     pub fn with_json(mut self, body: &str) -> Self {
-        self.body = body.to_string();
-        self.headers.set("content-type", "application/json");
-        self.headers.set("content-length", &body.len().to_string());
-        self
+        todo!()
     }
 
     pub fn with_html(mut self, body: &str) -> Self {
-        self.body = body.to_string();
-        self.headers.set("content-type", "text/html");
-        self.headers.set("content-length", &body.len().to_string());
-        self
+        todo!()
     }
 
     pub fn with_header(mut self, name: &str, value: &str) -> Self {
-        self.headers.set(name, value);
-        self
+        todo!()
     }
 
     /// Serialize to raw HTTP response
     pub fn to_http(&self) -> String {
-        let mut result = format!("HTTP/1.1 {}\r\n", self.status);
-        if !self.headers.is_empty() {
-            result.push_str(&self.headers.to_http());
-            result.push_str("\r\n");
-        }
-        result.push_str("\r\n");
-        result.push_str(&self.body);
-        result
+        todo!()
     }
 }
 
@@ -353,74 +242,12 @@ enum RouteSegment {
 
 impl Route {
     pub fn new(method: Method, pattern: &str) -> Self {
-        let segments = pattern
-            .trim_matches('/')
-            .split('/')
-            .filter(|s| !s.is_empty())
-            .map(|s| {
-                if let Some(param) = s.strip_prefix(':') {
-                    RouteSegment::Param(param.to_string())
-                } else if s == "*" {
-                    RouteSegment::Wildcard
-                } else {
-                    RouteSegment::Literal(s.to_string())
-                }
-            })
-            .collect();
-        Route {
-            method,
-            pattern: pattern.to_string(),
-            segments,
-        }
+        todo!()
     }
 
     /// Try to match a path, returning extracted parameters
     pub fn matches(&self, method: &Method, path: &str) -> Option<HashMap<String, String>> {
-        if &self.method != method {
-            return None;
-        }
-
-        let path_parts: Vec<&str> = path
-            .trim_matches('/')
-            .split('/')
-            .filter(|s| !s.is_empty())
-            .collect();
-
-        // Check for wildcard at end
-        let has_wildcard = self
-            .segments
-            .last()
-            .map(|s| matches!(s, RouteSegment::Wildcard))
-            .unwrap_or(false);
-
-        if !has_wildcard && path_parts.len() != self.segments.len() {
-            return None;
-        }
-
-        if has_wildcard && path_parts.len() < self.segments.len() - 1 {
-            return None;
-        }
-
-        let mut params = HashMap::new();
-        for (i, seg) in self.segments.iter().enumerate() {
-            match seg {
-                RouteSegment::Literal(expected) => {
-                    if i >= path_parts.len() || path_parts[i] != expected.as_str() {
-                        return None;
-                    }
-                }
-                RouteSegment::Param(name) => {
-                    if i >= path_parts.len() {
-                        return None;
-                    }
-                    params.insert(name.clone(), path_parts[i].to_string());
-                }
-                RouteSegment::Wildcard => {
-                    return Some(params); // match everything after
-                }
-            }
-        }
-        Some(params)
+        todo!()
     }
 }
 
@@ -431,11 +258,11 @@ pub struct Router {
 
 impl Router {
     pub fn new() -> Self {
-        Router { routes: Vec::new() }
+        todo!()
     }
 
     pub fn add_route(&mut self, method: Method, pattern: &str) {
-        self.routes.push(Route::new(method, pattern));
+        todo!()
     }
 
     /// Find the first matching route, returning (route_index, params)
@@ -444,22 +271,17 @@ impl Router {
         method: &Method,
         path: &str,
     ) -> Option<(usize, HashMap<String, String>)> {
-        for (i, route) in self.routes.iter().enumerate() {
-            if let Some(params) = route.matches(method, path) {
-                return Some((i, params));
-            }
-        }
-        None
+        todo!()
     }
 
     pub fn route_count(&self) -> usize {
-        self.routes.len()
+        todo!()
     }
 }
 
 impl Default for Router {
     fn default() -> Self {
-        Self::new()
+        todo!()
     }
 }
 
@@ -470,41 +292,10 @@ impl Default for Router {
 
 /// Decode a percent-encoded string
 pub fn url_decode(input: &str) -> String {
-    let mut result = String::with_capacity(input.len());
-    let mut chars = input.chars();
-    while let Some(ch) = chars.next() {
-        if ch == '%' {
-            let hex: String = chars.by_ref().take(2).collect();
-            if hex.len() == 2 {
-                if let Ok(byte) = u8::from_str_radix(&hex, 16) {
-                    result.push(byte as char);
-                    continue;
-                }
-            }
-            result.push('%');
-            result.push_str(&hex);
-        } else if ch == '+' {
-            result.push(' ');
-        } else {
-            result.push(ch);
-        }
-    }
-    result
+    todo!()
 }
 
 /// Encode a string with percent-encoding
 pub fn url_encode(input: &str) -> String {
-    let mut result = String::with_capacity(input.len());
-    for ch in input.chars() {
-        match ch {
-            'A'..='Z' | 'a'..='z' | '0'..='9' | '-' | '_' | '.' | '~' => result.push(ch),
-            ' ' => result.push('+'),
-            _ => {
-                for byte in ch.to_string().as_bytes() {
-                    result.push_str(&format!("%{:02X}", byte));
-                }
-            }
-        }
-    }
-    result
+    todo!()
 }

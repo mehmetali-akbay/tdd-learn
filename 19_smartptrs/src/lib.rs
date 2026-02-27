@@ -23,56 +23,39 @@ pub enum List<T> {
 
 impl<T> List<T> {
     pub fn new() -> Self {
-        List::Nil
+        todo!()
     }
 
     /// Push to the front
     pub fn push(self, value: T) -> Self {
-        List::Cons(value, Box::new(self))
+        todo!()
     }
 
     /// Count elements
     pub fn len(&self) -> usize {
-        match self {
-            List::Nil => 0,
-            List::Cons(_, tail) => 1 + tail.len(),
-        }
+        todo!()
     }
 
     pub fn is_empty(&self) -> bool {
-        matches!(self, List::Nil)
+        todo!()
     }
 
     /// Get the head value
     pub fn head(&self) -> Option<&T> {
-        match self {
-            List::Nil => None,
-            List::Cons(val, _) => Some(val),
-        }
+        todo!()
     }
 }
 
 impl<T: Clone> List<T> {
     /// Convert to a Vec
     pub fn to_vec(&self) -> Vec<T> {
-        let mut result = Vec::new();
-        let mut current = self;
-        loop {
-            match current {
-                List::Nil => break,
-                List::Cons(val, tail) => {
-                    result.push(val.clone());
-                    current = tail;
-                }
-            }
-        }
-        result
+        todo!()
     }
 }
 
 impl<T> Default for List<T> {
     fn default() -> Self {
-        Self::new()
+        todo!()
     }
 }
 
@@ -86,28 +69,19 @@ pub enum Tree<T> {
 impl<T: std::ops::Add<Output = T> + Copy> Tree<T> {
     /// Sum all leaf values
     pub fn sum(&self) -> T {
-        match self {
-            Tree::Leaf(v) => *v,
-            Tree::Node(left, right) => left.sum() + right.sum(),
-        }
+        todo!()
     }
 }
 
 impl<T> Tree<T> {
     /// Count all leaves
     pub fn count_leaves(&self) -> usize {
-        match self {
-            Tree::Leaf(_) => 1,
-            Tree::Node(left, right) => left.count_leaves() + right.count_leaves(),
-        }
+        todo!()
     }
 
     /// Tree depth
     pub fn depth(&self) -> usize {
-        match self {
-            Tree::Leaf(_) => 0,
-            Tree::Node(left, right) => 1 + left.depth().max(right.depth()),
-        }
+        todo!()
     }
 }
 
@@ -123,10 +97,10 @@ pub struct Circle {
 
 impl Shape for Circle {
     fn area(&self) -> f64 {
-        std::f64::consts::PI * self.radius * self.radius
+        todo!()
     }
     fn name(&self) -> &str {
-        "circle"
+        todo!()
     }
 }
 
@@ -136,16 +110,16 @@ pub struct Square {
 
 impl Shape for Square {
     fn area(&self) -> f64 {
-        self.side * self.side
+        todo!()
     }
     fn name(&self) -> &str {
-        "square"
+        todo!()
     }
 }
 
 /// Total area of a collection of boxed shapes
 pub fn total_area(shapes: &[Box<dyn Shape>]) -> f64 {
-    shapes.iter().map(|s| s.area()).sum()
+    todo!()
 }
 
 // ============================================
@@ -162,10 +136,7 @@ pub struct SharedConfig {
 
 impl SharedConfig {
     pub fn new(name: &str, debug: bool) -> Rc<Self> {
-        Rc::new(SharedConfig {
-            name: name.to_string(),
-            debug,
-        })
+        todo!()
     }
 }
 
@@ -178,14 +149,11 @@ pub struct Component {
 
 impl Component {
     pub fn new(label: &str, config: Rc<SharedConfig>) -> Self {
-        Component {
-            label: label.to_string(),
-            config,
-        }
+        todo!()
     }
 
     pub fn is_debug(&self) -> bool {
-        self.config.debug
+        todo!()
     }
 }
 
@@ -198,23 +166,16 @@ pub struct GraphNode {
 
 impl GraphNode {
     pub fn leaf(value: i32) -> Rc<Self> {
-        Rc::new(GraphNode {
-            value,
-            children: vec![],
-        })
+        todo!()
     }
 
     pub fn with_children(value: i32, children: Vec<Rc<GraphNode>>) -> Rc<Self> {
-        Rc::new(GraphNode { value, children })
+        todo!()
     }
 
     /// Count all descendants (including self)
     pub fn count_nodes(node: &Rc<GraphNode>) -> usize {
-        1 + node
-            .children
-            .iter()
-            .map(GraphNode::count_nodes)
-            .sum::<usize>()
+        todo!()
     }
 }
 
@@ -231,35 +192,33 @@ pub struct Logger {
 
 impl Logger {
     pub fn new() -> Self {
-        Logger {
-            messages: RefCell::new(Vec::new()),
-        }
+        todo!()
     }
 
     /// Log a message (note: &self, not &mut self!)
     pub fn log(&self, msg: &str) {
-        self.messages.borrow_mut().push(msg.to_string());
+        todo!()
     }
 
     /// Get all logged messages
     pub fn messages(&self) -> Vec<String> {
-        self.messages.borrow().clone()
+        todo!()
     }
 
     /// Count logged messages
     pub fn count(&self) -> usize {
-        self.messages.borrow().len()
+        todo!()
     }
 
     /// Clear all messages
     pub fn clear(&self) {
-        self.messages.borrow_mut().clear();
+        todo!()
     }
 }
 
 impl Default for Logger {
     fn default() -> Self {
-        Self::new()
+        todo!()
     }
 }
 
@@ -271,19 +230,19 @@ pub struct Counter {
 
 impl Counter {
     pub fn new(initial: i32) -> Rc<RefCell<Self>> {
-        Rc::new(RefCell::new(Counter { value: initial }))
+        todo!()
     }
 
     pub fn increment(&mut self) {
-        self.value += 1;
+        todo!()
     }
 
     pub fn decrement(&mut self) {
-        self.value -= 1;
+        todo!()
     }
 
     pub fn value(&self) -> i32 {
-        self.value
+        todo!()
     }
 }
 
@@ -301,42 +260,25 @@ pub struct BankAccount {
 
 impl BankAccount {
     pub fn new(owner: &str, balance: f64) -> Rc<Self> {
-        Rc::new(BankAccount {
-            owner: owner.to_string(),
-            balance: RefCell::new(balance),
-        })
+        todo!()
     }
 
     pub fn deposit(&self, amount: f64) -> Result<f64, String> {
-        if amount <= 0.0 {
-            return Err("deposit must be positive".to_string());
-        }
-        *self.balance.borrow_mut() += amount;
-        Ok(*self.balance.borrow())
+        todo!()
     }
 
     pub fn withdraw(&self, amount: f64) -> Result<f64, String> {
-        if amount <= 0.0 {
-            return Err("withdrawal must be positive".to_string());
-        }
-        let current = *self.balance.borrow();
-        if amount > current {
-            return Err("insufficient funds".to_string());
-        }
-        *self.balance.borrow_mut() -= amount;
-        Ok(*self.balance.borrow())
+        todo!()
     }
 
     pub fn get_balance(&self) -> f64 {
-        *self.balance.borrow()
+        todo!()
     }
 }
 
 /// Transfer between two accounts
 pub fn transfer(from: &BankAccount, to: &BankAccount, amount: f64) -> Result<(), String> {
-    from.withdraw(amount)?;
-    to.deposit(amount)?;
-    Ok(())
+    todo!()
 }
 
 // ============================================
@@ -354,14 +296,13 @@ pub struct Tracked<T> {
 
 impl<T> Tracked<T> {
     pub fn new(value: T, counter: Rc<Cell<usize>>) -> Self {
-        counter.set(counter.get() + 1);
-        Tracked { value, counter }
+        todo!()
     }
 }
 
 impl<T> Drop for Tracked<T> {
     fn drop(&mut self) {
-        self.counter.set(self.counter.get() - 1);
+        todo!()
     }
 }
 
@@ -375,36 +316,23 @@ pub struct History<T: Clone> {
 
 impl<T: Clone> History<T> {
     pub fn new(initial: T, max_history: usize) -> Self {
-        History {
-            current: initial,
-            history: Vec::new(),
-            max_history,
-        }
+        todo!()
     }
 
     pub fn set(&mut self, new_value: T) {
-        self.history.push(self.current.clone());
-        if self.history.len() > self.max_history {
-            self.history.remove(0);
-        }
-        self.current = new_value;
+        todo!()
     }
 
     pub fn get(&self) -> &T {
-        &self.current
+        todo!()
     }
 
     pub fn undo(&mut self) -> bool {
-        if let Some(prev) = self.history.pop() {
-            self.current = prev;
-            true
-        } else {
-            false
-        }
+        todo!()
     }
 
     pub fn history_len(&self) -> usize {
-        self.history.len()
+        todo!()
     }
 }
 
@@ -420,28 +348,24 @@ pub struct EventEmitter {
 
 impl EventEmitter {
     pub fn new() -> Self {
-        EventEmitter {
-            listeners: Vec::new(),
-        }
+        todo!()
     }
 
     pub fn on(&mut self, callback: Listener) {
-        self.listeners.push(callback);
+        todo!()
     }
 
     pub fn emit(&self, event: &str) {
-        for listener in &self.listeners {
-            (listener.borrow_mut())(event);
-        }
+        todo!()
     }
 
     pub fn listener_count(&self) -> usize {
-        self.listeners.len()
+        todo!()
     }
 }
 
 impl Default for EventEmitter {
     fn default() -> Self {
-        Self::new()
+        todo!()
     }
 }

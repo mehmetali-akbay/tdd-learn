@@ -18,52 +18,19 @@ pub struct Command {
 
 impl Command {
     pub fn parse(input: &str) -> Option<Self> {
-        let parts: Vec<&str> = input.split_whitespace().collect();
-        if parts.is_empty() { return None; }
-        Some(Command {
-            program: parts[0].to_string(),
-            args: parts[1..].iter().map(|s| s.to_string()).collect(),
-        })
+        todo!()
     }
 
-    pub fn arg_count(&self) -> usize { self.args.len() }
+    pub fn arg_count(&self) -> usize { todo!() }
 
     pub fn to_string_repr(&self) -> String {
-        if self.args.is_empty() {
-            self.program.clone()
-        } else {
-            format!("{} {}", self.program, self.args.join(" "))
-        }
+        todo!()
     }
 }
 
 /// Parse a command with quoted strings: echo "hello world" -> ["echo", "hello world"]
 pub fn parse_quoted(input: &str) -> Vec<String> {
-    let mut tokens = Vec::new();
-    let mut current = String::new();
-    let mut in_quotes = false;
-    let mut quote_char = ' ';
-    for ch in input.chars() {
-        if in_quotes {
-            if ch == quote_char {
-                in_quotes = false;
-            } else {
-                current.push(ch);
-            }
-        } else if ch == '"' || ch == '\'' {
-            in_quotes = true;
-            quote_char = ch;
-        } else if ch.is_whitespace() {
-            if !current.is_empty() {
-                tokens.push(current.clone());
-                current.clear();
-            }
-        } else {
-            current.push(ch);
-        }
-    }
-    if !current.is_empty() { tokens.push(current); }
-    tokens
+        todo!()
 }
 
 // ============================================
@@ -78,19 +45,13 @@ pub struct Pipeline {
 
 impl Pipeline {
     pub fn parse(input: &str) -> Option<Self> {
-        let cmds: Result<Vec<_>, _> = input
-            .split('|')
-            .map(|s| Command::parse(s.trim()).ok_or(()))
-            .collect();
-        let commands = cmds.ok()?;
-        if commands.is_empty() { return None; }
-        Some(Pipeline { commands })
+        todo!()
     }
 
-    pub fn len(&self) -> usize { self.commands.len() }
-    pub fn is_empty(&self) -> bool { self.commands.is_empty() }
+    pub fn len(&self) -> usize { todo!() }
+    pub fn is_empty(&self) -> bool { todo!() }
 
-    pub fn is_pipeline(&self) -> bool { self.commands.len() > 1 }
+    pub fn is_pipeline(&self) -> bool { todo!() }
 }
 
 // ============================================
@@ -104,59 +65,28 @@ pub struct Environment {
 
 impl Environment {
     pub fn new() -> Self {
-        Environment { vars: HashMap::new() }
+        todo!()
     }
 
     pub fn set(&mut self, key: &str, value: &str) {
-        self.vars.insert(key.to_string(), value.to_string());
+        todo!()
     }
 
     pub fn get(&self, key: &str) -> Option<&str> {
-        self.vars.get(key).map(|s| s.as_str())
+        todo!()
     }
 
     pub fn remove(&mut self, key: &str) -> bool {
-        self.vars.remove(key).is_some()
+        todo!()
     }
 
     /// Expand $VAR and ${VAR} in a string.
     pub fn expand(&self, input: &str) -> String {
-        let mut result = String::new();
-        let chars: Vec<char> = input.chars().collect();
-        let mut i = 0;
-        while i < chars.len() {
-            if chars[i] == '$' && i + 1 < chars.len() {
-                if chars[i+1] == '{' {
-                    // ${VAR} syntax
-                    if let Some(end) = chars[i+2..].iter().position(|&c| c == '}') {
-                        let name: String = chars[i+2..i+2+end].iter().collect();
-                        result.push_str(self.vars.get(&name).map(|s| s.as_str()).unwrap_or(""));
-                        i = i + 3 + end;
-                    } else {
-                        result.push(chars[i]);
-                        i += 1;
-                    }
-                } else {
-                    // $VAR syntax
-                    let start = i + 1;
-                    let mut end = start;
-                    while end < chars.len() && (chars[end].is_alphanumeric() || chars[end] == '_') {
-                        end += 1;
-                    }
-                    let name: String = chars[start..end].iter().collect();
-                    result.push_str(self.vars.get(&name).map(|s| s.as_str()).unwrap_or(""));
-                    i = end;
-                }
-            } else {
-                result.push(chars[i]);
-                i += 1;
-            }
-        }
-        result
+        todo!()
     }
 
-    pub fn len(&self) -> usize { self.vars.len() }
-    pub fn is_empty(&self) -> bool { self.vars.is_empty() }
+    pub fn len(&self) -> usize { todo!() }
+    pub fn is_empty(&self) -> bool { todo!() }
 }
 
 impl Default for Environment {
@@ -170,9 +100,7 @@ impl Default for Environment {
 
 /// Match a string against a glob pattern (* = any chars, ? = one char).
 pub fn glob_match(pattern: &str, text: &str) -> bool {
-    let p: Vec<char> = pattern.chars().collect();
-    let t: Vec<char> = text.chars().collect();
-    glob_match_inner(&p, &t, 0, 0)
+        todo!()
 }
 
 fn glob_match_inner(p: &[char], t: &[char], pi: usize, ti: usize) -> bool {
@@ -192,7 +120,7 @@ fn glob_match_inner(p: &[char], t: &[char], pi: usize, ti: usize) -> bool {
 
 /// Filter filenames matching a glob pattern.
 pub fn glob_filter<'a>(names: &[&'a str], pattern: &str) -> Vec<&'a str> {
-    names.iter().filter(|n| glob_match(pattern, n)).copied().collect()
+        todo!()
 }
 
 // ============================================
@@ -216,43 +144,10 @@ pub struct CommandWithRedirects {
 
 impl CommandWithRedirects {
     pub fn parse(input: &str) -> Option<Self> {
-        let mut redirects = Vec::new();
-        let mut cmd_parts = Vec::new();
-        let tokens: Vec<&str> = input.split_whitespace().collect();
-        let mut i = 0;
-        while i < tokens.len() {
-            match tokens[i] {
-                ">>" => {
-                    i += 1;
-                    if i < tokens.len() { redirects.push(Redirect::StdoutAppend(tokens[i].to_string())); }
-                    i += 1;
-                }
-                ">" => {
-                    i += 1;
-                    if i < tokens.len() { redirects.push(Redirect::StdoutWrite(tokens[i].to_string())); }
-                    i += 1;
-                }
-                "<" => {
-                    i += 1;
-                    if i < tokens.len() { redirects.push(Redirect::StdinRead(tokens[i].to_string())); }
-                    i += 1;
-                }
-                "2>" => {
-                    i += 1;
-                    if i < tokens.len() { redirects.push(Redirect::StderrWrite(tokens[i].to_string())); }
-                    i += 1;
-                }
-                _ => {
-                    cmd_parts.push(tokens[i]);
-                    i += 1;
-                }
-            }
-        }
-        let command = Command::parse(&cmd_parts.join(" "))?;
-        Some(CommandWithRedirects { command, redirects })
+        todo!()
     }
 
-    pub fn has_redirects(&self) -> bool { !self.redirects.is_empty() }
+    pub fn has_redirects(&self) -> bool { todo!() }
 }
 
 // ============================================
@@ -268,42 +163,14 @@ pub struct ShellState {
 
 impl ShellState {
     pub fn new() -> Self {
-        ShellState {
-            env: Environment::new(),
-            history: Vec::new(),
-            cwd: "/home/user".to_string(),
-        }
+        todo!()
     }
 
     pub fn execute_builtin(&mut self, input: &str) -> Option<String> {
-        self.history.push(input.to_string());
-        let cmd = Command::parse(input)?;
-        match cmd.program.as_str() {
-            "echo" => Some(cmd.args.join(" ")),
-            "pwd" => Some(self.cwd.clone()),
-            "cd" => {
-                if let Some(dir) = cmd.args.first() {
-                    self.cwd = dir.clone();
-                }
-                Some(String::new())
-            }
-            "export" => {
-                for arg in &cmd.args {
-                    if let Some((k, v)) = arg.split_once('=') {
-                        self.env.set(k, v);
-                    }
-                }
-                Some(String::new())
-            }
-            "history" => Some(self.history.iter().enumerate()
-                .map(|(i, h)| format!("  {} {}", i + 1, h))
-                .collect::<Vec<_>>()
-                .join("\n")),
-            _ => None, // not a builtin
-        }
+        todo!()
     }
 
-    pub fn history_count(&self) -> usize { self.history.len() }
+    pub fn history_count(&self) -> usize { todo!() }
 }
 
 impl Default for ShellState {
