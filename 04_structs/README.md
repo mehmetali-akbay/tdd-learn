@@ -2,7 +2,7 @@
 
 Struct-first TDD practice aligned to Rust Book Chapter 5 (`struct`s and `impl`).
 
-**46 functions | 49 tests**
+**54 functions | 50 tests**
 
 ```bash
 cargo test -p structs
