@@ -26,3 +26,15 @@ cargo test -p shapes
 4. **Triangle** — validity checks and side-based classification.
 5. **Color RGB** — value object behavior, parsing/formatting, transforms.
 6. **BoundingBox** — normalization + composition over collections of points.
+
+## Recommended TDD order
+
+1. **Point**: constructors and pure transforms first.
+2. **Rectangle / Circle**: constructor invariants, then derived behavior.
+3. **Triangle**: validity first, then classification and formulas.
+4. **Color**: value transforms and parse/format round trips.
+5. **BoundingBox**: normalization and composition as final step.
+
+## Scope note
+
+This module prioritizes struct modeling and method design. Math formulas are present, but the primary goal is data modeling with clear invariants.
