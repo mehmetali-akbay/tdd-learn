@@ -5,7 +5,7 @@
 
 /// Create and return a new empty String
 pub fn create_empty_string() -> String {
-    String::new()
+    String::from("")
 }
 
 /// Create a String from the literal "hello, rust!"
@@ -16,9 +16,9 @@ pub fn create_greeting() -> String {
 /// Append the suffix to the base string and return a new String
 /// Example: append("hello", " world") => "hello world"
 pub fn append(base: &str, suffix: &str) -> String {
-    let mut s = String::from(base);
-    s.push_str(suffix);
-    s
+    let mut base = String::from(base);
+    base.push_str(suffix);
+    base
 }
 
 /// Push the character '!' to the end of the string and return it
@@ -43,7 +43,11 @@ pub fn char_count(s: &str) -> usize {
 
 /// Return true if the string is empty
 pub fn is_blank(s: &str) -> bool {
-    s.is_empty()
+    if s.is_empty() {
+        true
+    } else {
+        false
+    }
 }
 
 // ============================================
@@ -60,13 +64,9 @@ pub fn first_n_chars(s: &str, n: usize) -> String {
 /// Return the last `n` characters of the string
 /// If n > string length, return the whole string
 pub fn last_n_chars(s: &str, n: usize) -> String {
-    let chars: Vec<char> = s.chars().collect();
-    let len = chars.len();
-    if n >= len {
-        s.to_string()
-    } else {
-        chars[len - n..].iter().collect()
-    }
+    let length = s.chars().count();
+    let final_length = length.saturating_sub(n);
+    s.chars().skip(final_length).collect()
 }
 
 /// Return true if the string contains the given substring
@@ -117,7 +117,7 @@ pub fn replace_all(s: &str, from: &str, to: &str) -> String {
 
 /// Split the string by the given delimiter and return a Vec of Strings
 pub fn split_by(s: &str, delimiter: char) -> Vec<String> {
-    s.split(delimiter).map(|part| part.to_string()).collect()
+    s.split(delimiter).map(String::from).collect()
 }
 
 /// Repeat the string `n` times
@@ -138,26 +138,24 @@ pub fn int_to_string(n: i32) -> String {
 
 /// Parse a string into an i32, return None if parsing fails
 pub fn parse_int(s: &str) -> Option<i32> {
-    s.parse().ok()
+    let result = s.parse().ok();
+    result
 }
 
 /// Parse a string into an f64, return None if parsing fails
 pub fn parse_float(s: &str) -> Option<f64> {
-    s.parse().ok()
+    let result: Option<f64> = s.parse().ok();
+    result
 }
 
 /// Format a greeting: "Hello, {name}! You are {age} years old."
 pub fn format_greeting(name: &str, age: u32) -> String {
-    format!("Hello, {}! You are {} years old.", name, age)
+    format!("Hello, {name}! You are {age} years old.")
 }
 
 /// Convert a boolean to "yes" or "no"
 pub fn bool_to_word(b: bool) -> String {
-    if b {
-        "yes".to_string()
-    } else {
-        "no".to_string()
-    }
+    if b { "yes" } else { "no" }.to_string()
 }
 
 // ============================================
@@ -184,42 +182,32 @@ pub fn count_char(s: &str, target: char) -> usize {
 
 /// Extract all words from a sentence (split by whitespace)
 pub fn extract_words(s: &str) -> Vec<String> {
-    s.split_whitespace().map(|w| w.to_string()).collect()
+    s.trim().split_whitespace().map(|e| e.to_string()).collect()
 }
 
 /// Create an acronym from a phrase
 /// Example: "Test Driven Development" => "TDD"
 pub fn make_acronym(phrase: &str) -> String {
     phrase
+        .trim()
         .split_whitespace()
-        .filter_map(|word| word.chars().next())
-        .map(|c| c.to_uppercase().to_string())
+        .filter_map(|e| e.chars().next())
+        .map(|e| e.to_uppercase().to_string())
         .collect()
 }
 
 /// Check if a string is a palindrome (case-insensitive)
 /// Example: "Racecar" => true, "hello" => false
 pub fn is_palindrome(s: &str) -> bool {
-    let cleaned: String = s.to_lowercase();
-    cleaned == cleaned.chars().rev().collect::<String>()
-}
+    let lower = s.to_lowercase();
+    let rev: String = s.to_lowercase().chars().rev().collect();
+    lower == rev
+    }
 
 /// Capitalize the first letter of each word
 /// Example: "hello world" => "Hello World"
 pub fn title_case(s: &str) -> String {
-    s.split_whitespace()
-        .map(|word| {
-            let mut chars = word.chars();
-            match chars.next() {
-                None => String::new(),
-                Some(first) => {
-                    let upper: String = first.to_uppercase().collect();
-                    upper + &chars.as_str().to_lowercase()
-                }
-            }
-        })
-        .collect::<Vec<_>>()
-        .join(" ")
+    todo!()
 }
 
 // ============================================
@@ -231,204 +219,76 @@ pub fn title_case(s: &str) -> String {
 /// Wraps around: 'z' shifted by 1 => 'a'. Only shifts letters, keeps other chars.
 /// Example: caesar_cipher("hello", 3) => "khoor"
 pub fn caesar_cipher(s: &str, shift: u8) -> String {
-    s.chars()
-        .map(|c| {
-            if c.is_ascii_lowercase() {
-                (b'a' + (c as u8 - b'a' + shift) % 26) as char
-            } else if c.is_ascii_uppercase() {
-                (b'A' + (c as u8 - b'A' + shift) % 26) as char
-            } else {
-                c
-            }
-        })
-        .collect()
+    todo!()
 }
 
 /// Run-length encoding: compress consecutive repeated characters
 /// Example: "aaabbc" => "3a2b1c"
 pub fn run_length_encode(s: &str) -> String {
-    if s.is_empty() {
-        return String::new();
-    }
-    let mut result = String::new();
-    let mut chars = s.chars();
-    let mut current = chars.next().unwrap();
-    let mut count = 1u32;
-    for c in chars {
-        if c == current {
-            count += 1;
-        } else {
-            result.push_str(&format!("{}{}", count, current));
-            current = c;
-            count = 1;
-        }
-    }
-    result.push_str(&format!("{}{}", count, current));
-    result
+    todo!()
 }
 
 /// Run-length decoding: decompress an encoded string
 /// Example: "3a2b1c" => "aaabbc"
 pub fn run_length_decode(s: &str) -> String {
-    let mut result = String::new();
-    let mut num = String::new();
-    for c in s.chars() {
-        if c.is_ascii_digit() {
-            num.push(c);
-        } else {
-            let count: usize = num.parse().unwrap_or(1);
-            result.push_str(&c.to_string().repeat(count));
-            num.clear();
-        }
-    }
-    result
+    todo!()
 }
 
 /// Count vowels and consonants, return (vowels, consonants)
 /// Only count ASCII letters
 pub fn count_vowels_consonants(s: &str) -> (usize, usize) {
-    let mut vowels = 0;
-    let mut consonants = 0;
-    for c in s.chars() {
-        if c.is_ascii_alphabetic() {
-            if "aeiouAEIOU".contains(c) {
-                vowels += 1;
-            } else {
-                consonants += 1;
-            }
-        }
-    }
-    (vowels, consonants)
+    todo!()
 }
 
 /// Return the longest word in a sentence
 /// If multiple words have the same max length, return the first one
 pub fn longest_word(s: &str) -> String {
-    s.split_whitespace()
-        .max_by_key(|w| w.len())
-        .unwrap_or("")
-        .to_string()
+    todo!()
 }
 
 /// Remove consecutive duplicate characters
 /// Example: "aabbccaab" => "abcab"
 pub fn remove_consecutive_dupes(s: &str) -> String {
-    let mut result = String::new();
-    let mut prev: Option<char> = None;
-    for c in s.chars() {
-        if Some(c) != prev {
-            result.push(c);
-            prev = Some(c);
-        }
-    }
-    result
+    todo!()
 }
 
 /// Interleave two strings character by character
 /// Example: interleave("abc", "123") => "a1b2c3"
 /// If one is longer, append remaining chars
 pub fn interleave(a: &str, b: &str) -> String {
-    let mut result = String::new();
-    let mut a_chars = a.chars();
-    let mut b_chars = b.chars();
-    loop {
-        match (a_chars.next(), b_chars.next()) {
-            (Some(ac), Some(bc)) => {
-                result.push(ac);
-                result.push(bc);
-            }
-            (Some(ac), None) => {
-                result.push(ac);
-                result.extend(a_chars);
-                break;
-            }
-            (None, Some(bc)) => {
-                result.push(bc);
-                result.extend(b_chars);
-                break;
-            }
-            (None, None) => break,
-        }
-    }
-    result
+    todo!()
 }
 
 /// Check if two strings are anagrams (same letters, different order)
 /// Case-insensitive, ignores spaces
 pub fn are_anagrams(a: &str, b: &str) -> bool {
-    let mut a_chars: Vec<char> = a
-        .to_lowercase()
-        .chars()
-        .filter(|c| !c.is_whitespace())
-        .collect();
-    let mut b_chars: Vec<char> = b
-        .to_lowercase()
-        .chars()
-        .filter(|c| !c.is_whitespace())
-        .collect();
-    a_chars.sort();
-    b_chars.sort();
-    a_chars == b_chars
+    todo!()
 }
 
 /// Pig Latin: move first consonant cluster to end and add "ay"
 /// If starts with vowel, just add "hay" to the end
 /// Example: "hello" => "ellohay", "apple" => "applehay", "string" => "ingstray"
 pub fn pig_latin(word: &str) -> String {
-    let lower = word.to_lowercase();
-    let vowels = "aeiou";
-    if let Some(first) = lower.chars().next() {
-        if vowels.contains(first) {
-            return format!("{}hay", lower);
-        }
-    }
-    let consonant_end = lower
-        .chars()
-        .position(|c| vowels.contains(c))
-        .unwrap_or(lower.len());
-    format!("{}{}ay", &lower[consonant_end..], &lower[..consonant_end])
+    todo!()
 }
 
 /// Validate a simple email: must have exactly one '@', at least one '.' after '@',
 /// non-empty parts before '@' and after '.'
 pub fn is_valid_email(email: &str) -> bool {
-    let parts: Vec<&str> = email.split('@').collect();
-    if parts.len() != 2 {
-        return false;
-    }
-    let (local, domain) = (parts[0], parts[1]);
-    if local.is_empty() || domain.is_empty() {
-        return false;
-    }
-    if !domain.contains('.') {
-        return false;
-    }
-    domain.split('.').all(|p| !p.is_empty())
+    todo!()
 }
 
 /// Truncate a string to `max_len` chars, adding "..." if truncated
 /// Example: truncate("hello world", 5) => "hello..."
 /// If string is shorter or equal to max_len, return as-is
 pub fn truncate(s: &str, max_len: usize) -> String {
-    if s.chars().count() <= max_len {
-        s.to_string()
-    } else {
-        let truncated: String = s.chars().take(max_len).collect();
-        format!("{}...", truncated)
-    }
+    todo!()
 }
 
 /// Convert a camelCase or PascalCase string to snake_case
 /// Example: "HelloWorld" => "hello_world", "helloWorld" => "hello_world"
 pub fn to_snake_case(s: &str) -> String {
-    let mut result = String::new();
-    for (i, c) in s.chars().enumerate() {
-        if c.is_uppercase() && i > 0 {
-            result.push('_');
-        }
-        result.push(c.to_lowercase().next().unwrap());
-    }
-    result
+    todo!()
 }
 
 // ============================================
@@ -439,34 +299,34 @@ pub fn to_snake_case(s: &str) -> String {
 /// Remove the last character from the string and return it.
 /// Returns None if the string is empty.
 pub fn remove_last_char(s: &mut String) -> Option<char> {
-    s.pop()
+    todo!()
 }
 
 /// Split the string at the first occurrence of the delimiter.
 /// Returns (before, after) if the delimiter is found, otherwise None.
 pub fn split_once_at<'a>(s: &'a str, delim: char) -> Option<(&'a str, &'a str)> {
-    s.split_once(delim)
+    todo!()
 }
 
 /// Count the number of non-empty lines in a string.
 pub fn count_non_empty_lines(s: &str) -> usize {
-    s.lines().filter(|line| !line.trim().is_empty()).count()
+    todo!()
 }
 
 /// Remove surrounding single or double quotes from the string.
 pub fn remove_surrounding_quotes(s: &str) -> &str {
-    s.trim_matches(|c| c == '\'' || c == '"')
+    todo!()
 }
 
 /// Return the byte index of the character at `char_index`.
 /// Emojis and special characters can take multiple bytes, meaning char_index != byte_index.
 pub fn find_char_byte_index(s: &str, char_index: usize) -> Option<usize> {
-    s.char_indices().nth(char_index).map(|(byte_idx, _)| byte_idx)
+    todo!()
 }
 
 /// Clear the string contents without reallocating its capacity.
 pub fn clear_string(s: &mut String) {
-    s.clear()
+    todo!()
 }
 
 // ============================================
@@ -476,44 +336,22 @@ pub fn clear_string(s: &mut String) {
 
 /// Check if a string is a pangram (contains every letter a-z at least once).
 pub fn is_pangram(text: &str) -> bool {
-    let lower = text.to_lowercase();
-    ('a'..='z').all(|c| lower.contains(c))
+        todo!()
 }
 
 /// Count distinct words in a string (case-insensitive).
 pub fn count_distinct_words(s: &str) -> usize {
-    let words: std::collections::HashSet<String> = s
-        .split_whitespace()
-        .map(|w| w.to_lowercase())
-        .collect();
-    words.len()
+        todo!()
 }
 
 /// Find the most common character in a string (excluding spaces).
 /// Returns None for empty strings.
 pub fn most_common_char(s: &str) -> Option<char> {
-    let mut counts = std::collections::HashMap::new();
-    for c in s.chars().filter(|c| !c.is_whitespace()) {
-        *counts.entry(c).or_insert(0usize) += 1;
-    }
-    counts.into_iter().max_by_key(|&(_, count)| count).map(|(c, _)| c)
+        todo!()
 }
 
 /// Wrap text at `width` characters, inserting newlines.
 pub fn word_wrap(text: &str, width: usize) -> String {
-    let mut result = String::new();
-    let mut line_len = 0;
-    for word in text.split_whitespace() {
-        if line_len > 0 && line_len + 1 + word.len() > width {
-            result.push('\n');
-            line_len = 0;
-        } else if line_len > 0 {
-            result.push(' ');
-            line_len += 1;
-        }
-        result.push_str(word);
-        line_len += word.len();
-    }
-    result
+        todo!()
 }
 
