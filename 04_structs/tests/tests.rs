@@ -635,3 +635,85 @@ fn complex_state_chain_behavior() {
     assert!(account.has_tag("ops"));
     assert_eq!(account.tier(), AccountTier::Enterprise);
 }
+
+// ===== Helper behavior coverage through public APIs =====
+
+#[test]
+fn normalize_token_for_roles_trims_lowercases_and_rejects_blank() {
+    let mut user = build_user("mail@example.com".to_string(), "alice".to_string());
+
+    user.grant_role(" \tAdmin\n ".to_string());
+    user.grant_role("ADMIN".to_string());
+    user.grant_role("  \n\t  ".to_string());
+
+    assert_eq!(user.roles, vec!["admin", "user"]);
+}
+
+#[test]
+fn normalize_token_for_login_ip_trims_and_lowercases() {
+    let mut account = AccountBuilder::new()
+        .id(UserId(11))
+        .owner("Liam".to_string())
+        .email("liam@example.com".to_string())
+        .build()
+        .unwrap();
+
+    account.record_login("  EXAMPLE-IP  ".to_string()).unwrap();
+
+    assert_eq!(account.last_login_ip(), Some("example-ip"));
+}
+
+#[test]
+fn normalize_token_for_remove_tag_ignores_whitespace_and_case() {
+    let mut account = AccountBuilder::new()
+        .id(UserId(12))
+        .owner("Maya".to_string())
+        .email("maya@example.com".to_string())
+        .add_tag("TeamA".to_string())
+        .build()
+        .unwrap();
+
+    assert!(account.remove_tag("  teama  "));
+    assert!(!account.has_tag("TEAMa"));
+}
+
+#[test]
+fn is_valid_email_rejects_multiple_at_symbols_and_missing_domain_dot() {
+    let multiple_at = AccountBuilder::new()
+        .id(UserId(13))
+        .owner("Nora".to_string())
+        .email("nora@@example.com".to_string())
+        .build();
+    assert_eq!(multiple_at, Err(AccountBuildError::InvalidEmail));
+
+    let missing_dot = AccountBuilder::new()
+        .id(UserId(14))
+        .owner("Omar".to_string())
+        .email("omar@example".to_string())
+        .build();
+    assert_eq!(missing_dot, Err(AccountBuildError::InvalidEmail));
+}
+
+#[test]
+fn is_valid_email_rejects_dot_boundary_domains_and_accepts_subdomain() {
+    let starts_with_dot = AccountBuilder::new()
+        .id(UserId(15))
+        .owner("Pia".to_string())
+        .email("pia@.example.com".to_string())
+        .build();
+    assert_eq!(starts_with_dot, Err(AccountBuildError::InvalidEmail));
+
+    let ends_with_dot = AccountBuilder::new()
+        .id(UserId(16))
+        .owner("Quinn".to_string())
+        .email("quinn@example.com.".to_string())
+        .build();
+    assert_eq!(ends_with_dot, Err(AccountBuildError::InvalidEmail));
+
+    let valid_subdomain = AccountBuilder::new()
+        .id(UserId(17))
+        .owner("Ria".to_string())
+        .email("ria@sub.example.com".to_string())
+        .build();
+    assert!(valid_subdomain.is_ok());
+}
