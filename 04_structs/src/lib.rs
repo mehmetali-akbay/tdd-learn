@@ -109,7 +109,7 @@ impl User {
     /// Add a role after normalization, ignoring duplicates/invalid input.
     pub fn grant_role(&mut self, role: String) {
         if let Some(normalized) = normalize_token(&role) {
-            if !self.roles.iter().any(|r| r == &normalized) {
+            if !self.roles.contains(&normalized) {
                 self.roles.push(normalized);
                 self.roles.sort();
             }
@@ -119,7 +119,7 @@ impl User {
     /// Check if the user has a given role (case-insensitive).
     pub fn has_role(&self, role: &str) -> bool {
         match normalize_token(role) {
-            Some(normalized) => self.roles.iter().any(|r| r == &normalized),
+            Some(normalized) => self.roles.contains(&normalized),
             None => false,
         }
     }
@@ -192,7 +192,7 @@ pub fn add_mm(a: Millimeters, b: Millimeters) -> Millimeters {
 
 /// Render a UserId as a readable string.
 pub fn user_id_to_string(id: UserId) -> String {
-    format!("UserId({})", id.0)
+    format!("{:?}", id)
 }
 
 // ============================================
