@@ -8,29 +8,29 @@
 
 /// Describe a number: "zero", "positive", or "negative"
 pub fn describe_number(n: i32) -> &'static str {
-        todo!()
+    todo!()
 }
 
 /// Convert a grade number to a letter
 /// 90-100 => "A", 80-89 => "B", 70-79 => "C", 60-69 => "D", below 60 => "F"
 pub fn grade_to_letter(grade: u32) -> &'static str {
-        todo!()
+    todo!()
 }
 
 /// Classify a character: "vowel", "consonant", "digit", or "other"
 pub fn classify_char(c: char) -> &'static str {
-        todo!()
+    todo!()
 }
 
 /// Return the day name for a number (1=Monday, 7=Sunday)
 /// Return "invalid" for anything else
 pub fn day_name(day: u32) -> &'static str {
-        todo!()
+    todo!()
 }
 
 /// FizzBuzz: divisible by 15 => "FizzBuzz", by 3 => "Fizz", by 5 => "Buzz", else the number
 pub fn fizzbuzz(n: u32) -> String {
-        todo!()
+    todo!()
 }
 
 // ============================================
@@ -49,7 +49,7 @@ pub enum Color {
 /// Return the hex string for a color
 /// Red => "#FF0000", Green => "#00FF00", Blue => "#0000FF", Custom(r,g,b) => "#RRGGBB"
 pub fn color_to_hex(color: &Color) -> String {
-        todo!()
+    todo!()
 }
 
 #[derive(Debug, PartialEq)]
@@ -61,12 +61,12 @@ pub enum Shape {
 
 /// Calculate the area of a shape
 pub fn area(shape: &Shape) -> f64 {
-        todo!()
+    todo!()
 }
 
 /// Return a description of the shape
 pub fn describe_shape(shape: &Shape) -> String {
-        todo!()
+    todo!()
 }
 
 #[derive(Debug, PartialEq)]
@@ -79,12 +79,28 @@ pub enum Coin {
 
 /// Return the value of a coin in cents
 pub fn coin_value(coin: &Coin) -> u32 {
-        todo!()
+    todo!()
 }
 
 /// Calculate the total value of a collection of coins
 pub fn total_value(coins: &[Coin]) -> u32 {
+    todo!()
+}
+
+/// A Chapter-6-style message enum with mixed variant shapes.
+#[derive(Debug, PartialEq)]
+pub enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+impl Message {
+    /// Simulate handling a message as a readable string.
+    pub fn call(&self) -> String {
         todo!()
+    }
 }
 
 // ============================================
@@ -97,32 +113,37 @@ pub fn total_value(coins: &[Coin]) -> u32 {
 
 /// Divide two numbers, return None if divisor is zero
 pub fn safe_divide(a: f64, b: f64) -> Option<f64> {
-        todo!()
+    todo!()
 }
 
 /// Get the first element of a slice, or return a default
 pub fn first_or_default(v: &[i32], default: i32) -> i32 {
-        todo!()
+    todo!()
 }
 
 /// Double the value inside an Option, return None if None
 pub fn double_option(opt: Option<i32>) -> Option<i32> {
-        todo!()
+    todo!()
 }
 
 /// Chain: parse a string to i32, then double it
 pub fn parse_and_double(s: &str) -> Option<i32> {
-        todo!()
+    todo!()
 }
 
 /// Return the length of the string inside an Option, or 0 if None
 pub fn option_string_length(opt: Option<&str>) -> usize {
-        todo!()
+    todo!()
 }
 
 /// Find the first even number in a slice
 pub fn first_even(v: &[i32]) -> Option<i32> {
-        todo!()
+    todo!()
+}
+
+/// Book-style exercise: add one to an optional number.
+pub fn plus_one(opt: Option<i32>) -> Option<i32> {
+    todo!()
 }
 
 // ============================================
@@ -132,27 +153,73 @@ pub fn first_even(v: &[i32]) -> Option<i32> {
 
 /// Extract the value from an Option and format it, or return "nothing"
 pub fn describe_option(opt: Option<i32>) -> String {
-        todo!()
+    todo!()
 }
 
 /// Count how many items can be popped from a vec (using while let)
 pub fn count_items(mut v: Vec<i32>) -> usize {
-        todo!()
+    todo!()
 }
 
 /// Process a Result: return the value as string, or the error message
 pub fn result_to_string(result: Result<i32, String>) -> String {
-        todo!()
+    todo!()
 }
 
 /// Check if a number is in range 1..=10 using matches! macro
 pub fn is_in_range(n: i32) -> bool {
-        todo!()
+    todo!()
 }
 
 /// Check if an Option contains an even number
 pub fn is_even_option(opt: Option<i32>) -> bool {
-        todo!()
+    todo!()
+}
+
+/// U.S. state payload used by quarter variants.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UsState {
+    Alabama,
+    Alaska,
+    California,
+    Texas,
+}
+
+/// Coin example that carries extra data in one variant.
+#[derive(Debug, PartialEq)]
+pub enum CoinWithState {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
+}
+
+/// Extract quarter state using `if let`, otherwise return None.
+pub fn quarter_state(coin: &CoinWithState) -> Option<UsState> {
+    todo!()
+}
+
+/// Parse exactly two integers from whitespace-separated input using `let...else`.
+pub fn parse_pair(input: &str) -> Option<(i32, i32)> {
+    todo!()
+}
+
+/// Demonstrates that non-exhaustive `match` expressions do not compile.
+///
+/// ```compile_fail
+/// enum Coin {
+///     Penny,
+///     Nickel,
+/// }
+///
+/// fn cents(c: Coin) -> u8 {
+///     match c {
+///         Coin::Penny => 1,
+///     }
+/// }
+/// ```
+pub fn exhaustiveness_demo() -> &'static str {
+    todo!()
 }
 
 // ============================================
@@ -162,12 +229,12 @@ pub fn is_even_option(opt: Option<i32>) -> bool {
 
 /// Destructure a tuple and return the sum
 pub fn tuple_sum(pair: (i32, i32)) -> i32 {
-        todo!()
+    todo!()
 }
 
 /// Destructure a triple and return the largest
 pub fn triple_max(triple: (i32, i32, i32)) -> i32 {
-        todo!()
+    todo!()
 }
 
 #[derive(Debug, PartialEq)]
@@ -178,22 +245,22 @@ pub struct Point {
 
 /// Calculate distance from origin using destructuring
 pub fn distance_from_origin(point: &Point) -> f64 {
-        todo!()
+    todo!()
 }
 
 /// Destructure a nested tuple ((a, b), c) and return a + b + c
 pub fn nested_sum(nested: ((i32, i32), i32)) -> i32 {
-        todo!()
+    todo!()
 }
 
 /// Swap x and y coordinates of a Point
 pub fn swap_coordinates(point: &Point) -> Point {
-        todo!()
+    todo!()
 }
 
 /// Compute area of a rectangle given as (width, height) — destructure in params
 pub fn rect_area((width, height): (f64, f64)) -> f64 {
-        todo!()
+    todo!()
 }
 
 // ============================================
@@ -213,12 +280,12 @@ pub enum Temperature {
 
 /// Convert any temperature to Celsius
 pub fn to_celsius(temp: &Temperature) -> f64 {
-        todo!()
+    todo!()
 }
 
 /// Describe a temperature: "freezing" (<0°C), "cold" (0-15), "comfortable" (15-25), "hot" (>25)
 pub fn describe_temperature(temp: &Temperature) -> &'static str {
-        todo!()
+    todo!()
 }
 
 /// A recursive expression tree
@@ -232,12 +299,12 @@ pub enum Expr {
 
 /// Evaluate a math expression tree recursively
 pub fn eval(expr: &Expr) -> f64 {
-        todo!()
+    todo!()
 }
 
 /// Pretty-print an expression tree
 pub fn expr_to_string(expr: &Expr) -> String {
-        todo!()
+    todo!()
 }
 
 #[derive(Debug, PartialEq)]
@@ -252,7 +319,7 @@ pub enum Command {
 /// "quit" => Quit, "echo hello world" => Echo("hello world"),
 /// "move 10 20" => Move { x: 10, y: 20 }, "color red" => ChangeColor(Red)
 pub fn parse_command(input: &str) -> Option<Command> {
-        todo!()
+    todo!()
 }
 
 /// A recursive binary tree
@@ -264,35 +331,35 @@ pub enum Tree {
 
 /// Sum all leaf values in a binary tree
 pub fn tree_sum(tree: &Tree) -> i32 {
-        todo!()
+    todo!()
 }
 
 /// Count the number of leaves in a tree
 pub fn tree_leaf_count(tree: &Tree) -> usize {
-        todo!()
+    todo!()
 }
 
 /// Find the depth of a tree (longest path from root to leaf)
 pub fn tree_depth(tree: &Tree) -> usize {
-        todo!()
+    todo!()
 }
 
 /// Flatten nested Options: Option<Option<T>> => Option<T>
 pub fn flatten_option(opt: Option<Option<i32>>) -> Option<i32> {
-        todo!()
+    todo!()
 }
 
 /// Classify a list of Results: count (successes, failures)
 pub fn count_results(results: &[Result<i32, String>]) -> (usize, usize) {
-        todo!()
+    todo!()
 }
 
 /// Collect all Ok values from a list of Results, discarding errors
 pub fn collect_successes(results: Vec<Result<i32, String>>) -> Vec<i32> {
-        todo!()
+    todo!()
 }
 
 /// Apply a function to the value inside an Option, or return default
 pub fn map_or_default(opt: Option<i32>, f: fn(i32) -> i32, default: i32) -> i32 {
-        todo!()
+    todo!()
 }

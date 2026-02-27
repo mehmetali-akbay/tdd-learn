@@ -106,6 +106,14 @@ fn total_value_sums_all_coins() {
     assert_eq!(total_value(&[]), 0);
 }
 
+#[test]
+fn message_call_handles_each_variant() {
+    assert_eq!(Message::Quit.call(), "Quit");
+    assert_eq!(Message::Move { x: 10, y: -5 }.call(), "Move to (10, -5)");
+    assert_eq!(Message::Write("hello".to_string()).call(), "Text: hello");
+    assert_eq!(Message::ChangeColor(1, 2, 3).call(), "Color: (1, 2, 3)");
+}
+
 // ===== Topic 3: Option Matching =====
 
 #[test]
@@ -148,6 +156,13 @@ fn first_even_returns_first_match_only() {
     assert_eq!(first_even(&[]), None);
 }
 
+#[test]
+fn plus_one_follows_book_style_option_matching() {
+    assert_eq!(plus_one(Some(5)), Some(6));
+    assert_eq!(plus_one(Some(-1)), Some(0));
+    assert_eq!(plus_one(None), None);
+}
+
 // ===== Topic 4: If Let, While Let, Matches! =====
 
 #[test]
@@ -184,6 +199,24 @@ fn is_even_option_requires_some_even_value() {
     assert!(is_even_option(Some(4)));
     assert!(!is_even_option(Some(3)));
     assert!(!is_even_option(None));
+}
+
+#[test]
+fn quarter_state_extracts_payload_with_if_let() {
+    assert_eq!(
+        quarter_state(&CoinWithState::Quarter(UsState::Alaska)),
+        Some(UsState::Alaska)
+    );
+    assert_eq!(quarter_state(&CoinWithState::Penny), None);
+}
+
+#[test]
+fn parse_pair_uses_let_else_for_happy_path_and_early_returns() {
+    assert_eq!(parse_pair("10 20"), Some((10, 20)));
+    assert_eq!(parse_pair("  -3   7 "), Some((-3, 7)));
+    assert_eq!(parse_pair("10"), None);
+    assert_eq!(parse_pair("10 20 30"), None);
+    assert_eq!(parse_pair("ten 20"), None);
 }
 
 // ===== Topic 5: Destructuring =====
@@ -236,9 +269,15 @@ fn to_celsius_converts_all_temperature_variants() {
 
 #[test]
 fn describe_temperature_uses_celsius_buckets() {
-    assert_eq!(describe_temperature(&Temperature::Celsius(-0.1)), "freezing");
+    assert_eq!(
+        describe_temperature(&Temperature::Celsius(-0.1)),
+        "freezing"
+    );
     assert_eq!(describe_temperature(&Temperature::Celsius(10.0)), "cold");
-    assert_eq!(describe_temperature(&Temperature::Celsius(20.0)), "comfortable");
+    assert_eq!(
+        describe_temperature(&Temperature::Celsius(20.0)),
+        "comfortable"
+    );
     assert_eq!(describe_temperature(&Temperature::Celsius(30.0)), "hot");
 }
 
