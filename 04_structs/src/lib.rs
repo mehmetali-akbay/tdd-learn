@@ -10,14 +10,29 @@
 /// - lowercase for case-insensitive matching
 /// - return None when the result is empty
 fn normalize_token(_raw: &str) -> Option<String> {
-    todo!()
+    if _raw.trim().is_empty() {
+        return None;
+    }
+    Some(_raw.trim().to_ascii_lowercase())
 }
 
 /// Validate a basic email format used by this learning project.
 ///
 /// Keep this intentionally simple (not RFC-complete).
 fn is_valid_email(_email: &str) -> bool {
-    todo!()
+    let mut parts = _email.split("@");
+    let local = parts.next().unwrap_or_default();
+    let domain = parts.next().unwrap_or_default();
+
+    if parts.next().is_some() {
+        return false;
+    }
+
+    !local.is_empty()
+        && !domain.is_empty()
+        && domain.contains(".")
+        && !domain.starts_with(".")
+        && !domain.ends_with(".")
 }
 
 // ============================================
@@ -37,53 +52,75 @@ pub struct User {
 
 /// Build an active user with default counters and role list.
 pub fn build_user(_email: String, _username: String) -> User {
-    todo!()
+    User {
+        active: true,
+        display_name: _username.clone(),
+        username: _username,
+        email: _email,
+        sign_in_count: 1,
+        roles: vec!["user".to_string()],
+    }
 }
 
 /// Create a predefined guest user profile.
 pub fn default_guest() -> User {
-    todo!()
+    User {
+        active: true,
+        username: "guest".to_string(),
+        email: "guest@example.com".to_string(),
+        sign_in_count: 0,
+        display_name: "Guest User".to_string(),
+        roles: vec!["guest".to_string()],
+    }
 }
 
 impl User {
     /// Update the username field.
     pub fn rename(&mut self, _new_username: String) {
-        todo!()
+        self.username = _new_username
     }
 
     /// Update the display name field.
     pub fn set_display_name(&mut self, _display_name: String) {
-        todo!()
+        self.display_name = _display_name
     }
 
     /// Mark the user as inactive.
     pub fn deactivate(&mut self) {
-        todo!()
+        self.active = false
     }
 
     /// Mark the user as active again.
     pub fn activate(&mut self) {
-        todo!()
+        self.active = true
     }
 
     /// Increment the sign-in counter.
     pub fn sign_in(&mut self) {
-        todo!()
+        self.sign_in_count += 1
     }
 
     /// Produce a human-friendly label like "Name <email>".
     pub fn contact_label(&self) -> String {
-        todo!()
+        format!("{} <{}>", self.display_name, self.email)
     }
 
     /// Add a role after normalization, ignoring duplicates/invalid input.
     pub fn grant_role(&mut self, _role: String) {
-        todo!()
+        if let Some(role) = normalize_token(&_role)
+            && !self.roles.contains(&role)
+        {
+            self.roles.insert(0, role)
+        }
     }
 
     /// Check if the user has a given role (case-insensitive).
     pub fn has_role(&self, _role: &str) -> bool {
-        todo!()
+        if let Some(role) = normalize_token(_role) {
+            self.roles.contains(&role)
+        } else {
+            false
+        }
     }
 }
 
@@ -93,17 +130,20 @@ impl User {
 
 /// Consume a User and return the owned username String.
 pub fn consume_username(_user: User) -> String {
-    todo!()
+    _user.username
 }
 
 /// Borrow a User and clone the email out.
 pub fn duplicate_email(_user: &User) -> String {
-    todo!()
+    _user.email.clone()
 }
 
 /// Return a cloned user with only email replaced.
 pub fn user_with_new_email(_user: &User, _email: String) -> User {
-    todo!()
+    User {
+        email: _email,
+        .._user.clone()
+    }
 }
 
 // ============================================
@@ -112,12 +152,15 @@ pub fn user_with_new_email(_user: &User, _email: String) -> User {
 
 /// Build a new user by cloning and changing only username.
 pub fn clone_with_username(_user: &User, _username: String) -> User {
-    todo!()
+    User {
+        username: _username,
+        .._user.clone()
+    }
 }
 
 /// Build a new user by moving source user with struct update syntax.
-pub fn move_with_username(_user: User, _username: String) -> User {
-    todo!()
+pub fn move_with_username(user: User, username: String) -> User {
+    User { username, ..user }
 }
 
 // ============================================
@@ -142,17 +185,17 @@ pub struct AlwaysEqual;
 
 /// Convert meters to millimeters.
 pub fn meters_to_mm(_m: Meters) -> Millimeters {
-    todo!()
+    Millimeters(_m.0.saturating_mul(1000))
 }
 
 /// Add two millimeter values.
 pub fn add_mm(_a: Millimeters, _b: Millimeters) -> Millimeters {
-    todo!()
+    Millimeters(_a.0.saturating_add(_b.0))
 }
 
 /// Render a UserId as a readable string.
 pub fn user_id_to_string(_id: UserId) -> String {
-    todo!()
+    format!("{:?}", _id)
 }
 
 // ============================================
@@ -168,58 +211,73 @@ pub struct Rectangle {
 
 /// Compute rectangle area from a tuple.
 pub fn area_tuple(_dim: (u32, u32)) -> u32 {
-    todo!()
+    _dim.0.saturating_mul(_dim.1)
 }
 
 /// Compute rectangle area from a struct reference.
 pub fn area_rect(_rect: &Rectangle) -> u32 {
-    todo!()
+    _rect.height.saturating_mul(_rect.width)
 }
 
 impl Rectangle {
     /// Compute the area of this rectangle.
     pub fn area(&self) -> u32 {
-        todo!()
+        self.height.saturating_mul(self.width)
     }
 
     /// Return true when width is non-zero.
     pub fn width(&self) -> bool {
-        todo!()
+        self.width > 0
     }
 
     /// Return true when self is strictly larger than other in both dimensions.
     pub fn can_hold(&self, _other: &Rectangle) -> bool {
-        todo!()
+        self.width > _other.width && self.height > _other.width
     }
 
     /// Associated constructor for a square.
     pub fn square(_size: u32) -> Rectangle {
-        todo!()
+        Rectangle {
+            width: _size,
+            height: _size,
+        }
     }
 
     /// Scale dimensions by a multiplier.
     pub fn scale(&mut self, _factor: u32) {
-        todo!()
+        self.width = self.width.saturating_mul(_factor);
+        self.height = self.height.saturating_mul(_factor);
     }
 
     /// Compute perimeter.
     pub fn perimeter(&self) -> u32 {
-        todo!()
+        self.width
+            .saturating_mul(2)
+            .saturating_add(self.height.saturating_mul(2))
     }
 
     /// Return true when width and height are equal.
     pub fn is_square(&self) -> bool {
-        todo!()
+        self.width == self.height
     }
 
+    // boolean fits = (w1 <= w2 && h1 <= h2) ||
+    //                (w1 <= h2 && h1 <= w2);
+    //
+
+    // 3x4 6×2 Döndür: 4≤6 ✓, 3≤2 ✗ → Sığmaz
+
     /// Check containment with optional rotation support.
-    pub fn fits_inside(&self, _other: &Rectangle, _allow_rotation: bool) -> bool {
-        todo!()
+    pub fn fits_inside(&self, other: &Rectangle, allow_rotation: bool) -> bool {
+        (self.width <= other.width && self.height <= other.height)
+            || (allow_rotation && self.width <= other.height && self.height <= other.width)
     }
 
     /// Compute diagonal length.
     pub fn diagonal(&self) -> f64 {
-        todo!()
+        let w = self.width as f64;
+        let h = self.height as f64;
+        (w * w + h * h).sqrt()
     }
 }
 
@@ -238,7 +296,7 @@ pub enum AccountTier {
 impl Default for AccountTier {
     /// Default account tier for newly built accounts.
     fn default() -> Self {
-        todo!()
+        Self::Free
     }
 }
 
@@ -290,128 +348,195 @@ pub enum AccountActionError {
 impl AccountBuilder {
     /// Create an empty builder.
     pub fn new() -> Self {
-        todo!()
+        Self::default()
     }
 
     /// Set account id.
     pub fn id(mut self, _id: UserId) -> Self {
-        todo!()
+        self.id = Some(_id);
+        self
     }
 
     /// Set account owner.
     pub fn owner(mut self, _owner: String) -> Self {
-        todo!()
+        self.owner = Some(_owner);
+        self
     }
 
     /// Set account email.
     pub fn email(mut self, _email: String) -> Self {
-        todo!()
+        self.email = Some(_email);
+        self
     }
 
     /// Set account tier.
     pub fn tier(mut self, _tier: AccountTier) -> Self {
-        todo!()
+        self.tier = Some(_tier);
+        self
     }
 
     /// Set creation timestamp.
     pub fn created_at_epoch(mut self, _created_at_epoch: u64) -> Self {
-        todo!()
+        self.created_at_epoch = Some(_created_at_epoch);
+        self
     }
 
     /// Add a tag candidate to the builder.
     pub fn add_tag(mut self, _tag: String) -> Self {
-        todo!()
+        self.tags.push(_tag);
+        self
     }
 
     /// Validate all fields and create the final Account.
     pub fn build(self) -> Result<Account, AccountBuildError> {
-        todo!()
+        let id = self.id.ok_or(AccountBuildError::MissingId)?;
+        let owner = self.owner.ok_or(AccountBuildError::MissingOwner)?;
+        if owner.trim().is_empty() {
+            return Err(AccountBuildError::InvalidOwner);
+        }
+
+        let email = self.email.ok_or(AccountBuildError::MissingEmail)?;
+        if !is_valid_email(&email) {
+            return Err(AccountBuildError::InvalidEmail);
+        }
+
+        let mut normalized_tags = Vec::new();
+        for raw in self.tags {
+            let Some(tag) = normalize_token(&raw) else {
+                return Err(AccountBuildError::InvalidTag);
+            };
+            if !normalized_tags.contains(&tag) {
+                normalized_tags.push(tag);
+            }
+        }
+        normalized_tags.sort();
+
+        Ok(Account {
+            id,
+            owner,
+            email,
+            active: true,
+            created_at_epoch: self.created_at_epoch.unwrap_or(0),
+            last_login_ip: None,
+            login_count: 0,
+            tags: normalized_tags,
+            tier: self.tier.unwrap_or_default(),
+        })
     }
 }
 
 impl Account {
     /// Get account id.
     pub fn id(&self) -> UserId {
-        todo!()
+        self.id
     }
 
     /// Get account owner.
     pub fn owner(&self) -> &str {
-        todo!()
+        &self.owner
     }
 
     /// Get account email.
     pub fn email(&self) -> &str {
-        todo!()
+        &self.email
     }
 
     /// Check whether account is active.
     pub fn is_active(&self) -> bool {
-        todo!()
+        self.active
     }
 
     /// Get successful login count.
     pub fn login_count(&self) -> u64 {
-        todo!()
+        self.login_count
     }
 
     /// Get current tier.
     pub fn tier(&self) -> AccountTier {
-        todo!()
+        self.tier
     }
 
     /// Get creation timestamp.
     pub fn created_at_epoch(&self) -> u64 {
-        todo!()
+        self.created_at_epoch
     }
 
     /// Get most recent login IP, if any.
     pub fn last_login_ip(&self) -> Option<&str> {
-        todo!()
+        self.last_login_ip.as_deref()
     }
 
     /// Borrow normalized account tags.
     pub fn tags(&self) -> &[String] {
-        todo!()
+        &self.tags
     }
 
     /// Check whether a tag is present.
     pub fn has_tag(&self, _tag: &str) -> bool {
-        todo!()
+        self.tags.contains(&_tag.to_ascii_lowercase())
     }
 
     /// Deactivate the account.
     pub fn deactivate(&mut self) {
-        todo!()
+        self.active = false
     }
 
     /// Reactivate the account.
     pub fn reactivate(&mut self) {
-        todo!()
+        self.active = true
     }
 
     /// Record a login attempt with IP.
     pub fn record_login(&mut self, _ip: String) -> Result<(), AccountActionError> {
-        todo!()
+        if !_ip.trim().is_empty() && self.active {
+            self.last_login_ip = normalize_token(&_ip);
+            self.login_count += 1;
+            Ok(())
+        } else if !self.active {
+            Err(AccountActionError::Inactive)
+        } else {
+            Err(AccountActionError::InvalidIp)
+        }
     }
 
     /// Update email if the new value is valid.
     pub fn change_email(&mut self, _email: String) -> Result<(), AccountActionError> {
-        todo!()
+        if is_valid_email(&_email) {
+            self.email = _email;
+            Ok(())
+        } else {
+            Err(AccountActionError::InvalidEmail)
+        }
     }
 
     /// Add a normalized tag to the account.
     pub fn add_tag(&mut self, _tag: String) -> Result<(), AccountActionError> {
-        todo!()
+        if let Some(role) = normalize_token(&_tag) {
+            if !self.tags.contains(&role) {
+                self.tags.push(role);
+            }
+            Ok(())
+        } else {
+            Err(AccountActionError::InvalidTag)
+        }
     }
 
     /// Remove a tag; return whether removal happened.
     pub fn remove_tag(&mut self, _tag: &str) -> bool {
-        todo!()
+        if let Some(index) = self
+            .tags
+            .iter()
+            .position(|e| *e == _tag.trim().to_ascii_lowercase())
+        {
+            self.tags.remove(index);
+            return true;
+        }
+        false
     }
 
     /// Return a short human-friendly summary line.
     pub fn summary(&self) -> String {
-        todo!()
+        let state = if self.active { "active" } else { "inactive" };
+        format!("#{} {} ({state})", self.id.0, self.owner)
     }
 }
