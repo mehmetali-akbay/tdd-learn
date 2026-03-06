@@ -9,6 +9,12 @@
 //   5. `use` keyword and aliases (`as`)
 //   6. Re-exports with `pub use`
 //   7. Fine-grained visibility: `pub(crate)` and `pub(super)`
+//
+// Reinforces prior topics:
+//   - Ownership & borrowing (slices, &self, &mut self, Vec ownership)
+//   - Pattern matching (match, Option<T>)
+//   - Structs with methods
+//   - Control flow (if/else, loops)
 // =============================================================
 
 // ── Topic 1: Module Basics ──────────────────────────────────
@@ -40,6 +46,40 @@ pub mod math {
             0
         } else {
             a / b
+        }
+    }
+
+    /// Clamps `value` so it stays within [min, max].
+    /// If value < min, returns min. If value > max, returns max.
+    /// Otherwise returns value.
+    /// (Reinforces: if/else chains)
+    pub fn clamp(value: i32, min: i32, max: i32) -> i32 {
+        if value < min {
+            min
+        } else if value > max {
+            max
+        } else {
+            value
+        }
+    }
+
+    /// Evaluates a simple math expression given an operator string.
+    /// Supported operators: "+", "-", "*", "/"
+    /// Returns None for unknown operators or division by zero.
+    /// (Reinforces: match + Option<T>)
+    pub fn eval(op: &str, a: i32, b: i32) -> Option<i32> {
+        match op {
+            "+" => Some(a + b),
+            "-" => Some(a - b),
+            "*" => Some(a * b),
+            "/" => {
+                if b == 0 {
+                    None
+                } else {
+                    Some(a / b)
+                }
+            }
+            _ => None,
         }
     }
 }
@@ -74,6 +114,21 @@ pub mod greetings {
     pub fn formal_hello(name: &str) -> String {
         let capitalized = capitalize_first(name);
         format!("Good day, {}.", capitalized)
+    }
+
+    /// Greets everyone in the slice, returning a Vec of greetings.
+    /// (Reinforces: borrowing a slice &[&str], returning owned Vec<String>)
+    pub fn greet_all(names: &[&str]) -> Vec<String> {
+        names.iter().map(|name| hello(name)).collect()
+    }
+
+    /// Greets an optional name. Returns "Hello, stranger!" for None.
+    /// (Reinforces: match on Option<T>)
+    pub fn greet_option(name: Option<&str>) -> String {
+        match name {
+            Some(n) => hello(n),
+            None => "Hello, stranger!".to_string(),
+        }
     }
 }
 
@@ -116,6 +171,24 @@ pub mod animals {
 
         pub fn name() -> &'static str {
             "Tweety"
+        }
+    }
+
+    /// Collects all animal sounds into a Vec.
+    /// (Reinforces: Vec ownership, calling across nested modules)
+    pub fn all_sounds() -> Vec<String> {
+        vec![dog::speak(), cat::speak(), bird::speak()]
+    }
+
+    /// Finds an animal's sound by name (case-insensitive).
+    /// Returns None if no animal matches.
+    /// (Reinforces: match + Option<T>, String ownership)
+    pub fn find_by_name(name: &str) -> Option<String> {
+        match name.to_lowercase().as_str() {
+            "buddy" => Some(dog::speak()),
+            "whiskers" => Some(cat::speak()),
+            "tweety" => Some(bird::speak()),
+            _ => None,
         }
     }
 }
@@ -168,6 +241,21 @@ pub mod library {
         pub fn isbn(&self) -> &str {
             &self.isbn
         }
+
+        /// Returns a formatted summary string.
+        /// Format: "{title} by {author} [ISBN: {isbn}] - {Available/Checked out}"
+        /// (Reinforces: if/else, String formatting, &self borrowing)
+        pub fn summary(&self) -> String {
+            let status = if self.available {
+                "Available"
+            } else {
+                "Checked out"
+            };
+            format!(
+                "{} by {} [ISBN: {}] - {}",
+                self.title, self.author, self.isbn, status
+            )
+        }
     }
 
     /// A public enum — all variants are automatically public.
@@ -187,6 +275,67 @@ pub mod library {
                 Genre::Science => "Science: exploration and discovery",
                 Genre::History => "History: lessons from the past",
             }
+        }
+    }
+
+    /// A shelf that holds books. The books field is private —
+    /// all access goes through methods (encapsulation).
+    /// (Reinforces: Vec ownership, &self/&mut self, Option<&T>, iterators)
+    pub struct Shelf {
+        books: Vec<Book>,
+    }
+
+    impl Shelf {
+        /// Creates an empty shelf.
+        pub fn new() -> Shelf {
+            Shelf { books: Vec::new() }
+        }
+
+        /// Adds a book to the shelf (takes ownership of the Book).
+        pub fn add(&mut self, book: Book) {
+            self.books.push(book);
+        }
+
+        /// Returns how many books are on the shelf.
+        pub fn len(&self) -> usize {
+            self.books.len()
+        }
+
+        /// Returns true if the shelf has no books.
+        pub fn is_empty(&self) -> bool {
+            self.books.is_empty()
+        }
+
+        /// Finds a book by exact title. Returns a borrowed reference.
+        /// Returns None if not found.
+        /// (Reinforces: Option<&T>, borrowing from a collection)
+        pub fn find_by_title(&self, title: &str) -> Option<&Book> {
+            self.books.iter().find(|b| b.title == title)
+        }
+
+        /// Returns the count of currently available books.
+        /// (Reinforces: iterator + filter + count)
+        pub fn available_count(&self) -> usize {
+            self.books.iter().filter(|b| b.available).count()
+        }
+
+        /// Returns a list of all book titles (borrowed from the shelf).
+        /// (Reinforces: returning Vec<&str> borrowed from owned data)
+        pub fn titles(&self) -> Vec<&str> {
+            self.books.iter().map(|b| b.title.as_str()).collect()
+        }
+
+        /// Checks out a book by title. Returns true if found and was available,
+        /// false otherwise.
+        /// (Reinforces: &mut self, find + mutate, boolean logic)
+        pub fn check_out_by_title(&mut self, title: &str) -> bool {
+            if let Some(book) = self.books.iter_mut().find(|b| b.title == title) {
+                if book.available {
+                    book.available = false;
+                    return true;
+                }
+            }
+            false
         }
     }
 }
@@ -222,6 +371,34 @@ pub mod colors {
         format!("#{:02X}{:02X}{:02X}", color.0, color.1, color.2)
     }
 
+    /// Calculates perceived brightness (0–255) using the formula:
+    /// (r * 299 + g * 587 + b * 114) / 1000
+    /// (Reinforces: arithmetic, type casting)
+    pub fn brightness(color: (u8, u8, u8)) -> u8 {
+        let (r, g, b) = color;
+        ((r as u32 * 299 + g as u32 * 587 + b as u32 * 114) / 1000) as u8
+    }
+
+    /// Returns true if the color is considered dark (brightness < 128).
+    pub fn is_dark(color: (u8, u8, u8)) -> bool {
+        brightness(color) < 128
+    }
+
+    /// Converts a color name to its RGB tuple.
+    /// Supports: "red", "green", "blue", "white", "black".
+    /// Returns None for unknown names.
+    /// (Reinforces: match + Option<T>)
+    pub fn from_name(name: &str) -> Option<(u8, u8, u8)> {
+        match name.to_lowercase().as_str() {
+            "red" => Some((255, 0, 0)),
+            "green" => Some((0, 255, 0)),
+            "blue" => Some((0, 0, 255)),
+            "white" => Some((255, 255, 255)),
+            "black" => Some((0, 0, 0)),
+            _ => None,
+        }
+    }
+
     /// A submodule with named color palettes.
     pub mod palettes {
         pub fn sunset() -> Vec<(u8, u8, u8)> {
@@ -230,6 +407,19 @@ pub mod colors {
 
         pub fn ocean() -> Vec<(u8, u8, u8)> {
             vec![(0, 105, 148), (0, 154, 178), (72, 202, 228)]
+        }
+
+        /// Returns the average color of a palette.
+        /// (Reinforces: slices, iteration, type casting, ownership)
+        pub fn average(palette: &[(u8, u8, u8)]) -> (u8, u8, u8) {
+            if palette.is_empty() {
+                return (0, 0, 0);
+            }
+            let len = palette.len() as u32;
+            let (r, g, b) = palette.iter().fold((0u32, 0u32, 0u32), |acc, c| {
+                (acc.0 + c.0 as u32, acc.1 + c.1 as u32, acc.2 + c.2 as u32)
+            });
+            ((r / len) as u8, (g / len) as u8, (b / len) as u8)
         }
     }
 }
@@ -269,9 +459,61 @@ pub mod music {
         }
     }
 
-    // Re-export: users can call `music::guitar()` directly.
-    // Without this, `instruments` is private so users can't
-    // write `music::instruments::guitar()`.
+    mod collections {
+        /// A playlist with a name and a list of songs.
+        /// (Reinforces: structs, Vec ownership, &self/&mut self)
+        pub struct Playlist {
+            name: String,
+            songs: Vec<String>,
+        }
+
+        impl Playlist {
+            pub fn new(name: &str) -> Playlist {
+                Playlist {
+                    name: name.to_string(),
+                    songs: Vec::new(),
+                }
+            }
+
+            pub fn add_song(&mut self, song: &str) {
+                self.songs.push(song.to_string());
+            }
+
+            pub fn name(&self) -> &str {
+                &self.name
+            }
+
+            pub fn len(&self) -> usize {
+                self.songs.len()
+            }
+
+            pub fn is_empty(&self) -> bool {
+                self.songs.is_empty()
+            }
+
+            pub fn songs(&self) -> &[String] {
+                &self.songs
+            }
+
+            /// Checks if a song is in the playlist.
+            pub fn contains(&self, song: &str) -> bool {
+                self.songs.iter().any(|s| s == song)
+            }
+
+            /// Returns a formatted description:
+            /// "Playlist '{name}': {song1}, {song2}, ..."
+            /// or "Playlist '{name}': (empty)" if no songs.
+            pub fn describe(&self) -> String {
+                if self.songs.is_empty() {
+                    format!("Playlist '{}': (empty)", self.name)
+                } else {
+                    format!("Playlist '{}': {}", self.name, self.songs.join(", "))
+                }
+            }
+        }
+    }
+
+    // Re-export instruments and genres at the music level.
     pub use instruments::guitar;
     pub use instruments::piano;
     pub use instruments::drums;
@@ -279,6 +521,10 @@ pub mod music {
     pub use genres::rock;
     pub use genres::jazz;
     pub use genres::classical;
+
+    // Re-export Playlist — users can create music::Playlist
+    // without knowing about the private `collections` module.
+    pub use collections::Playlist;
 
     /// Combine an instrument and genre into a description.
     pub fn describe_style(instrument: &str, genre: &str) -> String {
@@ -296,14 +542,38 @@ pub mod music {
 // We provide public wrapper functions to test the behavior.
 
 pub mod config {
-    // pub(crate): accessible from anywhere within this crate
-    pub(crate) fn default_max_retries() -> u32 {
-        3
+    /// Application config with mixed visibility.
+    /// (Reinforces: struct visibility, constructors, method chaining)
+    pub struct AppConfig {
+        pub(crate) max_retries: u32,
+        pub(crate) timeout_secs: u64,
+        pub(crate) db_pool_size: u32,
+        db_connection: String,
     }
 
-    // pub(crate): accessible from anywhere within this crate
-    pub(crate) fn default_timeout_secs() -> u64 {
-        30
+    impl AppConfig {
+        /// Creates a default config.
+        pub(crate) fn default_config() -> AppConfig {
+            AppConfig {
+                max_retries: 3,
+                timeout_secs: 30,
+                db_pool_size: 5,
+                db_connection: "postgres://localhost:5432/mydb".to_string(),
+            }
+        }
+
+        /// Builder-style: returns a new config with updated retries.
+        /// (Reinforces: ownership — consumes self, returns new owned value)
+        pub(crate) fn with_retries(mut self, retries: u32) -> AppConfig {
+            self.max_retries = retries;
+            self
+        }
+
+        /// Builder-style: returns a new config with updated timeout.
+        pub(crate) fn with_timeout(mut self, secs: u64) -> AppConfig {
+            self.timeout_secs = secs;
+            self
+        }
     }
 
     pub mod database {
@@ -319,25 +589,40 @@ pub mod config {
     }
 
     /// Public function that internally uses `pub(crate)` items.
-    /// This can be called from integration tests.
+    /// Returns: "Config: max_retries=3, timeout=30s, db_pool=5"
     pub fn summary() -> String {
+        let cfg = AppConfig::default_config();
         format!(
             "Config: max_retries={}, timeout={}s, db_pool={}",
-            default_max_retries(),
-            default_timeout_secs(),
-            database::pool_size()
+            cfg.max_retries, cfg.timeout_secs, database::pool_size()
         )
     }
 
     /// Uses `database::connection_string()` which is `pub(super)`.
-    /// This works because `config` is the parent of `database`.
+    /// Also reads the private `db_connection` field from AppConfig.
+    /// Returns full config summary including connection string.
     pub fn full_summary() -> String {
+        let cfg = AppConfig::default_config();
+        // Verify the stored connection matches the database module's value.
+        assert_eq!(cfg.db_connection, database::connection_string());
         format!(
             "Config: retries={}, timeout={}s, pool={}, conn={}",
-            default_max_retries(),
-            default_timeout_secs(),
+            cfg.max_retries,
+            cfg.timeout_secs,
             database::pool_size(),
-            database::connection_string()
+            cfg.db_connection
+        )
+    }
+
+    /// Creates a customized config summary with the builder pattern.
+    /// (Reinforces: ownership chain — each .with_*() consumes and returns)
+    pub fn custom_summary(retries: u32, timeout: u64) -> String {
+        let cfg = AppConfig::default_config()
+            .with_retries(retries)
+            .with_timeout(timeout);
+        format!(
+            "Config: max_retries={}, timeout={}s, db_pool={}",
+            cfg.max_retries, cfg.timeout_secs, cfg.db_pool_size
         )
     }
 }
@@ -350,17 +635,32 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_pub_crate_max_retries() {
-        assert_eq!(config::default_max_retries(), 3);
-    }
-
-    #[test]
-    fn test_pub_crate_timeout() {
-        assert_eq!(config::default_timeout_secs(), 30);
+    fn test_pub_crate_default_config() {
+        let cfg = config::AppConfig::default_config();
+        assert_eq!(cfg.max_retries, 3);
+        assert_eq!(cfg.timeout_secs, 30);
+        assert_eq!(cfg.db_pool_size, 5);
     }
 
     #[test]
     fn test_pub_crate_pool_size() {
         assert_eq!(config::database::pool_size(), 5);
+    }
+
+    #[test]
+    fn test_pub_crate_builder_retries() {
+        let cfg = config::AppConfig::default_config().with_retries(10);
+        assert_eq!(cfg.max_retries, 10);
+        assert_eq!(cfg.timeout_secs, 30); // unchanged
+    }
+
+    #[test]
+    fn test_pub_crate_builder_chain() {
+        let cfg = config::AppConfig::default_config()
+            .with_retries(5)
+            .with_timeout(60);
+        assert_eq!(cfg.max_retries, 5);
+        assert_eq!(cfg.timeout_secs, 60);
+        assert_eq!(cfg.db_pool_size, 5); // unchanged
     }
 }
