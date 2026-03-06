@@ -1,431 +1,364 @@
-// ============================================
-// Level 4, Project 2: Modules — Crates & Visibility
-// Learn: mod, pub, use, re-exports, visibility rules
-// ============================================
+// =============================================================
+// Module 04: Modules — Organizing Code in Rust
+// =============================================================
+// Covers: The Rust Book Chapter 7
+//   1. Defining modules with `mod`
+//   2. Visibility with `pub`
+//   3. Nested modules and `super`
+//   4. Struct and enum visibility
+//   5. `use` keyword and aliases (`as`)
+//   6. Re-exports with `pub use`
+//   7. Fine-grained visibility: `pub(crate)` and `pub(super)`
+// =============================================================
 
-// ============================================
-// Topic 1: Module Basics
-// Learn: mod, inline modules, pub, private by default
-// ============================================
+// ── Topic 1: Module Basics ──────────────────────────────────
+// Modules group related code under a namespace.
+// Items inside a module are private by default.
+// You access items using paths:
+//   - Absolute: crate::module::item
+//   - Relative: module::item
 
-mod math {
-    /// Add two numbers (public function in a module).
+pub mod math {
+    /// Adds two numbers together.
     pub fn add(a: i32, b: i32) -> i32 {
         todo!()
     }
 
-    /// Multiply two numbers (public).
+    /// Subtracts b from a.
+    pub fn subtract(a: i32, b: i32) -> i32 {
+        todo!()
+    }
+
+    /// Multiplies two numbers.
     pub fn multiply(a: i32, b: i32) -> i32 {
         todo!()
     }
 
-    /// Internal helper — not pub, only accessible within the module.
-    fn _square(x: i32) -> i32 {
-        todo!()
-    }
-
-    /// Uses the private helper internally.
-    pub fn sum_of_squares(a: i32, b: i32) -> i32 {
+    /// Divides a by b (integer division). Returns 0 if b is 0.
+    pub fn safe_divide(a: i32, b: i32) -> i32 {
         todo!()
     }
 }
 
-// ============================================
-// Topic 2: Nested Modules
-// Learn: Module hierarchy, super, path resolution
-// ============================================
+// ── Topic 2: Visibility with `pub` ─────────────────────────
+// By default, everything in Rust is private.
+// Use `pub` to make items accessible from outside the module.
+// Making a module `pub` does NOT make its contents `pub` —
+// you must mark each item individually.
 
-mod geometry {
-    pub mod shapes {
-        /// Calculate circle area.
-        pub fn circle_area(radius: f64) -> f64 {
-            todo!()
-        }
-
-        /// Calculate rectangle area.
-        pub fn rectangle_area(width: f64, height: f64) -> f64 {
-            todo!()
-        }
-    }
-
-    pub mod utils {
-        /// Use super to access sibling module's function.
-        /// Returns the area of a square (uses rectangle_area from shapes).
-        pub fn square_area(side: f64) -> f64 {
-            todo!()
-        }
-
-        /// Format the area with 2 decimal places.
-        pub fn format_area(area: f64) -> String {
-            todo!()
-        }
-    }
-}
-
-// ============================================
-// Topic 3: use and Aliases
-// Learn: use, as, glob imports
-// ============================================
-
-mod converters {
-    /// Celsius to Fahrenheit.
-    pub fn celsius_to_fahrenheit(c: f64) -> f64 {
+pub mod greetings {
+    /// Returns a greeting for the given name.
+    /// Example: hello("Alice") => "Hello, Alice!"
+    pub fn hello(name: &str) -> String {
         todo!()
     }
 
-    /// Fahrenheit to Celsius.
-    pub fn fahrenheit_to_celsius(f: f64) -> f64 {
+    /// Returns a farewell message.
+    /// Example: goodbye("Bob") => "Goodbye, Bob!"
+    pub fn goodbye(name: &str) -> String {
         todo!()
     }
 
-    /// Kilometers to miles.
-    pub fn km_to_miles(km: f64) -> f64 {
+    // This helper is private — it CANNOT be called from outside `greetings`.
+    // Capitalize the first character of a string.
+    fn capitalize_first(s: &str) -> String {
         todo!()
     }
 
-    /// Miles to kilometers.
-    pub fn miles_to_km(miles: f64) -> f64 {
+    /// Returns a formal greeting. Uses the private `capitalize_first` helper.
+    /// Example: formal_hello("alice") => "Good day, Alice."
+    pub fn formal_hello(name: &str) -> String {
         todo!()
     }
 }
 
-/// Demonstrate use with alias — convert temperature and format.
-pub fn describe_temperature(celsius: f64) -> String {
-    todo!()
-}
+// ── Topic 3: Nested Modules and `super` ─────────────────────
+// Modules can be nested inside other modules.
+// Use `super` to refer to the parent module.
+// Child modules can see private items in their parent.
 
-/// Convert distance using the converters module.
-pub fn describe_distance_km(km: f64) -> String {
-    todo!()
-}
-
-// ============================================
-// Topic 4: Visibility Rules
-// Learn: pub(crate), pub(super), struct field visibility
-// ============================================
-
-mod database {
-    /// A record with mixed visibility fields.
-    pub struct Record {
-        pub id: u32,
-        pub name: String,
-        pub(crate) internal_score: f64,
-        created_at: String,
+pub mod animals {
+    // Private helper — only children of `animals` can access this via `super`.
+    // Returns: "The {animal} says {sound}!"
+    fn describe(animal: &str, sound: &str) -> String {
+        todo!()
     }
 
-    impl Record {
-        /// Constructor — only way to set private fields.
-        pub fn new(id: u32, name: String, score: f64) -> Self {
+    pub mod dog {
+        /// Uses `super::describe` to access the parent's private function.
+        /// Returns: "The dog says woof!"
+        pub fn speak() -> String {
             todo!()
         }
 
-        /// Public getter for the private created_at field.
-        pub fn created_at(&self) -> &str {
-            todo!()
-        }
-
-        /// Only accessible within the crate.
-        pub(crate) fn update_score(&mut self, new_score: f64) {
+        /// Returns the dog's name: "Buddy"
+        pub fn name() -> &'static str {
             todo!()
         }
     }
 
-    pub(super) fn create_default_record() -> Record {
+    pub mod cat {
+        /// Returns: "The cat says meow!"
+        pub fn speak() -> String {
+            todo!()
+        }
+
+        /// Returns the cat's name: "Whiskers"
+        pub fn name() -> &'static str {
+            todo!()
+        }
+    }
+
+    pub mod bird {
+        /// Returns: "The bird says tweet!"
+        pub fn speak() -> String {
+            todo!()
+        }
+
+        /// Returns the bird's name: "Tweety"
+        pub fn name() -> &'static str {
+            todo!()
+        }
+    }
+}
+
+// ── Topic 4: Struct and Enum Visibility ─────────────────────
+// A `pub` struct can have a mix of public and private fields.
+// If any field is private, the struct cannot be constructed
+// directly from outside — a constructor function is required.
+//
+// A `pub` enum makes ALL its variants public automatically.
+
+pub mod library {
+    /// A book with some public and some private fields.
+    pub struct Book {
+        pub title: String,
+        pub author: String,
+        // Private fields: can only be set through the constructor
+        isbn: String,
+        available: bool,
+    }
+
+    impl Book {
+        /// Constructor — the only way to create a Book from outside,
+        /// since `isbn` and `available` are private.
+        /// New books start as available (available = true).
+        pub fn new(title: &str, author: &str, isbn: &str) -> Book {
+            todo!()
+        }
+
+        /// Check out the book (marks as unavailable).
+        pub fn check_out(&mut self) {
+            todo!()
+        }
+
+        /// Return the book (marks as available).
+        pub fn return_book(&mut self) {
+            todo!()
+        }
+
+        /// Accessor for the private `available` field.
+        pub fn is_available(&self) -> bool {
+            todo!()
+        }
+
+        /// Accessor for the private `isbn` field.
+        pub fn isbn(&self) -> &str {
+            todo!()
+        }
+    }
+
+    /// A public enum — all variants are automatically public.
+    pub enum Genre {
+        Fiction,
+        NonFiction,
+        Science,
+        History,
+    }
+
+    impl Genre {
+        /// Returns a human-readable description.
+        /// Fiction => "Fiction: novels, stories, and imagination"
+        /// NonFiction => "Non-Fiction: facts, essays, and real events"
+        /// Science => "Science: exploration and discovery"
+        /// History => "History: lessons from the past"
+        pub fn description(&self) -> &str {
+            todo!()
+        }
+    }
+}
+
+// ── Topic 5: The `use` Keyword and Aliases ──────────────────
+// `use` brings paths into scope so you don't have to write
+// the full path every time. `as` lets you rename imports.
+
+pub mod colors {
+    /// Returns the RGB tuple for red: (255, 0, 0)
+    pub fn red() -> (u8, u8, u8) {
+        todo!()
+    }
+
+    /// Returns the RGB tuple for green: (0, 255, 0)
+    pub fn green() -> (u8, u8, u8) {
+        todo!()
+    }
+
+    /// Returns the RGB tuple for blue: (0, 0, 255)
+    pub fn blue() -> (u8, u8, u8) {
+        todo!()
+    }
+
+    /// Mix two colors by averaging their channels.
+    /// Use u16 for intermediate calculations to avoid overflow.
+    pub fn mix(c1: (u8, u8, u8), c2: (u8, u8, u8)) -> (u8, u8, u8) {
+        todo!()
+    }
+
+    /// Format a color as a hex string: "#RRGGBB".
+    /// Example: to_hex((255, 0, 0)) => "#FF0000"
+    pub fn to_hex(color: (u8, u8, u8)) -> String {
+        todo!()
+    }
+
+    /// A submodule with named color palettes.
+    pub mod palettes {
+        /// Returns a sunset palette: [(255,94,77), (255,154,0), (255,206,0)]
+        pub fn sunset() -> Vec<(u8, u8, u8)> {
+            todo!()
+        }
+
+        /// Returns an ocean palette: [(0,105,148), (0,154,178), (72,202,228)]
+        pub fn ocean() -> Vec<(u8, u8, u8)> {
+            todo!()
+        }
+    }
+}
+
+// ── Topic 6: Re-exports with `pub use` ──────────────────────
+// `pub use` re-exports an item, making it available at a
+// different (usually shorter) path. This is great for creating
+// a clean public API while keeping the internal structure organized.
+
+pub mod music {
+    // These submodules are private — users can't reach them directly.
+    mod instruments {
+        /// Returns "🎸 Guitar"
+        pub fn guitar() -> &'static str {
+            todo!()
+        }
+
+        /// Returns "🎹 Piano"
+        pub fn piano() -> &'static str {
+            todo!()
+        }
+
+        /// Returns "🥁 Drums"
+        pub fn drums() -> &'static str {
+            todo!()
+        }
+    }
+
+    mod genres {
+        /// Returns "Rock"
+        pub fn rock() -> &'static str {
+            todo!()
+        }
+
+        /// Returns "Jazz"
+        pub fn jazz() -> &'static str {
+            todo!()
+        }
+
+        /// Returns "Classical"
+        pub fn classical() -> &'static str {
+            todo!()
+        }
+    }
+
+    // Re-export: users can call `music::guitar()` directly.
+    // Without this, `instruments` is private so users can't
+    // write `music::instruments::guitar()`.
+    pub use instruments::guitar;
+    pub use instruments::piano;
+    pub use instruments::drums;
+
+    pub use genres::rock;
+    pub use genres::jazz;
+    pub use genres::classical;
+
+    /// Combine an instrument and genre into a description.
+    /// Example: describe_style("🎸 Guitar", "Rock") => "🎸 Guitar playing Rock"
+    pub fn describe_style(instrument: &str, genre: &str) -> String {
         todo!()
     }
 }
 
-/// Demonstrates access to pub and pub(crate) fields.
-pub fn get_record_summary(id: u32, name: &str, score: f64) -> String {
-    todo!()
-}
+// ── Topic 7: Fine-grained Visibility ────────────────────────
+// `pub(crate)` — visible anywhere within this crate, but NOT
+//                to external crates (including integration tests!).
+// `pub(super)` — visible only to the parent module.
+//
+// Note: Integration tests (in the `tests/` folder) are compiled
+// as separate crates, so they CANNOT access `pub(crate)` items.
+// We provide public wrapper functions to test the behavior.
 
-// ============================================
-// Topic 5: Re-exports
-// Learn: pub use, creating a clean public API
-// ============================================
+pub mod config {
+    // pub(crate): accessible from anywhere within this crate
+    pub(crate) fn default_max_retries() -> u32 {
+        todo!()
+    }
 
-mod engine {
-    mod parser {
-        pub fn parse(input: &str) -> Vec<&str> {
+    // pub(crate): accessible from anywhere within this crate
+    pub(crate) fn default_timeout_secs() -> u64 {
+        todo!()
+    }
+
+    pub mod database {
+        // pub(super): only visible to the parent module (`config`)
+        // Returns "postgres://localhost:5432/mydb"
+        pub(super) fn connection_string() -> String {
+            todo!()
+        }
+
+        // pub(crate): visible throughout the crate
+        // Returns 5
+        pub(crate) fn pool_size() -> u32 {
             todo!()
         }
     }
 
-    mod evaluator {
-        pub fn evaluate(tokens: &[&str]) -> String {
-            todo!()
-        }
+    /// Public function that internally uses `pub(crate)` items.
+    /// Returns: "Config: max_retries={}, timeout={}s, db_pool={}"
+    pub fn summary() -> String {
+        todo!()
     }
 
-    // Re-export so users don't need to know about internal modules.
-    pub use evaluator::evaluate;
-    pub use parser::parse;
-
-    /// Process input by parsing and evaluating.
-    pub fn process(input: &str) -> String {
+    /// Uses `database::connection_string()` which is `pub(super)`.
+    /// Returns: "Config: retries={}, timeout={}s, pool={}, conn={}"
+    pub fn full_summary() -> String {
         todo!()
     }
 }
 
-/// Uses the re-exported functions from engine.
-pub fn run_engine(input: &str) -> String {
-    todo!()
-}
-
-// ============================================
-// Topic 6: Advanced — Plugin Architecture
-// Learn: Modules + traits for extensible systems
-// ============================================
-
-/// A trait that plugins implement.
-pub trait Plugin {
-    fn name(&self) -> &str;
-    fn execute(&self, input: &str) -> String;
-}
-
-mod plugins {
-    use super::Plugin;
-
-    pub struct UppercasePlugin;
-
-    impl Plugin for UppercasePlugin {
-        fn name(&self) -> &str {
-            todo!()
-        }
-        fn execute(&self, input: &str) -> String {
-            todo!()
-        }
-    }
-
-    pub struct ReversePlugin;
-
-    impl Plugin for ReversePlugin {
-        fn name(&self) -> &str {
-            todo!()
-        }
-        fn execute(&self, input: &str) -> String {
-            todo!()
-        }
-    }
-
-    pub struct RepeatPlugin {
-        pub times: usize,
-    }
-
-    impl Plugin for RepeatPlugin {
-        fn name(&self) -> &str {
-            todo!()
-        }
-        fn execute(&self, input: &str) -> String {
-            todo!()
-        }
-    }
-}
-
-// Re-export plugins
-pub use plugins::{RepeatPlugin, ReversePlugin, UppercasePlugin};
-
-/// A plugin runner that executes all registered plugins in order.
-pub struct PluginRunner {
-    plugins: Vec<Box<dyn Plugin>>,
-}
-
-impl PluginRunner {
-    /// Constructor — only way to set private fields.
-    pub fn new() -> Self {
-        todo!()
-    }
-
-    pub fn register(&mut self, plugin: Box<dyn Plugin>) {
-        todo!()
-    }
-
-    /// Run all plugins sequentially, each receiving the output of the previous.
-    pub fn run(&self, input: &str) -> String {
-        todo!()
-    }
-
-    /// List all registered plugin names.
-    pub fn plugin_names(&self) -> Vec<&str> {
-        todo!()
-    }
-}
-
-// ============================================
-// Tests
-// ============================================
-
+// ── Unit tests for pub(crate) items ─────────────────────────
+// These MUST live inside the crate because integration tests
+// (in tests/) are separate crates and can't see pub(crate) items.
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    // --- Topic 1: Module Basics ---
-
     #[test]
-    fn test_math_add() {
-        assert_eq!(math::add(2, 3), 5);
+    fn test_pub_crate_max_retries() {
+        assert_eq!(config::default_max_retries(), 3);
     }
 
     #[test]
-    fn test_math_multiply() {
-        assert_eq!(math::multiply(3, 4), 12);
+    fn test_pub_crate_timeout() {
+        assert_eq!(config::default_timeout_secs(), 30);
     }
 
     #[test]
-    fn test_math_sum_of_squares() {
-        assert_eq!(math::sum_of_squares(3, 4), 25);
-    }
-
-    // --- Topic 2: Nested Modules ---
-
-    #[test]
-    fn test_circle_area() {
-        let area = geometry::shapes::circle_area(5.0);
-        assert!((area - 78.53981633974483).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_rectangle_area() {
-        assert!((geometry::shapes::rectangle_area(3.0, 4.0) - 12.0).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_square_area_via_utils() {
-        assert!((geometry::utils::square_area(5.0) - 25.0).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_format_area() {
-        assert_eq!(geometry::utils::format_area(12.3456), "12.35");
-    }
-
-    // --- Topic 3: use and Aliases ---
-
-    #[test]
-    fn test_celsius_to_fahrenheit() {
-        assert!((converters::celsius_to_fahrenheit(0.0) - 32.0).abs() < 1e-6);
-        assert!((converters::celsius_to_fahrenheit(100.0) - 212.0).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_fahrenheit_to_celsius() {
-        assert!((converters::fahrenheit_to_celsius(32.0) - 0.0).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_describe_temperature() {
-        let desc = describe_temperature(100.0);
-        assert!(desc.contains("100"));
-        assert!(desc.contains("212"));
-    }
-
-    #[test]
-    fn test_describe_distance() {
-        let desc = describe_distance_km(10.0);
-        assert!(desc.contains("10"));
-        assert!(desc.contains("6.21")); // approx miles
-    }
-
-    // --- Topic 4: Visibility ---
-
-    #[test]
-    fn test_record_creation() {
-        let r = database::Record::new(1, "test".into(), 9.5);
-        assert_eq!(r.id, 1);
-        assert_eq!(r.name, "test");
-    }
-
-    #[test]
-    fn test_record_pub_crate_field() {
-        let r = database::Record::new(1, "test".into(), 9.5);
-        assert!((r.internal_score - 9.5).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_record_created_at() {
-        let r = database::Record::new(1, "test".into(), 9.5);
-        assert!(!r.created_at().is_empty());
-    }
-
-    #[test]
-    fn test_update_score() {
-        let mut r = database::Record::new(1, "test".into(), 5.0);
-        r.update_score(10.0);
-        assert!((r.internal_score - 10.0).abs() < 1e-6);
-    }
-
-    #[test]
-    fn test_record_summary() {
-        let summary = get_record_summary(1, "Alice", 9.5);
-        assert!(summary.contains("Alice"));
-    }
-
-    // --- Topic 5: Re-exports ---
-
-    #[test]
-    fn test_engine_parse() {
-        let tokens = engine::parse("hello world");
-        assert_eq!(tokens.len(), 2);
-    }
-
-    #[test]
-    fn test_engine_evaluate() {
-        let result = engine::evaluate(&["hello", "world"]);
-        assert!(!result.is_empty());
-    }
-
-    #[test]
-    fn test_engine_process() {
-        let result = engine::process("hello world");
-        assert!(!result.is_empty());
-    }
-
-    #[test]
-    fn test_run_engine() {
-        let result = run_engine("hello world");
-        assert!(!result.is_empty());
-    }
-
-    // --- Topic 6: Plugin Architecture ---
-
-    #[test]
-    fn test_uppercase_plugin() {
-        let p = UppercasePlugin;
-        assert_eq!(p.execute("hello"), "HELLO");
-    }
-
-    #[test]
-    fn test_reverse_plugin() {
-        let p = ReversePlugin;
-        assert_eq!(p.execute("hello"), "olleh");
-    }
-
-    #[test]
-    fn test_repeat_plugin() {
-        let p = RepeatPlugin { times: 3 };
-        assert_eq!(p.execute("ha"), "hahaha");
-    }
-
-    #[test]
-    fn test_plugin_runner_empty() {
-        let runner = PluginRunner::new();
-        assert_eq!(runner.run("hello"), "hello");
-    }
-
-    #[test]
-    fn test_plugin_runner_chain() {
-        let mut runner = PluginRunner::new();
-        runner.register(Box::new(UppercasePlugin));
-        runner.register(Box::new(ReversePlugin));
-        assert_eq!(runner.run("hello"), "OLLEH");
-    }
-
-    #[test]
-    fn test_plugin_names() {
-        let mut runner = PluginRunner::new();
-        runner.register(Box::new(UppercasePlugin));
-        runner.register(Box::new(ReversePlugin));
-        assert_eq!(runner.plugin_names(), vec!["uppercase", "reverse"]);
+    fn test_pub_crate_pool_size() {
+        assert_eq!(config::database::pool_size(), 5);
     }
 }
