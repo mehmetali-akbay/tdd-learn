@@ -285,6 +285,12 @@ pub mod library {
         books: Vec<Book>,
     }
 
+    impl Default for Shelf {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
     impl Shelf {
         /// Creates an empty shelf.
         pub fn new() -> Shelf {
@@ -329,11 +335,11 @@ pub mod library {
         /// false otherwise.
         /// (Reinforces: &mut self, find + mutate, boolean logic)
         pub fn check_out_by_title(&mut self, title: &str) -> bool {
-            if let Some(book) = self.books.iter_mut().find(|b| b.title == title) {
-                if book.available {
-                    book.available = false;
-                    return true;
-                }
+            if let Some(book) = self.books.iter_mut().find(|b| b.title == title)
+                && book.available
+            {
+                book.available = false;
+                return true;
             }
             false
         }
