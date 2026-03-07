@@ -1,8 +1,10 @@
-# HashMaps — Collections
+# HashMaps — Associative Collections
 
-HashMap, BTreeMap, entry API, counting, grouping
+HashMap, BTreeMap, HashSet, Entry API, counting, grouping, set operations
 
-**25 functions | 26 tests**
+**68 public items | 186 tests**
+
+Covers: The Rust Book Chapter 8, Section 3
 
 ```bash
 cargo test -p hashmaps
@@ -10,9 +12,13 @@ cargo test -p hashmaps
 
 ## Topics
 
-1. **HashMap Basics** — insert, get, contains_key, remove, len
-2. **Entry API** — entry(), or_insert, or_insert_with, and_modify
-3. **BTreeMap — Ordered Maps** — BTreeMap, range queries, first/last
-4. **Map Transformations** — Transforming, filtering, reducing maps
-5. **Nested Maps & Complex Keys** — HashMap<K, HashMap<K2, V>>, composite keys
-6. **Advanced — Set Operations via HashMap** — Using maps as sets, intersection, difference
+1. **Creating Hash Maps** — `HashMap::new()` + insert, collect from iterators, `HashMap::from()`
+2. **Accessing Values** — `get()` → `Option<&V>`, `copied()`, `contains_key`, `keys()`, `values()`
+3. **Ownership and Hash Maps** — String keys are moved, `insert()` returns old value, `clone`, `extend`
+4. **Updating — Entry API** — `or_insert`, `or_insert_with`, `and_modify`, `values_mut`, `retain`, `remove`
+5. **Counting and Grouping** — word count (Rust Book classic), char frequency, group by criteria
+6. **BTreeMap — Ordered Maps** — sorted keys, range queries, `min`/`max`, nth key
+7. **Map Transformations** — filter, map values, sum, max/min key, sort by value, partition
+8. **HashSet Fundamentals** — unique, intersection, union, difference, symmetric difference, subset, disjoint
+9. **Nested Maps & Complex Structures** — grade book, department directory (Rust Book exercise)
+10. **Advanced Patterns** — two-sum, most frequent, anagram groups, first unique char, longest consecutive
