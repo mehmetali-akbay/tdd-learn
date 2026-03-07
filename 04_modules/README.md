@@ -2,11 +2,27 @@
 
 Covers **The Rust Book Chapter 7**: Managing Growing Projects with Packages, Crates, and Modules.
 
-**7 topics | Progressive difficulty | Reinforces prior topics**
+**7 topics | 85 tests (4 unit + 81 integration) | Mixed practice approach**
 
 ```bash
 cargo test -p modules_intro
 ```
+
+## Practice Approach
+
+This module uses a **mixed** learning approach:
+
+### Topics 1–4: Implement the code (standard TDD)
+- Function bodies contain `todo!()` — you implement them
+- Tests are provided — run them to verify your implementations
+- These topics reinforce general Rust (if/else, match, structs, iterators)
+
+### Topics 5–7: Write the tests (module concepts)
+- Code is fully implemented — read it to understand module structures
+- Test bodies contain `todo!()` — **you write the tests!**
+- This is where you learn `use`, `as`, `pub use`, `pub(crate)`, `pub(super)`
+- The real module learning happens from the **caller's perspective**
+- Topic 7 also has unit tests in `lib.rs` to practice `pub(crate)` access
 
 ## Topics
 

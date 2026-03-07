@@ -10,6 +10,13 @@
 //   6. Re-exports with `pub use`
 //   7. Fine-grained visibility: `pub(crate)` and `pub(super)`
 //
+// Practice Mode:
+//   Topics 1–4: Implement the function bodies (todo!())
+//   Topics 5–7: Code is provided — write the TESTS instead!
+//     The real module learning happens when you write use statements,
+//     exercise module paths, and understand visibility from the
+//     caller's perspective.
+//
 // Reinforces prior topics:
 //   - Ownership & borrowing (slices, &self, &mut self, Vec ownership)
 //   - Pattern matching (match, Option<T>)
@@ -91,7 +98,8 @@ pub mod greetings {
     /// Returns a formal greeting. Uses the private `capitalize_first` helper.
     /// Example: formal_hello("alice") => "Good day, Alice."
     pub fn formal_hello(name: &str) -> String {
-        todo!()
+        let cpt = capitalize_first(name);
+        format!("Good day, {cpt}.")
     }
 
     /// Greets everyone in the slice, returning a Vec of greetings.
@@ -124,7 +132,7 @@ pub mod animals {
         /// Uses `super::describe` to access the parent's private function.
         /// Returns: "The dog says woof!"
         pub fn speak() -> String {
-            todo!()
+            super::describe("dog", "woof")
         }
 
         /// Returns the dog's name: "Buddy"
@@ -136,7 +144,7 @@ pub mod animals {
     pub mod cat {
         /// Returns: "The cat says meow!"
         pub fn speak() -> String {
-            todo!()
+            super::describe("cat", "meow")
         }
 
         /// Returns the cat's name: "Whiskers"
@@ -148,7 +156,7 @@ pub mod animals {
     pub mod bird {
         /// Returns: "The bird says tweet!"
         pub fn speak() -> String {
-            todo!()
+            super::describe("bird", "tweet")
         }
 
         /// Returns the bird's name: "Tweety"
@@ -252,6 +260,12 @@ pub mod library {
         books: Vec<Book>,
     }
 
+    impl Default for Shelf {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
     impl Shelf {
         /// Creates an empty shelf.
         pub fn new() -> Shelf {
@@ -301,6 +315,21 @@ pub mod library {
     }
 }
 
+// ══════════════════════════════════════════════════════════════
+// ⬇ Topics 5–7: CODE IS PROVIDED — Write the TESTS instead! ⬇
+// ══════════════════════════════════════════════════════════════
+// The module structures below are complete. Your task is to
+// write integration tests (in tests/tests.rs) that exercise:
+//   - Module paths (e.g. colors::red())
+//   - `use` statements to bring items into scope
+//   - `use ... as` to create aliases
+//   - Nested `use` (e.g. use colors::palettes::{sunset, ocean})
+//   - `pub use` re-exports (e.g. music::guitar())
+//   - Understanding what is/isn't accessible
+// Also write unit tests below (in #[cfg(test)] mod tests)
+// for `pub(crate)` items that can't be tested from outside.
+// ══════════════════════════════════════════════════════════════
+
 // ── Topic 5: The `use` Keyword and Aliases ──────────────────
 // `use` brings paths into scope so you don't have to write
 // the full path every time. `as` lets you rename imports.
@@ -308,29 +337,33 @@ pub mod library {
 pub mod colors {
     /// Returns the RGB tuple for red: (255, 0, 0)
     pub fn red() -> (u8, u8, u8) {
-        todo!()
+        (255, 0, 0)
     }
 
     /// Returns the RGB tuple for green: (0, 255, 0)
     pub fn green() -> (u8, u8, u8) {
-        todo!()
+        (0, 255, 0)
     }
 
     /// Returns the RGB tuple for blue: (0, 0, 255)
     pub fn blue() -> (u8, u8, u8) {
-        todo!()
+        (0, 0, 255)
     }
 
     /// Mix two colors by averaging their channels.
     /// Use u16 for intermediate calculations to avoid overflow.
     pub fn mix(c1: (u8, u8, u8), c2: (u8, u8, u8)) -> (u8, u8, u8) {
-        todo!()
+        (
+            ((c1.0 as u16 + c2.0 as u16) / 2) as u8,
+            ((c1.1 as u16 + c2.1 as u16) / 2) as u8,
+            ((c1.2 as u16 + c2.2 as u16) / 2) as u8,
+        )
     }
 
     /// Format a color as a hex string: "#RRGGBB".
     /// Example: to_hex((255, 0, 0)) => "#FF0000"
     pub fn to_hex(color: (u8, u8, u8)) -> String {
-        todo!()
+        format!("#{:02X}{:02X}{:02X}", color.0, color.1, color.2)
     }
 
     /// Calculates perceived brightness (0–255) using the formula:
@@ -338,12 +371,13 @@ pub mod colors {
     /// Use u32 for intermediate calculations.
     /// (Reinforces: arithmetic, type casting)
     pub fn brightness(color: (u8, u8, u8)) -> u8 {
-        todo!()
+        let (r, g, b) = color;
+        ((r as u32 * 299 + g as u32 * 587 + b as u32 * 114) / 1000) as u8
     }
 
     /// Returns true if the color is considered dark (brightness < 128).
     pub fn is_dark(color: (u8, u8, u8)) -> bool {
-        todo!()
+        brightness(color) < 128
     }
 
     /// Converts a color name to its RGB tuple.
@@ -351,26 +385,40 @@ pub mod colors {
     /// Returns None for unknown names.
     /// (Reinforces: match + Option<T>)
     pub fn from_name(name: &str) -> Option<(u8, u8, u8)> {
-        todo!()
+        match name.to_lowercase().as_str() {
+            "red" => Some((255, 0, 0)),
+            "green" => Some((0, 255, 0)),
+            "blue" => Some((0, 0, 255)),
+            "white" => Some((255, 255, 255)),
+            "black" => Some((0, 0, 0)),
+            _ => None,
+        }
     }
 
     /// A submodule with named color palettes.
     pub mod palettes {
         /// Returns a sunset palette: [(255,94,77), (255,154,0), (255,206,0)]
         pub fn sunset() -> Vec<(u8, u8, u8)> {
-            todo!()
+            vec![(255, 94, 77), (255, 154, 0), (255, 206, 0)]
         }
 
         /// Returns an ocean palette: [(0,105,148), (0,154,178), (72,202,228)]
         pub fn ocean() -> Vec<(u8, u8, u8)> {
-            todo!()
+            vec![(0, 105, 148), (0, 154, 178), (72, 202, 228)]
         }
 
         /// Returns the average color of a palette.
         /// Empty palette returns (0, 0, 0).
         /// (Reinforces: slices, iteration, type casting, ownership)
         pub fn average(palette: &[(u8, u8, u8)]) -> (u8, u8, u8) {
-            todo!()
+            if palette.is_empty() {
+                return (0, 0, 0);
+            }
+            let len = palette.len() as u32;
+            let (r, g, b) = palette.iter().fold((0u32, 0u32, 0u32), |acc, c| {
+                (acc.0 + c.0 as u32, acc.1 + c.1 as u32, acc.2 + c.2 as u32)
+            });
+            ((r / len) as u8, (g / len) as u8, (b / len) as u8)
         }
     }
 }
@@ -379,40 +427,44 @@ pub mod colors {
 // `pub use` re-exports an item, making it available at a
 // different (usually shorter) path. This is great for creating
 // a clean public API while keeping the internal structure organized.
+//
+// Notice: `instruments`, `genres`, and `collections` are PRIVATE modules.
+// You CANNOT access music::instruments::guitar() from outside.
+// But `pub use` re-exports them at the `music::` level.
 
 pub mod music {
     // These submodules are private — users can't reach them directly.
     mod instruments {
         /// Returns "🎸 Guitar"
         pub fn guitar() -> &'static str {
-            todo!()
+            "🎸 Guitar"
         }
 
         /// Returns "🎹 Piano"
         pub fn piano() -> &'static str {
-            todo!()
+            "🎹 Piano"
         }
 
         /// Returns "🥁 Drums"
         pub fn drums() -> &'static str {
-            todo!()
+            "🥁 Drums"
         }
     }
 
     mod genres {
         /// Returns "Rock"
         pub fn rock() -> &'static str {
-            todo!()
+            "Rock"
         }
 
         /// Returns "Jazz"
         pub fn jazz() -> &'static str {
-            todo!()
+            "Jazz"
         }
 
         /// Returns "Classical"
         pub fn classical() -> &'static str {
-            todo!()
+            "Classical"
         }
     }
 
@@ -427,44 +479,51 @@ pub mod music {
         impl Playlist {
             /// Creates an empty playlist with the given name.
             pub fn new(name: &str) -> Playlist {
-                todo!()
+                Playlist {
+                    name: name.to_string(),
+                    songs: Vec::new(),
+                }
             }
 
             /// Adds a song to the playlist.
             pub fn add_song(&mut self, song: &str) {
-                todo!()
+                self.songs.push(song.to_string());
             }
 
             /// Returns the playlist name.
             pub fn name(&self) -> &str {
-                todo!()
+                &self.name
             }
 
             /// Returns the number of songs.
             pub fn len(&self) -> usize {
-                todo!()
+                self.songs.len()
             }
 
             /// Returns true if the playlist has no songs.
             pub fn is_empty(&self) -> bool {
-                todo!()
+                self.songs.is_empty()
             }
 
             /// Returns a slice of all songs.
             pub fn songs(&self) -> &[String] {
-                todo!()
+                &self.songs
             }
 
             /// Checks if a song is in the playlist.
             pub fn contains(&self, song: &str) -> bool {
-                todo!()
+                self.songs.iter().any(|s| s == song)
             }
 
             /// Returns a formatted description:
             /// "Playlist '{name}': {song1}, {song2}, ..."
             /// or "Playlist '{name}': (empty)" if no songs.
             pub fn describe(&self) -> String {
-                todo!()
+                if self.songs.is_empty() {
+                    format!("Playlist '{}': (empty)", self.name)
+                } else {
+                    format!("Playlist '{}': {}", self.name, self.songs.join(", "))
+                }
             }
         }
     }
@@ -485,7 +544,7 @@ pub mod music {
     /// Combine an instrument and genre into a description.
     /// Example: describe_style("🎸 Guitar", "Rock") => "🎸 Guitar playing Rock"
     pub fn describe_style(instrument: &str, genre: &str) -> String {
-        todo!()
+        format!("{} playing {}", instrument, genre)
     }
 }
 
@@ -496,7 +555,9 @@ pub mod music {
 //
 // Note: Integration tests (in the `tests/` folder) are compiled
 // as separate crates, so they CANNOT access `pub(crate)` items.
-// We provide public wrapper functions to test the behavior.
+// You'll write unit tests in the #[cfg(test)] module below
+// to test pub(crate) items, and integration tests for the
+// public wrapper functions.
 
 pub mod config {
     /// Application config with mixed visibility.
@@ -513,18 +574,25 @@ pub mod config {
         /// max_retries=3, timeout_secs=30, db_pool_size=5,
         /// db_connection="postgres://localhost:5432/mydb"
         pub(crate) fn default_config() -> AppConfig {
-            todo!()
+            AppConfig {
+                max_retries: 3,
+                timeout_secs: 30,
+                db_pool_size: 5,
+                db_connection: "postgres://localhost:5432/mydb".to_string(),
+            }
         }
 
         /// Builder-style: returns a new config with updated retries.
         /// (Reinforces: ownership — consumes self, returns new owned value)
         pub(crate) fn with_retries(mut self, retries: u32) -> AppConfig {
-            todo!()
+            self.max_retries = retries;
+            self
         }
 
         /// Builder-style: returns a new config with updated timeout.
         pub(crate) fn with_timeout(mut self, secs: u64) -> AppConfig {
-            todo!()
+            self.timeout_secs = secs;
+            self
         }
     }
 
@@ -532,27 +600,39 @@ pub mod config {
         // pub(super): only visible to the parent module (`config`)
         // Returns "postgres://localhost:5432/mydb"
         pub(super) fn connection_string() -> String {
-            todo!()
+            "postgres://localhost:5432/mydb".to_string()
         }
 
         // pub(crate): visible throughout the crate
         // Returns 5
         pub(crate) fn pool_size() -> u32 {
-            todo!()
+            5
         }
     }
 
     /// Public function that internally uses `pub(crate)` items.
     /// Returns: "Config: max_retries=3, timeout=30s, db_pool=5"
     pub fn summary() -> String {
-        todo!()
+        let cfg = AppConfig::default_config();
+        format!(
+            "Config: max_retries={}, timeout={}s, db_pool={}",
+            cfg.max_retries, cfg.timeout_secs, database::pool_size()
+        )
     }
 
     /// Uses `database::connection_string()` which is `pub(super)`.
     /// Also reads the private `db_connection` field from AppConfig.
     /// Returns: "Config: retries=3, timeout=30s, pool=5, conn=postgres://..."
     pub fn full_summary() -> String {
-        todo!()
+        let cfg = AppConfig::default_config();
+        assert_eq!(cfg.db_connection, database::connection_string());
+        format!(
+            "Config: retries={}, timeout={}s, pool={}, conn={}",
+            cfg.max_retries,
+            cfg.timeout_secs,
+            database::pool_size(),
+            cfg.db_connection
+        )
     }
 
     /// Creates a customized config summary with the builder pattern.
@@ -560,44 +640,55 @@ pub mod config {
     /// Returns: "Config: max_retries={retries}, timeout={timeout}s, db_pool=5"
     /// (Reinforces: ownership chain — each .with_*() consumes and returns)
     pub fn custom_summary(retries: u32, timeout: u64) -> String {
-        todo!()
+        let cfg = AppConfig::default_config()
+            .with_retries(retries)
+            .with_timeout(timeout);
+        format!(
+            "Config: max_retries={}, timeout={}s, db_pool={}",
+            cfg.max_retries, cfg.timeout_secs, cfg.db_pool_size
+        )
     }
 }
 
 // ── Unit tests for pub(crate) items ─────────────────────────
 // These MUST live inside the crate because integration tests
 // (in tests/) are separate crates and can't see pub(crate) items.
+//
+// YOUR TASK: Write the unit tests below to verify:
+//   - AppConfig::default_config() returns correct defaults
+//   - database::pool_size() returns 5
+//   - The builder methods (.with_retries, .with_timeout) work
+//   - Chaining builders preserves unchanged fields
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_pub_crate_default_config() {
-        let cfg = config::AppConfig::default_config();
-        assert_eq!(cfg.max_retries, 3);
-        assert_eq!(cfg.timeout_secs, 30);
-        assert_eq!(cfg.db_pool_size, 5);
+        // TODO: Create a default config and assert its fields:
+        //   max_retries == 3, timeout_secs == 30, db_pool_size == 5
+        // Hint: let cfg = config::AppConfig::default_config();
+        todo!()
     }
 
     #[test]
     fn test_pub_crate_pool_size() {
-        assert_eq!(config::database::pool_size(), 5);
+        // TODO: Assert that config::database::pool_size() returns 5
+        // Note: This works because we're inside the crate (pub(crate))
+        todo!()
     }
 
     #[test]
     fn test_pub_crate_builder_retries() {
-        let cfg = config::AppConfig::default_config().with_retries(10);
-        assert_eq!(cfg.max_retries, 10);
-        assert_eq!(cfg.timeout_secs, 30); // unchanged
+        // TODO: Create default config, call .with_retries(10),
+        //   assert max_retries changed but timeout_secs didn't
+        todo!()
     }
 
     #[test]
     fn test_pub_crate_builder_chain() {
-        let cfg = config::AppConfig::default_config()
-            .with_retries(5)
-            .with_timeout(60);
-        assert_eq!(cfg.max_retries, 5);
-        assert_eq!(cfg.timeout_secs, 60);
-        assert_eq!(cfg.db_pool_size, 5); // unchanged
+        // TODO: Chain .with_retries(5).with_timeout(60) on default_config,
+        //   assert all three fields have expected values
+        todo!()
     }
 }

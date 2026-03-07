@@ -1,6 +1,10 @@
 use modules_intro::*;
 
 // =============================================================
+// Topics 1–4: Tests are provided — implement the code in lib.rs
+// =============================================================
+
+// =============================================================
 // Topic 1: Module Basics — Accessing items via module paths
 // Reinforces: if/else, match, Option<T>
 // =============================================================
@@ -376,251 +380,283 @@ fn test_shelf_check_out_already_checked_out() {
 }
 
 // =============================================================
-// Topic 5: The `use` Keyword and Aliases
-// Reinforces: match, Option<T>, arithmetic, type casting
+// ⬇ Topics 5–7: Write the TESTS below! Code is in lib.rs ⬇
 // =============================================================
+// The module code is already implemented. Your task is to write
+// tests that exercise module paths, `use`, `as`, `pub use`,
+// and visibility rules.
+//
+// Each test has a comment explaining what to test and what
+// module concept it exercises. Replace todo!() with real asserts.
+// =============================================================
+
+// =============================================================
+// Topic 5: The `use` Keyword and Aliases
+// =============================================================
+// Learning goals:
+//   - Access items via full module paths (colors::red())
+//   - Bring items into scope with `use`
+//   - Rename imports with `as`
+//   - Use nested imports (use colors::palettes::{sunset, ocean})
+//   - Call functions within submodules (colors::palettes::average)
 
 #[test]
 fn test_colors_full_path() {
-    assert_eq!(colors::red(), (255, 0, 0));
-    assert_eq!(colors::green(), (0, 255, 0));
-    assert_eq!(colors::blue(), (0, 0, 255));
+    // TODO: Call colors::red(), colors::green(), colors::blue()
+    // using full module paths and assert their RGB values.
+    // red=(255,0,0), green=(0,255,0), blue=(0,0,255)
+    todo!()
 }
 
 #[test]
 fn test_colors_with_use() {
-    use modules_intro::colors::{red, green, blue};
-    assert_eq!(red(), (255, 0, 0));
-    assert_eq!(green(), (0, 255, 0));
-    assert_eq!(blue(), (0, 0, 255));
+    // TODO: Add a `use` statement to bring red, green, blue into scope
+    // WITHOUT the module prefix. Then call them directly.
+    // Hint: use modules_intro::colors::{red, green, blue};
+    todo!()
 }
 
 #[test]
 fn test_color_alias_with_as() {
-    use modules_intro::colors::red as crimson;
-    assert_eq!(crimson(), (255, 0, 0));
+    // TODO: Use `as` to rename colors::red to `crimson`.
+    // Then call crimson() and assert it returns (255, 0, 0).
+    // Hint: use modules_intro::colors::red as crimson;
+    todo!()
 }
 
 #[test]
 fn test_color_mix() {
-    let r = colors::red();
-    let b = colors::blue();
-    let mixed = colors::mix(r, b);
-    assert_eq!(mixed, (127, 0, 127));
+    // TODO: Mix red and blue using colors::mix().
+    // Average of (255,0,0) and (0,0,255) is (127,0,127).
+    // Practice: use full paths or bring into scope with `use`.
+    todo!()
 }
 
 #[test]
 fn test_color_mix_same() {
-    let g = colors::green();
-    assert_eq!(colors::mix(g, g), (0, 255, 0));
+    // TODO: Mix green with itself.
+    // Mixing (0,255,0) with (0,255,0) should give (0,255,0).
+    todo!()
 }
 
 #[test]
 fn test_color_to_hex() {
-    assert_eq!(colors::to_hex((255, 0, 0)), "#FF0000");
-    assert_eq!(colors::to_hex((0, 255, 0)), "#00FF00");
-    assert_eq!(colors::to_hex((0, 0, 0)), "#000000");
-    assert_eq!(colors::to_hex((255, 255, 255)), "#FFFFFF");
+    // TODO: Test colors::to_hex() with multiple colors:
+    // (255,0,0) => "#FF0000", (0,255,0) => "#00FF00",
+    // (0,0,0) => "#000000", (255,255,255) => "#FFFFFF"
+    todo!()
 }
 
 #[test]
 fn test_color_brightness_white() {
-    // White (255,255,255): (255*299 + 255*587 + 255*114)/1000 = 255
-    assert_eq!(colors::brightness((255, 255, 255)), 255);
+    // TODO: Test brightness of white (255,255,255).
+    // Formula: (255*299 + 255*587 + 255*114) / 1000 = 255
+    todo!()
 }
 
 #[test]
 fn test_color_brightness_black() {
-    assert_eq!(colors::brightness((0, 0, 0)), 0);
+    // TODO: Test brightness of black (0,0,0) is 0.
+    todo!()
 }
 
 #[test]
 fn test_color_brightness_red() {
-    // Red (255,0,0): (255*299)/1000 = 76
-    assert_eq!(colors::brightness((255, 0, 0)), 76);
+    // TODO: Test brightness of red (255,0,0).
+    // (255*299 + 0 + 0) / 1000 = 76
+    todo!()
 }
 
 #[test]
 fn test_color_is_dark() {
-    assert!(colors::is_dark((0, 0, 0)));       // black
-    assert!(colors::is_dark((255, 0, 0)));     // red (brightness 76)
-    assert!(!colors::is_dark((255, 255, 255))); // white
-    assert!(!colors::is_dark((0, 255, 0)));     // green (brightness ~150)
+    // TODO: Test is_dark for various colors:
+    // black (0,0,0) → dark, red (255,0,0) → dark (brightness 76),
+    // white (255,255,255) → NOT dark, green (0,255,0) → NOT dark
+    todo!()
 }
 
 #[test]
 fn test_color_from_name_known() {
-    assert_eq!(colors::from_name("red"), Some((255, 0, 0)));
-    assert_eq!(colors::from_name("green"), Some((0, 255, 0)));
-    assert_eq!(colors::from_name("blue"), Some((0, 0, 255)));
-    assert_eq!(colors::from_name("white"), Some((255, 255, 255)));
-    assert_eq!(colors::from_name("black"), Some((0, 0, 0)));
+    // TODO: Test from_name for "red", "green", "blue", "white", "black".
+    // Each returns Some((r,g,b)).
+    todo!()
 }
 
 #[test]
 fn test_color_from_name_case_insensitive() {
-    assert_eq!(colors::from_name("RED"), Some((255, 0, 0)));
-    assert_eq!(colors::from_name("Blue"), Some((0, 0, 255)));
+    // TODO: Test that from_name("RED") and from_name("Blue") work.
+    // The function is case-insensitive.
+    todo!()
 }
 
 #[test]
 fn test_color_from_name_unknown() {
-    assert_eq!(colors::from_name("purple"), None);
-    assert_eq!(colors::from_name(""), None);
+    // TODO: Test from_name("purple") and from_name("") return None.
+    todo!()
 }
 
 #[test]
 fn test_color_palettes() {
-    let sunset = colors::palettes::sunset();
-    assert_eq!(sunset.len(), 3);
-    assert_eq!(sunset[0], (255, 94, 77));
-
-    let ocean = colors::palettes::ocean();
-    assert_eq!(ocean.len(), 3);
+    // TODO: Call colors::palettes::sunset() and colors::palettes::ocean().
+    // Assert sunset has 3 colors, first is (255,94,77).
+    // Assert ocean has 3 colors.
+    // This exercises nested module paths!
+    todo!()
 }
 
 #[test]
 fn test_nested_use_statement() {
-    use modules_intro::colors::palettes::{ocean, sunset};
-    assert!(!sunset().is_empty());
-    assert!(!ocean().is_empty());
+    // TODO: Use a nested `use` to bring sunset and ocean into scope:
+    //   use modules_intro::colors::palettes::{sunset, ocean};
+    // Then call them directly without the full path.
+    todo!()
 }
 
 #[test]
 fn test_palette_average_sunset() {
-    let sunset = colors::palettes::sunset();
-    let avg = colors::palettes::average(&sunset);
+    // TODO: Get the sunset palette, compute its average.
     // (255+255+255)/3=255, (94+154+206)/3=151, (77+0+0)/3=25
-    assert_eq!(avg, (255, 151, 25));
+    // Assert average is (255, 151, 25).
+    todo!()
 }
 
 #[test]
 fn test_palette_average_empty() {
-    let avg = colors::palettes::average(&[]);
-    assert_eq!(avg, (0, 0, 0));
+    // TODO: Average of an empty palette should be (0,0,0).
+    todo!()
 }
 
 #[test]
 fn test_palette_average_single() {
-    let avg = colors::palettes::average(&[(100, 150, 200)]);
-    assert_eq!(avg, (100, 150, 200));
+    // TODO: Average of a single-element palette [(100,150,200)]
+    // should be (100, 150, 200).
+    todo!()
 }
 
 // =============================================================
 // Topic 6: Re-exports with `pub use`
-// Reinforces: structs, Vec ownership, &self/&mut self
 // =============================================================
+// Learning goals:
+//   - Access re-exported items at the shorter path (music::guitar)
+//   - Understand that private submodules are NOT directly accessible
+//   - Use the re-exported Playlist struct
+//   - Understand pub use creates a "public API" from private internals
 
 #[test]
 fn test_reexported_instruments() {
-    assert_eq!(music::guitar(), "🎸 Guitar");
-    assert_eq!(music::piano(), "🎹 Piano");
-    assert_eq!(music::drums(), "🥁 Drums");
+    // TODO: Call music::guitar(), music::piano(), music::drums()
+    // These are re-exported from the PRIVATE music::instruments module.
+    // Assert: guitar="🎸 Guitar", piano="🎹 Piano", drums="🥁 Drums"
+    //
+    // Note: music::instruments::guitar() would NOT compile because
+    // `instruments` is a private module! pub use makes it available
+    // at the music:: level instead.
+    todo!()
 }
 
 #[test]
 fn test_reexported_genres() {
-    assert_eq!(music::rock(), "Rock");
-    assert_eq!(music::jazz(), "Jazz");
-    assert_eq!(music::classical(), "Classical");
+    // TODO: Call music::rock(), music::jazz(), music::classical()
+    // These are re-exported from the private music::genres module.
+    // Assert their return values.
+    todo!()
 }
 
 #[test]
 fn test_describe_style() {
-    let style = music::describe_style(music::guitar(), music::rock());
-    assert_eq!(style, "🎸 Guitar playing Rock");
+    // TODO: Call music::describe_style(music::guitar(), music::rock())
+    // Assert it returns "🎸 Guitar playing Rock"
+    // Notice how you compose re-exported functions!
+    todo!()
 }
 
 #[test]
 fn test_describe_multiple_styles() {
-    assert_eq!(
-        music::describe_style(music::piano(), music::jazz()),
-        "🎹 Piano playing Jazz"
-    );
-    assert_eq!(
-        music::describe_style(music::drums(), music::classical()),
-        "🥁 Drums playing Classical"
-    );
+    // TODO: Test describe_style with piano+jazz and drums+classical.
+    // "🎹 Piano playing Jazz" and "🥁 Drums playing Classical"
+    todo!()
 }
 
 #[test]
 fn test_playlist_new_is_empty() {
-    let pl = music::Playlist::new("My Playlist");
-    assert_eq!(pl.name(), "My Playlist");
-    assert!(pl.is_empty());
-    assert_eq!(pl.len(), 0);
+    // TODO: Create music::Playlist (re-exported from private collections).
+    // Assert its name, that it's empty, and len is 0.
+    // Hint: let pl = music::Playlist::new("My Playlist");
+    todo!()
 }
 
 #[test]
 fn test_playlist_add_songs() {
-    let mut pl = music::Playlist::new("Road Trip");
-    pl.add_song("Bohemian Rhapsody");
-    pl.add_song("Hotel California");
-    assert_eq!(pl.len(), 2);
-    assert!(!pl.is_empty());
+    // TODO: Create a playlist, add two songs, assert len == 2.
+    todo!()
 }
 
 #[test]
 fn test_playlist_contains() {
-    let mut pl = music::Playlist::new("Favs");
-    pl.add_song("Yesterday");
-    pl.add_song("Imagine");
-    assert!(pl.contains("Yesterday"));
-    assert!(!pl.contains("Stairway to Heaven"));
+    // TODO: Create a playlist, add "Yesterday" and "Imagine".
+    // Assert contains("Yesterday") is true.
+    // Assert contains("Stairway to Heaven") is false.
+    todo!()
 }
 
 #[test]
 fn test_playlist_songs_returns_slice() {
-    let mut pl = music::Playlist::new("Rock");
-    pl.add_song("Thunderstruck");
-    pl.add_song("Back in Black");
-    let songs = pl.songs();
-    assert_eq!(songs.len(), 2);
-    assert_eq!(songs[0], "Thunderstruck");
-    assert_eq!(songs[1], "Back in Black");
+    // TODO: Create a playlist, add songs, call .songs().
+    // Assert it returns a &[String] with the correct songs.
+    todo!()
 }
 
 #[test]
 fn test_playlist_describe_empty() {
-    let pl = music::Playlist::new("Empty");
-    assert_eq!(pl.describe(), "Playlist 'Empty': (empty)");
+    // TODO: Create an empty playlist named "Empty".
+    // Assert describe returns "Playlist 'Empty': (empty)".
+    todo!()
 }
 
 #[test]
 fn test_playlist_describe_with_songs() {
-    let mut pl = music::Playlist::new("Jazz Night");
-    pl.add_song("So What");
-    pl.add_song("Take Five");
-    assert_eq!(pl.describe(), "Playlist 'Jazz Night': So What, Take Five");
+    // TODO: Create playlist "Jazz Night", add "So What" and "Take Five".
+    // Assert describe returns "Playlist 'Jazz Night': So What, Take Five".
+    todo!()
 }
 
 // =============================================================
 // Topic 7: Fine-grained Visibility — pub(crate), pub(super)
-// Reinforces: builder pattern (ownership chain)
 // =============================================================
+// Learning goals:
+//   - pub(crate) items ARE accessible from within the crate
+//     (unit tests in lib.rs) but NOT from integration tests here
+//   - Public wrapper functions (summary, full_summary, custom_summary)
+//     expose the behavior without exposing the internals
+//   - The unit tests in lib.rs (#[cfg(test)] mod tests) are where
+//     you test pub(crate) items directly
+//
+// For integration tests, you can only test the public API:
 
 #[test]
 fn test_config_summary() {
-    let summary = config::summary();
-    assert!(summary.contains("max_retries=3"));
-    assert!(summary.contains("timeout=30s"));
-    assert!(summary.contains("db_pool=5"));
+    // TODO: Call config::summary() and verify it contains:
+    // "max_retries=3", "timeout=30s", "db_pool=5"
+    // Hint: use .contains() to check substrings
+    todo!()
 }
 
 #[test]
 fn test_config_full_summary() {
-    let summary = config::full_summary();
-    assert!(summary.contains("retries=3"));
-    assert!(summary.contains("timeout=30s"));
-    assert!(summary.contains("pool=5"));
-    assert!(summary.contains("postgres://localhost:5432/mydb"));
+    // TODO: Call config::full_summary() and verify it contains:
+    // "retries=3", "timeout=30s", "pool=5", "postgres://localhost:5432/mydb"
+    todo!()
 }
 
 #[test]
 fn test_config_custom_summary() {
-    let summary = config::custom_summary(10, 60);
-    assert!(summary.contains("max_retries=10"));
-    assert!(summary.contains("timeout=60s"));
-    // pool stays at default
-    assert!(summary.contains("db_pool=5"));
+    // TODO: Call config::custom_summary(10, 60) and verify:
+    // "max_retries=10", "timeout=60s", "db_pool=5" (pool stays default)
+    todo!()
 }
+
+// NOTE: You CANNOT do the following from an integration test:
+//   let cfg = config::AppConfig::default_config();  // pub(crate) — won't compile!
+//   config::database::pool_size();                   // pub(crate) — won't compile!
+//   config::database::connection_string();           // pub(super) — won't compile!
+// Go to lib.rs and write the unit tests in #[cfg(test)] mod tests instead!
