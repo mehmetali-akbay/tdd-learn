@@ -34,22 +34,25 @@
 pub mod math {
     /// Adds two numbers together.
     pub fn add(a: i32, b: i32) -> i32 {
-        todo!()
+        a + b
     }
 
     /// Subtracts b from a.
     pub fn subtract(a: i32, b: i32) -> i32 {
-        todo!()
+        a - b
     }
 
     /// Multiplies two numbers.
     pub fn multiply(a: i32, b: i32) -> i32 {
-        todo!()
+        a * b
     }
 
     /// Divides a by b (integer division). Returns 0 if b is 0.
     pub fn safe_divide(a: i32, b: i32) -> i32 {
-        todo!()
+        if b == 0 {
+            return 0;
+        }
+        a / b
     }
 
     /// Clamps `value` so it stays within [min, max].
@@ -57,7 +60,13 @@ pub mod math {
     /// Otherwise returns value.
     /// (Reinforces: if/else chains)
     pub fn clamp(value: i32, min: i32, max: i32) -> i32 {
-        todo!()
+        if value < min {
+            return min;
+        } else if value > max {
+            return max;
+        } else {
+            return value;
+        }
     }
 
     /// Evaluates a simple math expression given an operator string.
@@ -65,7 +74,19 @@ pub mod math {
     /// Returns None for unknown operators or division by zero.
     /// (Reinforces: match + Option<T>)
     pub fn eval(op: &str, a: i32, b: i32) -> Option<i32> {
-        todo!()
+        match op {
+            "+" => Some(a + b),
+            "-" => Some(a - b),
+            "*" => Some(a * b),
+            "/" => {
+                if b == 0 {
+                    None
+                } else {
+                    Some(a / b)
+                }
+            }
+            _ => None,
+        }
     }
 }
 
@@ -79,20 +100,24 @@ pub mod greetings {
     /// Returns a greeting for the given name.
     /// Example: hello("Alice") => "Hello, Alice!"
     pub fn hello(name: &str) -> String {
-        todo!()
+        format!("Hello, {name}!")
     }
 
     /// Returns a farewell message.
     /// Example: goodbye("Bob") => "Goodbye, Bob!"
     pub fn goodbye(name: &str) -> String {
-        todo!()
+        format!("Goodbye, {name}!")
     }
 
     // This helper is private — it CANNOT be called from outside `greetings`.
     // Capitalize the first character of a string.
     // Empty string returns empty string.
     fn capitalize_first(s: &str) -> String {
-        todo!()
+        let mut chars = s.chars();
+        match chars.next() {
+            None => String::new(),
+            Some(c) => c.to_uppercase().to_string() + chars.as_str(),
+        }
     }
 
     /// Returns a formal greeting. Uses the private `capitalize_first` helper.
@@ -106,13 +131,13 @@ pub mod greetings {
     /// Example: greet_all(&["Alice", "Bob"]) => vec!["Hello, Alice!", "Hello, Bob!"]
     /// (Reinforces: borrowing a slice &[&str], returning owned Vec<String>)
     pub fn greet_all(names: &[&str]) -> Vec<String> {
-        todo!()
+        names.iter().map(|e| hello(e)).collect()
     }
 
     /// Greets an optional name. Returns "Hello, stranger!" for None.
     /// (Reinforces: match on Option<T>)
     pub fn greet_option(name: Option<&str>) -> String {
-        todo!()
+        hello(name.unwrap_or("stranger"))
     }
 }
 
@@ -125,7 +150,7 @@ pub mod animals {
     // Private helper — only children of `animals` can access this via `super`.
     // Returns: "The {animal} says {sound}!"
     fn describe(animal: &str, sound: &str) -> String {
-        todo!()
+        format!("The {animal} says {sound}!")
     }
 
     pub mod dog {
@@ -137,7 +162,7 @@ pub mod animals {
 
         /// Returns the dog's name: "Buddy"
         pub fn name() -> &'static str {
-            todo!()
+            "Buddy"
         }
     }
 
@@ -149,7 +174,7 @@ pub mod animals {
 
         /// Returns the cat's name: "Whiskers"
         pub fn name() -> &'static str {
-            todo!()
+            "Whiskers"
         }
     }
 
@@ -161,7 +186,7 @@ pub mod animals {
 
         /// Returns the bird's name: "Tweety"
         pub fn name() -> &'static str {
-            todo!()
+            "Tweety"
         }
     }
 
@@ -169,7 +194,7 @@ pub mod animals {
     /// Returns: vec![dog::speak(), cat::speak(), bird::speak()]
     /// (Reinforces: Vec ownership, calling across nested modules)
     pub fn all_sounds() -> Vec<String> {
-        todo!()
+        vec![dog::speak(), cat::speak(), bird::speak()]
     }
 
     /// Finds an animal's sound by name (case-insensitive).
@@ -177,7 +202,12 @@ pub mod animals {
     /// Returns None if no animal matches.
     /// (Reinforces: match + Option<T>, String ownership)
     pub fn find_by_name(name: &str) -> Option<String> {
-        todo!()
+        match name.to_lowercase().as_str() {
+            "buddy" => Some(dog::speak()),
+            "whiskers" => Some(cat::speak()),
+            "tweety" => Some(bird::speak()),
+            _ => None,
+        }
     }
 }
 
@@ -203,34 +233,49 @@ pub mod library {
         /// since `isbn` and `available` are private.
         /// New books start as available (available = true).
         pub fn new(title: &str, author: &str, isbn: &str) -> Book {
-            todo!()
+            Book {
+                title: title.to_string(),
+                author: author.to_string(),
+                isbn: isbn.to_string(),
+                available: true,
+            }
         }
 
         /// Check out the book (marks as unavailable).
         pub fn check_out(&mut self) {
-            todo!()
+            self.available = false
         }
 
         /// Return the book (marks as available).
         pub fn return_book(&mut self) {
-            todo!()
+            self.available = true
         }
 
         /// Accessor for the private `available` field.
         pub fn is_available(&self) -> bool {
-            todo!()
+            self.available
         }
 
         /// Accessor for the private `isbn` field.
         pub fn isbn(&self) -> &str {
-            todo!()
+            &self.isbn
         }
 
         /// Returns a formatted summary string.
         /// Format: "{title} by {author} [ISBN: {isbn}] - {Available/Checked out}"
         /// (Reinforces: if/else, String formatting, &self borrowing)
         pub fn summary(&self) -> String {
-            todo!()
+            format!(
+                "{} by {} [ISBN: {}] - {}",
+                &self.title,
+                &self.author,
+                &self.isbn,
+                if self.available {
+                    "Available"
+                } else {
+                    "Checked out"
+                }
+            )
         }
     }
 
@@ -249,7 +294,12 @@ pub mod library {
         /// Science => "Science: exploration and discovery"
         /// History => "History: lessons from the past"
         pub fn description(&self) -> &str {
-            todo!()
+            match self {
+                Genre::Fiction => "Fiction: novels, stories, and imagination",
+                Genre::NonFiction => "Non-Fiction: facts, essays, and real events",
+                Genre::Science => "Science: exploration and discovery",
+                Genre::History => "History: lessons from the past",
+            }
         }
     }
 
@@ -269,48 +319,54 @@ pub mod library {
     impl Shelf {
         /// Creates an empty shelf.
         pub fn new() -> Shelf {
-            todo!()
+            Shelf { books: Vec::new() }
         }
 
         /// Adds a book to the shelf (takes ownership of the Book).
         pub fn add(&mut self, book: Book) {
-            todo!()
+            self.books.push(book);
         }
 
         /// Returns how many books are on the shelf.
         pub fn len(&self) -> usize {
-            todo!()
+            self.books.iter().count()
         }
 
         /// Returns true if the shelf has no books.
         pub fn is_empty(&self) -> bool {
-            todo!()
+            self.books.is_empty()
         }
 
         /// Finds a book by exact title. Returns a borrowed reference.
         /// Returns None if not found.
         /// (Reinforces: Option<&T>, borrowing from a collection)
         pub fn find_by_title(&self, title: &str) -> Option<&Book> {
-            todo!()
+            self.books.iter().find(|b| b.title == title)
         }
 
         /// Returns the count of currently available books.
         /// (Reinforces: iterator + filter + count)
         pub fn available_count(&self) -> usize {
-            todo!()
+            self.books.iter().filter(|&b| b.available).count()
         }
 
         /// Returns a list of all book titles (borrowed from the shelf).
         /// (Reinforces: returning Vec<&str> borrowed from owned data)
         pub fn titles(&self) -> Vec<&str> {
-            todo!()
+            self.books.iter().map(|b| b.title.as_str()).collect()
         }
 
         /// Checks out a book by title. Returns true if found and was available,
         /// false otherwise (not found or already checked out).
         /// (Reinforces: &mut self, find + mutate, boolean logic)
         pub fn check_out_by_title(&mut self, title: &str) -> bool {
-            todo!()
+            if let Some(book) = self.books.iter_mut().find(|e| e.title == title) {
+                if book.available {
+                    book.available = false;
+                    return true;
+                }
+            }
+            false
         }
     }
 }
