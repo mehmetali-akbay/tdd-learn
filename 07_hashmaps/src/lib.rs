@@ -145,7 +145,7 @@ pub fn clone_and_extend(
     extra: &HashMap<String, i32>,
 ) -> HashMap<String, i32> {
     let mut result = base.clone();
-    result.extend(extra.iter().map(|(k, v)| (k.clone(), *v)));
+    result.extend(extra.clone());
     result
 }
 
