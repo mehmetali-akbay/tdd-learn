@@ -21,7 +21,11 @@
 //   - Structs with methods (composite data in maps)
 // =============================================================
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::{
+    collections::{BTreeMap, HashMap, HashSet},
+    default,
+    hash::DefaultHasher,
+};
 
 // ── Topic 1: Creating Hash Maps ─────────────────────────────
 // HashMap::new() + insert, collect() from iterators, HashMap::from()
@@ -30,33 +34,37 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 /// Create a score board: {"Alice": 100, "Bob": 85, "Charlie": 92}.
 /// Demonstrates the basic HashMap::new() + insert pattern.
 pub fn create_scores() -> HashMap<String, i32> {
-    todo!()
+    let mut map = HashMap::new();
+    map.insert("Alice".to_string(), 100);
+    map.insert("Bob".to_string(), 85);
+    map.insert("Charlie".to_string(), 92);
+    map
 }
 
 /// Create a HashMap from a slice of (key, value) tuples.
 /// Demonstrates collecting from an iterator of pairs.
 /// (Reinforces: iterators, map(), collect(), String ownership)
 pub fn from_tuples(pairs: &[(&str, i32)]) -> HashMap<String, i32> {
-    todo!()
+    pairs.iter().map(|&(k, v)| (k.to_string(), v)).collect()
 }
 
 /// Create a HashMap from two parallel slices (keys, values).
 /// If slices differ in length, zip stops at the shorter one.
 /// (Reinforces: zip, iterators, collect)
 pub fn zip_to_map<'a>(keys: &[&'a str], values: &[i32]) -> HashMap<&'a str, i32> {
-    todo!()
+    keys.iter().zip(values).map(|(&k, &v)| (k, v)).collect()
 }
 
 /// Create a HashMap from keys, giving each the same default value.
 /// Example: from_keys_with_default(&["x","y","z"], 0) → {"x":0, "y":0, "z":0}
 pub fn from_keys_with_default(keys: &[&str], default: i32) -> HashMap<String, i32> {
-    todo!()
+    keys.iter().map(|&k| (k.to_string(), default)).collect()
 }
 
 /// Create a HashMap using the array literal syntax: HashMap::from().
 /// Returns: {"one": 1, "two": 2, "three": 3}
 pub fn from_array_literal() -> HashMap<&'static str, i32> {
-    todo!()
+    HashMap::from([("one", 1), ("two", 2), ("three", 3)])
 }
 
 // ── Topic 2: Accessing Values ───────────────────────────────
@@ -67,39 +75,43 @@ pub fn from_array_literal() -> HashMap<&'static str, i32> {
 /// Uses the .get().copied().unwrap_or() pattern from the Rust Book.
 /// (Reinforces: Option<&V>, copied(), unwrap_or())
 pub fn get_or_default(map: &HashMap<String, i32>, key: &str, default: i32) -> i32 {
-    todo!()
+    map.get(key).copied().unwrap_or(default)
 }
 
 /// Look up multiple keys, returning a Vec of Option values.
 /// Uses get().copied() for each key.
 /// (Reinforces: iterating over keys, get() → Option<&V>, copied())
 pub fn get_many(map: &HashMap<String, i32>, keys: &[&str]) -> Vec<Option<i32>> {
-    todo!()
+    keys.iter().map(|&e| map.get(e).copied()).collect()
 }
 
 /// Check if ALL the given keys exist in the map.
 /// (Reinforces: contains_key(), all())
 pub fn contains_all_keys(map: &HashMap<String, i32>, keys: &[&str]) -> bool {
-    todo!()
+    keys.iter().all(|&e| map.contains_key(e))
 }
 
 /// Return all keys, sorted alphabetically.
 /// HashMap iteration order is arbitrary — sorting gives determinism.
 /// (Reinforces: keys(), cloned(), collect(), sort())
 pub fn all_keys_sorted(map: &HashMap<String, i32>) -> Vec<String> {
-    todo!()
+    let mut vec: Vec<String> = map.keys().cloned().collect();
+    vec.sort();
+    vec
 }
 
 /// Return all values, sorted ascending.
 /// (Reinforces: values(), copied(), collect(), sort())
 pub fn all_values_sorted(map: &HashMap<String, i32>) -> Vec<i32> {
-    todo!()
+    let mut values: Vec<i32> = map.values().cloned().collect();
+    values.sort();
+    values
 }
 
 /// Count how many entries have a value equal to `target`.
 /// (Reinforces: values(), filter(), count())
 pub fn count_by_value(map: &HashMap<String, i32>, target: i32) -> usize {
-    todo!()
+    map.values().filter(|&&v| v == target).count()
 }
 
 // ── Topic 3: Ownership and Hash Maps ────────────────────────
@@ -110,12 +122,8 @@ pub fn count_by_value(map: &HashMap<String, i32>, target: i32) -> usize {
 /// Insert a key-value pair, returning the OLD value if the key already existed.
 /// Demonstrates that insert() returns Option<V>.
 /// (Reinforces: ownership — String key is moved, i32 value is copied)
-pub fn insert_returns_old(
-    map: &mut HashMap<String, i32>,
-    key: &str,
-    value: i32,
-) -> Option<i32> {
-    todo!()
+pub fn insert_returns_old(map: &mut HashMap<String, i32>, key: &str, value: i32) -> Option<i32> {
+    map.insert(key.to_string(), value)
 }
 
 /// Swap keys and values. Assumes all values are unique.
@@ -123,7 +131,7 @@ pub fn insert_returns_old(
 /// and building another.
 /// (Reinforces: clone(), iterating map entries, ownership transfer)
 pub fn invert_map(map: &HashMap<String, String>) -> HashMap<String, String> {
-    todo!()
+    map.iter().map(|(k,v)| (v.clone(),k.clone())).collect()
 }
 
 /// Clone a map and extend it with entries from another map.
@@ -133,7 +141,9 @@ pub fn clone_and_extend(
     base: &HashMap<String, i32>,
     extra: &HashMap<String, i32>,
 ) -> HashMap<String, i32> {
-    todo!()
+    let mut map = base.clone();
+    map.extend(extra.clone());
+    map
 }
 
 /// Merge two maps: on conflict, keep the value from `first`.
@@ -176,11 +186,7 @@ pub fn insert_if_absent(map: &mut HashMap<String, i32>, key: &str, value: i32) -
 /// Note: or_default() is equivalent here since Vec implements Default,
 /// but we use or_insert_with() explicitly to teach the pattern.
 #[allow(clippy::unwrap_or_default)]
-pub fn push_to_key(
-    map: &mut HashMap<String, Vec<String>>,
-    key: &str,
-    value: &str,
-) -> usize {
+pub fn push_to_key(map: &mut HashMap<String, Vec<String>>, key: &str, value: &str) -> usize {
     todo!()
 }
 
@@ -283,10 +289,7 @@ pub fn min_max_keys(map: &BTreeMap<i32, String>) -> Option<(i32, i32)> {
 }
 
 /// Merge two BTreeMaps; on conflict, keep the value from `b`.
-pub fn merge_btree(
-    a: &BTreeMap<String, i32>,
-    b: &BTreeMap<String, i32>,
-) -> BTreeMap<String, i32> {
+pub fn merge_btree(a: &BTreeMap<String, i32>, b: &BTreeMap<String, i32>) -> BTreeMap<String, i32> {
     todo!()
 }
 
