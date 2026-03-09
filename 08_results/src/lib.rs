@@ -7,7 +7,7 @@
 // ============================================
 
 use std::collections::HashMap;
-use std::fmt;
+use std::fmt::{self, format};
 use std::num::ParseIntError;
 
 // ============================================
@@ -18,45 +18,61 @@ use std::num::ParseIntError;
 
 /// Divide two integers, returning Err on division by zero
 pub fn divide(a: i32, b: i32) -> Result<i32, String> {
-    todo!()
+    if b == 0 {
+        return Err("division by zero".to_string());
+    }
+    Ok(a / b)
 }
 
 /// Parse a string to i32, mapping the error to a String
 pub fn parse_number(s: &str) -> Result<i32, String> {
-    todo!()
+    s.parse().map_err(|e| format!("parse error: {}", e))
 }
 
 /// Get element at index, returning Err if out of bounds
 /// Reinforces: borrowing slices
 pub fn get_at(v: &[i32], index: usize) -> Result<i32, String> {
-    todo!()
+    v.get(index)
+        .copied()
+        .ok_or_else(|| format!("index {} out of bounds", index))
 }
 
 /// Double a Result value if Ok, pass through Err
 pub fn double_result(r: Result<i32, String>) -> Result<i32, String> {
-    todo!()
+    r.map(|v| v * 2)
 }
 
 /// Chain: parse then double
 pub fn parse_and_double(s: &str) -> Result<i32, String> {
-    todo!()
+    parse_number(s).map(|r| r * 2)
 }
 
 /// Return the default value if the Result is Err
 pub fn unwrap_or_default(r: Result<i32, String>, default: i32) -> i32 {
-    todo!()
+    r.unwrap_or(default)
 }
 
 /// Find the first even number in a slice, or error if none found
 /// Reinforces: slice borrowing, iteration, pattern matching
 pub fn find_first_even(slice: &[i32]) -> Result<i32, String> {
-    todo!()
+    slice
+        .iter()
+        .find(|&e| e % 2 == 0)
+        .copied()
+        .ok_or_else(|| format!("cannot find even number"))
 }
 
 /// Look up a letter grade based on a numeric score (0-100)
 /// Reinforces: match on ranges, pattern matching
 pub fn lookup_grade(score: u32) -> Result<char, String> {
-    todo!()
+    match score {
+        90..=100 => Ok('A'),
+        80..=89 => Ok('B'),
+        70..=79 => Ok('C'),
+        60..=69 => Ok('D'),
+        0..=59 => Ok('F'),
+        _ => Err(format!("score {} is out of range 0-100", score)),
+    }
 }
 
 // ============================================
@@ -67,40 +83,99 @@ pub fn lookup_grade(score: u32) -> Result<char, String> {
 
 /// Parse two strings and add them (using ? operator)
 pub fn add_strings(a: &str, b: &str) -> Result<i32, String> {
-    todo!()
+    let x = parse_number(a)?;
+    let y = parse_number(b)?;
+    Ok(x + y)
 }
 
 /// Parse a string, divide by another parsed string
 pub fn parse_and_divide(a: &str, b: &str) -> Result<i32, String> {
-    todo!()
+    let x = parse_number(a)?;
+    let y = parse_number(b)?;
+    Ok(x / y)
 }
 
 /// Calculate the average of string numbers: "1,2,3" => 2.0
 pub fn average_of_csv(csv: &str) -> Result<f64, String> {
-    todo!()
+    let nums: Vec<f64> = csv
+        .split(',')
+        .map(|e| parse_number(e.trim()).map(|num| num as f64))
+        .collect::<Result<Vec<f64>, String>>()?;
+    if nums.is_empty() {
+        return Err("the vec is empty, cannot be calculated".to_string());
+    } else {
+        return Ok(nums.iter().sum::<f64>() / nums.len() as f64);
+    }
 }
 
 /// Find the first positive number in a comma-separated string
 pub fn first_positive_from_csv(csv: &str) -> Result<i32, String> {
-    todo!()
+    for e in csv.split(',') {
+        let num = parse_number(e.trim())?;
+
+        if num > 0 {
+            return Ok(num);
+        }
+    }
+    Err("couldn't find num".to_string())
 }
 
 /// Parse a point string "x,y" into a tuple of f64
 /// Reinforces: String splitting, tuples, destructuring
 pub fn parse_point(s: &str) -> Result<(f64, f64), String> {
-    todo!()
+    let (first, second) = s
+        .split_once(',')
+        .ok_or_else(|| "missing comma".to_string())?;
+    let x = first
+        .trim()
+        .parse::<f64>()
+        .map_err(|_| "invalid x".to_string())?;
+
+    let y = second
+        .trim()
+        .parse::<f64>()
+        .map_err(|_| "invalid x".to_string())?;
+    Ok((x, y))
 }
 
 /// Sum only the positive numbers from a CSV string
 /// Reinforces: Vec iteration, conditional accumulation
 pub fn sum_positive_from_csv(csv: &str) -> Result<i32, String> {
-    todo!()
+    if csv.trim().is_empty() {
+        return Err("empty input".to_string());
+    }
+    let mut sum = 0;
+    for part in csv.split(',') {
+        let n = part
+            .trim()
+            .parse::<i32>()
+            .map_err(|e| format!("parse error {}", e))?;
+        if n > 0 {
+            sum += n;
+        }
+    }
+    Ok(sum)
 }
 
 /// Parse a range string "start..end" into a Vec of integers (exclusive end)
 /// Reinforces: Vec creation, ranges, String parsing
 pub fn parse_int_range(s: &str) -> Result<Vec<i32>, String> {
-    todo!()
+    let (first, second) = s
+        .split_once("..")
+        .ok_or_else(|| "missin dots".to_string())?;
+    let start = first
+        .trim()
+        .parse::<i32>()
+        .map_err(|_| "invalid x".to_string())?;
+
+    let end = second
+        .trim()
+        .parse::<i32>()
+        .map_err(|_| "invalid x".to_string())?;
+    if start > end {
+        return Err("start > end error".to_string());
+    }
+    Ok((start..end).collect())
 }
 
 // ============================================
@@ -291,11 +366,7 @@ pub fn sum_with_error_count(items: &[&str]) -> (i32, usize) {
 /// Parse and filter: only keep numbers within [min, max] range
 /// Returns (valid_numbers, rejection_messages)
 /// Reinforces: Vec, range checks, match guards, tuples
-pub fn filter_valid_in_range(
-    items: &[&str],
-    min: i32,
-    max: i32,
-) -> (Vec<i32>, Vec<String>) {
+pub fn filter_valid_in_range(items: &[&str], min: i32, max: i32) -> (Vec<i32>, Vec<String>) {
     todo!()
 }
 
@@ -308,9 +379,7 @@ pub fn parse_matrix_row(s: &str) -> Result<Vec<f64>, String> {
 /// Validate multiple usernames, partitioning into valid and invalid
 /// Returns (valid_names, Vec of (name, error) pairs)
 /// Reinforces: Vec of tuples, reusing custom error types from Topic 3
-pub fn validate_usernames(
-    names: &[&str],
-) -> (Vec<String>, Vec<(String, ValidationError)>) {
+pub fn validate_usernames(names: &[&str]) -> (Vec<String>, Vec<(String, ValidationError)>) {
     todo!()
 }
 
