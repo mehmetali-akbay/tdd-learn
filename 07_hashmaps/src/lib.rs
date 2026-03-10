@@ -131,7 +131,7 @@ pub fn insert_returns_old(map: &mut HashMap<String, i32>, key: &str, value: i32)
 /// and building another.
 /// (Reinforces: clone(), iterating map entries, ownership transfer)
 pub fn invert_map(map: &HashMap<String, String>) -> HashMap<String, String> {
-    map.iter().map(|(k,v)| (v.clone(),k.clone())).collect()
+    map.iter().map(|(k, v)| (v.clone(), k.clone())).collect()
 }
 
 /// Clone a map and extend it with entries from another map.
@@ -153,7 +153,11 @@ pub fn merge_prefer_first(
     first: &HashMap<String, i32>,
     second: &HashMap<String, i32>,
 ) -> HashMap<String, i32> {
-    todo!()
+    let mut result = first.clone();
+    for (k,v) in second {
+        result.entry(k.clone()).or_insert(*v);
+    }
+    result
 }
 
 /// Merge two maps: on conflict, keep the value from `second`.
@@ -162,7 +166,11 @@ pub fn merge_prefer_second(
     first: &HashMap<String, i32>,
     second: &HashMap<String, i32>,
 ) -> HashMap<String, i32> {
-    todo!()
+    let mut result = second.clone();
+    for (k,v) in first {
+        result.entry(k.clone()).or_insert(*v);
+    }
+    result
 }
 
 // ── Topic 4: Updating — Entry API ───────────────────────────
@@ -176,7 +184,7 @@ pub fn merge_prefer_second(
 /// Uses entry().or_insert(). Returns the final value for that key.
 /// (Reinforces: Entry enum, or_insert returns &mut V)
 pub fn insert_if_absent(map: &mut HashMap<String, i32>, key: &str, value: i32) -> i32 {
-    todo!()
+    *map.entry(key.to_string()).or_insert(value)
 }
 
 /// Push a value into the Vec associated with a key, creating the Vec if needed.
