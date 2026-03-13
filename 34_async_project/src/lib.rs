@@ -1,3 +1,5 @@
+#![allow(dead_code, unused_variables)]
+
 // ============================================
 // Level 9, Project 5: Async Chat Server — Capstone
 // Learn: TCP async server, broadcast, rooms, graceful shutdown
