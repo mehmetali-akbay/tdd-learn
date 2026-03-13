@@ -8,7 +8,7 @@
 // ============================================
 
 use std::collections::HashMap;
-use std::fmt;
+use std::fmt::{self, write};
 
 // ============================================
 // Topic 1: Generic Functions
@@ -18,51 +18,63 @@ use std::fmt;
 
 /// Return a reference to the first element of a slice
 pub fn first<T>(items: &[T]) -> Option<&T> {
-    todo!()
+    items.first()
 }
 
 /// Return a reference to the last element of a slice
 pub fn last<T>(items: &[T]) -> Option<&T> {
-    todo!()
+    items.last()
 }
 
 /// Check if a slice contains an element
 pub fn contains<T: PartialEq>(items: &[T], target: &T) -> bool {
-    todo!()
+    items.contains(target)
 }
 
 /// Return the larger of two values
 pub fn max_of_two<T: PartialOrd>(a: T, b: T) -> T {
-    todo!()
+    if a >= b {
+        return a;
+    }
+    b
 }
 
 /// Return the smaller of two values
 /// Reinforces: mirrors max_of_two, solidifies generic understanding
 pub fn min_of_two<T: PartialOrd>(a: T, b: T) -> T {
-    todo!()
+    if a <= b {
+        return a;
+    }
+    b
 }
 
 /// Swap two values, returning them in reversed order
 pub fn swap<T>(a: T, b: T) -> (T, T) {
-    todo!()
+    (b, a)
 }
 
 /// Return a new vec with duplicates removed (preserving first-seen order)
 /// Reinforces: Vec operations, PartialEq + Clone bounds
 pub fn deduplicate<T: PartialEq + Clone>(items: &[T]) -> Vec<T> {
-    todo!()
+    let mut result = Vec::new();
+    for item in items {
+        if !result.contains(item) {
+            result.push(item.clone());
+        }
+    }
+    result
 }
 
 /// Find the first element matching a predicate, return a reference
 /// Reinforces: closures with slices, Option<&T>
 pub fn find_first<T>(items: &[T], predicate: fn(&T) -> bool) -> Option<&T> {
-    todo!()
+    items.iter().find(|e| predicate(e))
 }
 
 /// Zip two slices into pairs, truncating to the shorter length
 /// Reinforces: multiple generic params on functions, slices, lifetimes
 pub fn zip_slices<'a, A, B>(a: &'a [A], b: &'a [B]) -> Vec<(&'a A, &'a B)> {
-    todo!()
+    a.iter().zip(b).collect()
 }
 
 // ============================================
@@ -80,40 +92,47 @@ pub struct Wrapper<T> {
 impl<T> Wrapper<T> {
     /// Create a new wrapper
     pub fn new(value: T) -> Self {
-        todo!()
+        Self { value }
     }
 
     /// Get a reference to the inner value
     pub fn get(&self) -> &T {
-        todo!()
+        &self.value
     }
 
     /// Set the inner value (mutable borrow)
     pub fn set(&mut self, value: T) {
-        todo!()
+        self.value = value
     }
 
     /// Consume the wrapper and return the inner value (ownership transfer)
     pub fn into_inner(self) -> T {
-        todo!()
+        self.value
     }
 
     /// Transform the inner value with a function, returning a new Wrapper
     /// Reinforces: FnOnce, type transformation
     pub fn map<U>(self, f: impl FnOnce(T) -> U) -> Wrapper<U> {
-        todo!()
+        Wrapper {
+            value: f(self.value),
+        }
     }
 
     /// Return the inner value if it satisfies a predicate, otherwise a default
     /// Reinforces: closures, Option-like semantics
     pub fn unwrap_or(self, default: T, predicate: fn(&T) -> bool) -> T {
-        todo!()
+        if predicate(&self.value) {
+            return self.value;
+        }
+        default
     }
 
     /// Combine two Wrappers into a Wrapper of a tuple
     /// Reinforces: multiple type params, tuples
     pub fn zip<U>(self, other: Wrapper<U>) -> Wrapper<(T, U)> {
-        todo!()
+        Wrapper {
+            value: (self.value, other.value),
+        }
     }
 }
 
@@ -122,7 +141,7 @@ impl<T> Wrapper<T> {
 /// Format: "Wrapper({value})"
 impl<T: fmt::Display> fmt::Display for Wrapper<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+        write!(f, "Wrapper({})", self.value)
     }
 }
 
@@ -142,45 +161,57 @@ pub struct Pair<T, U> {
 impl<T, U> Pair<T, U> {
     /// Create a new pair
     pub fn new(first: T, second: U) -> Self {
-        todo!()
+        Self { first, second }
     }
 
     /// Get a reference to the first element
     pub fn first(&self) -> &T {
-        todo!()
+        &self.first
     }
 
     /// Get a reference to the second element
     pub fn second(&self) -> &U {
-        todo!()
+        &self.second
     }
 
     /// Swap the elements, returning Pair<U, T>
     pub fn swap(self) -> Pair<U, T> {
-        todo!()
+        Pair {
+            first: self.second,
+            second: self.first,
+        }
     }
 
     /// Transform the first element
     pub fn map_first<V>(self, f: impl FnOnce(T) -> V) -> Pair<V, U> {
-        todo!()
+        Pair {
+            first: f(self.first),
+            second: self.second,
+        }
     }
 
     /// Transform the second element
     pub fn map_second<V>(self, f: impl FnOnce(U) -> V) -> Pair<T, V> {
-        todo!()
+        Pair {
+            first: self.first,
+            second: f(self.second),
+        }
     }
 
     /// Mixup: take first from self and second from another pair (Rust Book §10.1)
     /// This demonstrates method-level generic params (X2, Y2)
     /// separate from the struct's generic params (T, U)
     pub fn mixup<X2, Y2>(self, other: Pair<X2, Y2>) -> Pair<T, Y2> {
-        todo!()
+        Pair {
+            first: self.first,
+            second: other.second,
+        }
     }
 
     /// Convert the pair into a tuple
     /// Reinforces: destructuring, tuples
     pub fn into_tuple(self) -> (T, U) {
-        todo!()
+        (self.first, self.second)
     }
 }
 
@@ -188,7 +219,7 @@ impl<T, U> Pair<T, U> {
 /// Format: "({first}, {second})"
 impl<T: fmt::Display, U: fmt::Display> fmt::Display for Pair<T, U> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+        write!(f, "({}, {})", self.first, self.second)
     }
 }
 
@@ -209,39 +240,54 @@ pub enum Maybe<T> {
 impl<T> Maybe<T> {
     /// Check if this is a Just value
     pub fn is_just(&self) -> bool {
-        todo!()
+        matches!(&self, Maybe::Just(_))
     }
 
     /// Check if this is Nothing
     pub fn is_nothing(&self) -> bool {
-        todo!()
+        matches!(&self, Maybe::Nothing)
     }
 
     /// Unwrap the value, panicking with "called unwrap on Nothing" if Nothing
     pub fn unwrap(self) -> T {
-        todo!()
+        match self {
+            Maybe::Just(value) => value,
+            Maybe::Nothing => panic!("called unwrap on Nothing"),
+        }
     }
 
     /// Return the value if Just, otherwise return the provided default
     /// Reinforces: pattern matching, ownership
     pub fn unwrap_or(self, default: T) -> T {
-        todo!()
+        match self {
+            Maybe::Just(value) => value,
+            Maybe::Nothing => default,
+        }
     }
 
     /// Transform the inner value, if present
     /// Reinforces: FnOnce, type transformation
     pub fn map<U>(self, f: impl FnOnce(T) -> U) -> Maybe<U> {
-        todo!()
+        match self {
+            Maybe::Just(value) => Maybe::Just(f(value)),
+            Maybe::Nothing => Maybe::Nothing,
+        }
     }
 
     /// Convert to a standard Option<T>
     pub fn to_option(self) -> Option<T> {
-        todo!()
+        match self {
+            Maybe::Just(value) => Some(value),
+            Maybe::Nothing => None,
+        }
     }
 
     /// Create from a standard Option<T>
     pub fn from_option(opt: Option<T>) -> Maybe<T> {
-        todo!()
+        match opt {
+            Some(val) => Maybe::Just(val),
+            None => Maybe::Nothing,
+        }
     }
 }
 
@@ -256,33 +302,45 @@ pub enum Either<L, R> {
 impl<L, R> Either<L, R> {
     /// Check if this is a Left value
     pub fn is_left(&self) -> bool {
-        todo!()
+        matches!(&self, Either::Left(_))
     }
 
     /// Check if this is a Right value
     pub fn is_right(&self) -> bool {
-        todo!()
+        matches!(&self, Either::Right(_))
     }
 
     /// Get the Left value as an Option
     /// Reinforces: pattern matching, Option
     pub fn left(self) -> Option<L> {
-        todo!()
+        match self {
+            Either::Left(val) => Some(val),
+            _ => None,
+        }
     }
 
     /// Get the Right value as an Option
     pub fn right(self) -> Option<R> {
-        todo!()
+        match self {
+            Either::Right(val) => Some(val),
+            _ => None,
+        }
     }
 
     /// Map over the Left value, leaving Right unchanged
     pub fn map_left<L2>(self, f: impl FnOnce(L) -> L2) -> Either<L2, R> {
-        todo!()
+        match self {
+            Either::Left(val) => Either::Left(f(val)),
+            Either::Right(val) => Either::Right(val),
+        }
     }
 
     /// Map over the Right value, leaving Left unchanged
     pub fn map_right<R2>(self, f: impl FnOnce(R) -> R2) -> Either<L, R2> {
-        todo!()
+        match self {
+            Either::Left(val) => Either::Left(val),
+            Either::Right(val) => Either::Right(f(val)),
+        }
     }
 }
 
@@ -301,69 +359,78 @@ pub struct Stack<T> {
 impl<T> Stack<T> {
     /// Create an empty stack
     pub fn new() -> Self {
-        todo!()
+        Self {
+            elements: Vec::new(),
+        }
     }
 
     /// Create a stack from a Vec (bottom to top)
     /// Reinforces: Vec ownership, From-like pattern
     pub fn from_vec(v: Vec<T>) -> Self {
-        todo!()
+        Self { elements: v }
     }
 
     /// Push a value onto the stack
     pub fn push(&mut self, value: T) {
-        todo!()
+        self.elements.push(value);
     }
 
     /// Pop a value from the stack
     pub fn pop(&mut self) -> Option<T> {
-        todo!()
+        self.elements.pop()
     }
 
     /// Peek at the top value without removing it
     pub fn peek(&self) -> Option<&T> {
-        todo!()
+        self.elements.get(0)
     }
 
     /// Number of elements on the stack
     pub fn size(&self) -> usize {
-        todo!()
+        self.elements.iter().count()
     }
 
     /// Check if the stack is empty
     pub fn is_empty(&self) -> bool {
-        todo!()
+        self.elements.is_empty()
     }
 
     /// Convert the stack into a Vec (bottom to top)
     pub fn into_vec(self) -> Vec<T> {
-        todo!()
+        self.elements
     }
 
     /// Reverse the stack (bottom becomes top)
     /// Reinforces: Vec::reverse, mutability
     pub fn reverse(&mut self) {
-        todo!()
+        self.elements.reverse()
     }
 
     /// Drain all elements into a Vec (top to bottom order)
     /// The stack is left empty after this operation
     /// Reinforces: ownership, Vec manipulation
     pub fn drain_to_vec(&mut self) -> Vec<T> {
-        todo!()
+        let mut result = Vec::new();
+        while let Some(val) = self.pop() {
+            result.push(val);
+        }
+        result
     }
 }
 
 impl<T> Default for Stack<T> {
     fn default() -> Self {
-        todo!()
+        Self {
+            elements: Vec::new(),
+        }
     }
 }
 
 /// Display the stack as "[elem1, elem2, ...]" (bottom to top)
 impl<T: fmt::Display> fmt::Display for Stack<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+        let item: Vec<String> = self.elements.iter().map(|e| format!("{}", e)).collect();
+        write!(f, "[{}]", item.join(", "))
     }
 }
 
@@ -376,12 +443,24 @@ impl<T: fmt::Display> fmt::Display for Stack<T> {
 
 /// Return the minimum of three values
 pub fn min_of_three<T: PartialOrd + Copy>(a: T, b: T, c: T) -> T {
-    todo!()
+    if a < b && a < c {
+        return a;
+    } else if b < a && b < c {
+        return b;
+    } else {
+        return c;
+    }
 }
 
 /// Clamp a value between min and max bounds
 pub fn clamp<T: PartialOrd + Copy>(value: T, min: T, max: T) -> T {
-    todo!()
+    if value < min {
+        return min;
+    } else if value > max {
+        return max;
+    } else {
+        return value;
+    }
 }
 
 /// Sort three values and return as a tuple (smallest, middle, largest)
@@ -504,10 +583,7 @@ pub fn apply_twice<T>(value: T, f: impl Fn(T) -> T) -> T {
 }
 
 /// Compose two functions: (f ∘ g)(x) = f(g(x))
-pub fn compose<A, B, C>(
-    f: impl Fn(B) -> C,
-    g: impl Fn(A) -> B,
-) -> impl Fn(A) -> C {
+pub fn compose<A, B, C>(f: impl Fn(B) -> C, g: impl Fn(A) -> B) -> impl Fn(A) -> C {
     todo!();
     // Hint: return a closure that applies g then f
     #[allow(unreachable_code)]
@@ -551,10 +627,7 @@ pub fn try_apply<T, U, E>(value: T, f: impl FnOnce(T) -> Result<U, E>) -> Result
 /// Apply a function to each element, collecting into a Result<Vec<U>, E>
 /// Stops at the first error (like Iterator::collect into Result)
 /// Reinforces: Result (08), Vec, closures, error propagation
-pub fn try_map<T, U, E>(
-    items: &[T],
-    f: impl Fn(&T) -> Result<U, E>,
-) -> Result<Vec<U>, E> {
+pub fn try_map<T, U, E>(items: &[T], f: impl Fn(&T) -> Result<U, E>) -> Result<Vec<U>, E> {
     todo!()
 }
 
