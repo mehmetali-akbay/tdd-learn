@@ -6,6 +6,7 @@
 
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::iter;
 
 // ============================================
 // Topic 1: Closure Basics — Capture & Call
@@ -15,52 +16,55 @@ use std::collections::HashSet;
 
 /// Apply a function to each element.
 pub fn map_vec<T, U>(items: &[T], f: impl Fn(&T) -> U) -> Vec<U> {
-    todo!()
+    items.iter().map(f).collect()
 }
 
 /// Keep items matching a predicate.
 pub fn filter_vec<T: Clone>(items: &[T], predicate: impl Fn(&T) -> bool) -> Vec<T> {
-    todo!()
+    items.iter().filter(|&e| predicate(e)).cloned().collect()
 }
 
 /// Reduce items to a single value (fold).
 pub fn reduce<T: Clone>(items: &[T], initial: T, f: impl Fn(T, &T) -> T) -> T {
-    todo!()
+    items.iter().fold(initial, f)
 }
 
 /// Apply a transform N times.
 pub fn apply_n<T>(mut value: T, n: usize, f: impl Fn(T) -> T) -> T {
-    todo!()
+    for _ in 0..n {
+        value = f(value);
+    }
+    value
 }
 
 /// Check if any element satisfies a predicate.
 pub fn any_of<T>(items: &[T], predicate: impl Fn(&T) -> bool) -> bool {
-    todo!()
+    items.iter().any(predicate)
 }
 
 /// Check if all elements satisfy a predicate.
 pub fn all_of<T>(items: &[T], predicate: impl Fn(&T) -> bool) -> bool {
-    todo!()
+    items.iter().all(predicate)
 }
 
 /// Find the first element matching a predicate.
 pub fn find_first<T>(items: &[T], predicate: impl Fn(&T) -> bool) -> Option<&T> {
-    todo!()
+    items.iter().find(|&e| predicate(e))
 }
 
 /// Flat-map: apply f to each element, flatten the resulting Vecs.
 pub fn flat_map_vec<T, U>(items: &[T], f: impl Fn(&T) -> Vec<U>) -> Vec<U> {
-    todo!()
+    items.iter().flat_map(f).collect()
 }
 
 /// Zip two slices together using a combining function.
 pub fn zip_with<A, B, C>(a: &[A], b: &[B], f: impl Fn(&A, &B) -> C) -> Vec<C> {
-    todo!()
+    a.iter().zip(b.iter()).map(|(x, y)| f(x, y)).collect()
 }
 
 /// Take elements while predicate is true.
 pub fn take_while_vec<T: Clone>(items: &[T], predicate: impl Fn(&T) -> bool) -> Vec<T> {
-    todo!()
+    items.iter().take_while(|e| predicate(e)).cloned().collect()
 }
 
 // ============================================
@@ -71,46 +75,50 @@ pub fn take_while_vec<T: Clone>(items: &[T], predicate: impl Fn(&T) -> bool) -> 
 
 /// Count how many items match (Fn — read-only).
 pub fn count_matching<T>(items: &[T], predicate: impl Fn(&T) -> bool) -> usize {
-    todo!()
+    items.iter().filter(|&e| predicate(e)).count()
 }
 
 /// For each item, call a mutable callback (FnMut — mutation allowed).
-pub fn for_each<T>(items: &[T], mut f: impl FnMut(&T)) {
-    todo!()
+pub fn for_each<T>(items: &[T], f: impl FnMut(&T)) {
+    items.iter().for_each(f);
 }
 
 /// Collect items into a string using a mutable formatter (FnMut).
 pub fn build_string<T>(items: &[T], formatter: impl FnMut(&T) -> String) -> String {
-    todo!()
+    items.iter().map(formatter).collect()
 }
 
 /// Consume a value through a callback (FnOnce — takes ownership).
 pub fn consume_with<T, R>(value: T, f: impl FnOnce(T) -> R) -> R {
-    todo!()
+    f(value)
 }
 
 /// Try to produce a value, falling back to a default generator (FnOnce).
 pub fn unwrap_or_else<T>(opt: Option<T>, default: impl FnOnce() -> T) -> T {
-    todo!()
+    if let Some(val) = opt {
+        return val;
+    } else {
+        return default();
+    }
 }
 
 /// Transform each element in a mutable slice in-place (FnMut).
-pub fn transform_in_place<T>(items: &mut [T], mut f: impl FnMut(&mut T)) {
-    todo!()
+pub fn transform_in_place<T>(items: &mut [T], f: impl FnMut(&mut T)) {
+    items.into_iter().for_each(f)
 }
 
 /// Stateful map: accumulate state while mapping (FnMut).
 pub fn scan_vec<T, S, R>(items: &[T], initial: S, mut f: impl FnMut(&mut S, &T) -> R) -> Vec<R> {
-    todo!()
+    let mut state = initial;
+    items.iter().map(|e| f(&mut state, e)).collect()
 }
 
 /// Map an Option with separate functions for Some and None (FnOnce).
-pub fn map_or_else<T, U>(
-    opt: Option<T>,
-    default: impl FnOnce() -> U,
-    f: impl FnOnce(T) -> U,
-) -> U {
-    todo!()
+pub fn map_or_else<T, U>(opt: Option<T>, default: impl FnOnce() -> U, f: impl FnOnce(T) -> U) -> U {
+    match opt {
+        Some(v) => f(v),
+        None => default(),
+    }
 }
 
 // ============================================
@@ -121,22 +129,22 @@ pub fn map_or_else<T, U>(
 
 /// Create an adder: returns a closure that adds N.
 pub fn make_adder(n: i32) -> impl Fn(i32) -> i32 {
-    move |x| todo!()
+    move |x| x + n
 }
 
 /// Create a multiplier: returns a closure that multiplies by N.
 pub fn make_multiplier(n: i32) -> impl Fn(i32) -> i32 {
-    move |x| todo!()
+    move |x| x * n
 }
 
 /// Create a threshold checker.
 pub fn make_threshold(threshold: i32) -> impl Fn(i32) -> bool {
-    move |x| todo!()
+    move |x| x >= threshold
 }
 
 /// Create a string repeater.
 pub fn make_repeater(n: usize) -> impl Fn(&str) -> String {
-    move |s| todo!()
+    move |s| s.repeat(n)
 }
 
 /// Compose two functions: f(g(x)).
@@ -144,29 +152,33 @@ pub fn compose<A, B, C>(
     f: impl Fn(B) -> C + 'static,
     g: impl Fn(A) -> B + 'static,
 ) -> Box<dyn Fn(A) -> C> {
-    todo!()
+    Box::new(move |x| f(g(x)))
 }
 
 /// Negate a predicate.
 pub fn negate<T>(predicate: impl Fn(&T) -> bool + 'static) -> Box<dyn Fn(&T) -> bool> {
-    todo!()
+    Box::new(move |x| !predicate(x))
 }
 
 /// Create a clamper: returns a closure that clamps a value to [min, max].
 pub fn make_clamper(min: i32, max: i32) -> impl Fn(i32) -> i32 {
-    move |x| todo!()
+    move |x| x.clamp(min, max)
 }
 
 /// Create a prefixer: returns a closure that prepends a string.
 pub fn make_prefix(prefix: &str) -> impl Fn(&str) -> String {
     let prefix = prefix.to_string();
-    move |s| todo!()
+    move |s| format!("{prefix}{s}")
 }
 
 /// Create a counter: returns a FnMut closure that counts from start.
 pub fn make_counter(start: usize) -> impl FnMut() -> usize {
     let mut count = start;
-    move || todo!()
+    move || {
+        let current = count;
+        count += 1;
+        current
+    }
 }
 
 // ============================================
@@ -177,12 +189,12 @@ pub fn make_counter(start: usize) -> impl FnMut() -> usize {
 
 /// Chain two transforms: apply f then g.
 pub fn chain<T>(f: impl Fn(T) -> T, g: impl Fn(T) -> T) -> impl Fn(T) -> T {
-    move |x| todo!()
+    move |x| g(f(x))
 }
 
 /// Apply the first predicate that matches any item in the slice.
 pub fn first_match<'a, T>(items: &[T], predicates: &[&'a dyn Fn(&T) -> bool]) -> Option<usize> {
-    todo!()
+    predicates.iter().position(|f| items.iter().any(f))
 }
 
 /// Partition items into two groups based on a predicate.

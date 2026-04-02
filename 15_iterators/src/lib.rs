@@ -15,12 +15,12 @@ use std::collections::HashSet;
 
 /// Sum of squares: 1² + 2² + ... + n².
 pub fn sum_of_squares(n: u32) -> u64 {
-    todo!()
+    (0..=n).map(|e| (e as u64) * (e as u64)).sum()
 }
 
 /// Product of elements (return 1 for empty).
 pub fn product(items: &[i32]) -> i64 {
-    todo!()
+    items.iter().fold(1, |acc, x| acc * (*x as i64) )
 }
 
 /// Flatten a vec of vecs into a single vec.

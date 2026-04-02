@@ -465,7 +465,10 @@ pub fn clamp<T: PartialOrd + Copy>(value: T, min: T, max: T) -> T {
 
 /// Sort three values and return as a tuple (smallest, middle, largest)
 pub fn sort_three<T: PartialOrd + Copy>(a: T, b: T, c: T) -> (T, T, T) {
-    todo!()
+    let mut arr = [a,b,c];
+    arr.sort_by(|a,b| a.partial_cmp(&b).unwrap());
+    (arr[0],arr[1],arr[2])
+    
 }
 
 /// Check if value is between min and max (inclusive)

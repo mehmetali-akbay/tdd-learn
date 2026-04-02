@@ -154,7 +154,7 @@ pub fn merge_prefer_first(
     second: &HashMap<String, i32>,
 ) -> HashMap<String, i32> {
     let mut result = first.clone();
-    for (k,v) in second {
+    for (k, v) in second {
         result.entry(k.clone()).or_insert(*v);
     }
     result
@@ -167,7 +167,7 @@ pub fn merge_prefer_second(
     second: &HashMap<String, i32>,
 ) -> HashMap<String, i32> {
     let mut result = second.clone();
-    for (k,v) in first {
+    for (k, v) in first {
         result.entry(k.clone()).or_insert(*v);
     }
     result
@@ -195,7 +195,9 @@ pub fn insert_if_absent(map: &mut HashMap<String, i32>, key: &str, value: i32) -
 /// but we use or_insert_with() explicitly to teach the pattern.
 #[allow(clippy::unwrap_or_default)]
 pub fn push_to_key(map: &mut HashMap<String, Vec<String>>, key: &str, value: &str) -> usize {
-    todo!()
+    let vec = map.entry(key.to_string()).or_insert_with(Vec::new);
+    vec.push(value.to_string());
+    vec.len()
 }
 
 /// Upsert pattern: increment if present, insert 1 if absent.

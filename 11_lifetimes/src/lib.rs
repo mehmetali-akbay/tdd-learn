@@ -14,7 +14,10 @@ use std::fmt;
 /// Return the longer of two string slices.
 /// Both inputs share lifetime 'a; the return lives at most as long as both.
 pub fn longest<'a>(a: &'a str, b: &'a str) -> &'a str {
-    todo!()
+    if a.len() > b.len() {
+        return a;
+    }
+    return b;
 }
 
 /// Return the shorter of two string slices.
@@ -386,10 +389,7 @@ pub fn min_by_key<T, K: Ord>(items: &[T], f: impl Fn(&T) -> K) -> Option<&T> {
 }
 
 /// Partition items into (matching, non-matching) based on a predicate.
-pub fn partition_refs<T>(
-    items: &[T],
-    predicate: impl Fn(&T) -> bool,
-) -> (Vec<&T>, Vec<&T>) {
+pub fn partition_refs<T>(items: &[T], predicate: impl Fn(&T) -> bool) -> (Vec<&T>, Vec<&T>) {
     todo!()
 }
 

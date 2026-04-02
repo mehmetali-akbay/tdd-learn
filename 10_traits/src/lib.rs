@@ -30,14 +30,17 @@ pub struct Pet {
 
 impl Pet {
     pub fn new(name: &str, species: &str) -> Self {
-        todo!()
+        Self {
+            name: name.to_string(),
+            species: species.to_string(),
+        }
     }
 }
 
 impl Describable for Pet {
     /// Return "{name} the {species}"
     fn describe(&self) -> String {
-        todo!()
+        format!("{} the {}", self.name, self.species)
     }
 }
 
@@ -51,20 +54,24 @@ pub struct Car {
 
 impl Car {
     pub fn new(make: &str, model: &str, year: u32) -> Self {
-        todo!()
+        Self {
+            make: make.to_string(),
+            model: model.to_string(),
+            year,
+        }
     }
 
     /// Check if the car is vintage (before 1990)
     /// Reinforces: simple method, comparison
     pub fn is_vintage(&self) -> bool {
-        todo!()
+        self.year < 1990
     }
 }
 
 impl Describable for Car {
     /// Return "{year} {make} {model}"
     fn describe(&self) -> String {
-        todo!()
+        format!("{} {} {}", self.year, self.make, self.model)
     }
 }
 
@@ -78,32 +85,39 @@ pub struct Book {
 
 impl Book {
     pub fn new(title: &str, author: &str, pages: u32) -> Self {
-        todo!()
+        Self {
+            title: title.to_string(),
+            author: author.to_string(),
+            pages,
+        }
     }
 }
 
 impl Describable for Book {
     /// Return "\"<title>\" by <author> (<pages> pages)"
     fn describe(&self) -> String {
-        todo!()
+        format!(
+            "\"{}\" by {} ({} pages)",
+            self.title, self.author, self.pages
+        )
     }
 }
 
 /// A generic function that takes anything Describable (trait object parameter)
 pub fn print_description(item: &dyn Describable) -> String {
-    todo!()
+    item.describe()
 }
 
 /// Collect descriptions from a slice of trait objects into a Vec
 /// Reinforces: slice borrowing, Vec collection, iteration
 pub fn describe_all(items: &[&dyn Describable]) -> Vec<String> {
-    todo!()
+    items.iter().map(|e| e.describe()).collect()
 }
 
 /// Find the longest description among a slice of Describable items
 /// Reinforces: Option<String>, iteration, max_by_key
 pub fn longest_description(items: &[&dyn Describable]) -> Option<String> {
-    todo!()
+    items.iter().map(|e| e.describe()).max_by_key(|e| e.len())
 }
 
 // ============================================
@@ -127,14 +141,14 @@ impl Coord {
     /// Calculate the Euclidean distance to another coordinate
     /// Reinforces: borrowing (&self, &Coord), arithmetic
     pub fn distance_to(&self, other: &Coord) -> f64 {
-        todo!()
+        ((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).sqrt()
     }
 }
 
 impl fmt::Display for Coord {
     /// Display as "(x, y)"
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+        write!(f, "({}, {})",self.x,self.y)
     }
 }
 

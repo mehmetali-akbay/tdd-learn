@@ -295,7 +295,7 @@ pub fn group_consecutive(v: &[i32]) -> Vec<Vec<i32>> {
 /// Moving average with a window size
 /// Example: [1.0, 2.0, 3.0, 4.0, 5.0] window=3 => [2.0, 3.0, 4.0]
 pub fn moving_average(v: &[f64], window: usize) -> Vec<f64> {
-    todo!()
+    v.windows(window).map(|e| e.iter().sum::<f64>()/window as f64).collect()
 }
 
 /// Rotate a vec left by `n` positions

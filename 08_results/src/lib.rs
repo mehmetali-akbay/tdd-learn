@@ -8,6 +8,7 @@
 
 use std::collections::HashMap;
 use std::fmt::{self, format};
+use std::iter::Empty;
 use std::num::ParseIntError;
 
 // ============================================
@@ -199,7 +200,16 @@ pub enum ValidationError {
 
 impl fmt::Display for ValidationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+        match self {
+            ValidationError::Empty => write!(f, "cannot be empty"),
+            ValidationError::TooShort(val) => write!(f, "too short: {} chars", val),
+            ValidationError::TooLong(val) => write!(f, "too long: {} chars", val),
+            ValidationError::InvalidChar(val) => write!(f, "invalid character: '{}'", val),
+            ValidationError::MissingUppercase => write!(f, "missing uppercase letter"),
+            ValidationError::MissingLowercase => write!(f, "missing lowercase letter"),
+            ValidationError::MissingDigit => write!(f, "missing digit"),
+            ValidationError::InvalidFormat(val) => write!(f, "invalid format: {}", val),
+        }
     }
 }
 

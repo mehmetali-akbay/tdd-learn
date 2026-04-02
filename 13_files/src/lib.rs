@@ -15,7 +15,7 @@ use std::collections::HashSet;
 
 /// Count non-empty lines.
 pub fn count_lines(content: &str) -> usize {
-    todo!()
+    content.lines().filter(|e| !e.trim().is_empty()).count()
 }
 
 /// Return lines that contain a search term (case-insensitive).

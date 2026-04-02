@@ -585,13 +585,13 @@ pub mod music {
     }
 
     // Re-export instruments and genres at the music level.
+    pub use instruments::drums;
     pub use instruments::guitar;
     pub use instruments::piano;
-    pub use instruments::drums;
 
-    pub use genres::rock;
-    pub use genres::jazz;
     pub use genres::classical;
+    pub use genres::jazz;
+    pub use genres::rock;
 
     // Re-export Playlist — users can create music::Playlist
     // without knowing about the private `collections` module.
@@ -672,7 +672,9 @@ pub mod config {
         let cfg = AppConfig::default_config();
         format!(
             "Config: max_retries={}, timeout={}s, db_pool={}",
-            cfg.max_retries, cfg.timeout_secs, database::pool_size()
+            cfg.max_retries,
+            cfg.timeout_secs,
+            database::pool_size()
         )
     }
 
@@ -724,7 +726,11 @@ mod tests {
         // TODO: Create a default config and assert its fields:
         //   max_retries == 3, timeout_secs == 30, db_pool_size == 5
         // Hint: let cfg = config::AppConfig::default_config();
-        todo!()
+        let cfg = config::AppConfig::default_config();
+        assert_eq!(3, cfg.max_retries);
+        assert_eq!(30, cfg.timeout_secs);
+        assert_eq!(5, cfg.db_pool_size);
+        
     }
 
     #[test]

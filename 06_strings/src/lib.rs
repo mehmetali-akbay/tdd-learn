@@ -43,11 +43,7 @@ pub fn char_count(s: &str) -> usize {
 
 /// Return true if the string is empty
 pub fn is_blank(s: &str) -> bool {
-    if s.is_empty() {
-        true
-    } else {
-        false
-    }
+    if s.is_empty() { true } else { false }
 }
 
 // ============================================
@@ -202,12 +198,25 @@ pub fn is_palindrome(s: &str) -> bool {
     let lower = s.to_lowercase();
     let rev: String = s.to_lowercase().chars().rev().collect();
     lower == rev
-    }
+}
 
 /// Capitalize the first letter of each word
 /// Example: "hello world" => "Hello World"
 pub fn title_case(s: &str) -> String {
-    todo!()
+    s.trim()
+        .to_lowercase()
+        .split_whitespace()
+        .map(|e| {
+            let mut ch = e.chars();
+            if let Some(first_ch) = ch.next() {
+                let remain = ch.as_str();
+                return format!("{}{}",first_ch.to_uppercase(), remain);
+            } else {
+                String::new()
+            }
+        })
+        .collect::<Vec<String>>()
+        .join(" ")
 }
 
 // ============================================
@@ -336,22 +345,21 @@ pub fn clear_string(s: &mut String) {
 
 /// Check if a string is a pangram (contains every letter a-z at least once).
 pub fn is_pangram(text: &str) -> bool {
-        todo!()
+    todo!()
 }
 
 /// Count distinct words in a string (case-insensitive).
 pub fn count_distinct_words(s: &str) -> usize {
-        todo!()
+    todo!()
 }
 
 /// Find the most common character in a string (excluding spaces).
 /// Returns None for empty strings.
 pub fn most_common_char(s: &str) -> Option<char> {
-        todo!()
+    todo!()
 }
 
 /// Wrap text at `width` characters, inserting newlines.
 pub fn word_wrap(text: &str, width: usize) -> String {
-        todo!()
+    todo!()
 }
-

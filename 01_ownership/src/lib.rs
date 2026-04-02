@@ -166,7 +166,7 @@ pub fn process_and_keep(s: String) -> (String, String) {
 
 /// Apply a transformation function to each element
 pub fn transform_each(v: &[i32], f: fn(i32) -> i32) -> Vec<i32> {
-    todo!()
+    v.iter().map(|&e| f(e)).collect()
 }
 
 /// Return a reference to the longer of two string slices
