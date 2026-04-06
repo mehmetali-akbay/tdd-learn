@@ -1,11 +1,12 @@
 // ============================================
 // Level 5, Project 3: Macros — macro_rules!
-// Learn: Declarative macros, patterns, repetitions, TT munching
+// Learn: Declarative macros from Easy -> Medium -> Hard
+// Branch intent: practice (scaffolded, incomplete implementations)
 // ============================================
 
 // ============================================
-// Topic 1: Basic Macro Patterns
-// Learn: Simple matching, expression macros
+// Topic 1 (Easy): Basic Macro Patterns
+// Learn: Simple matching and expression-style macros
 // ============================================
 
 /// A macro that creates a HashMap from key-value pairs
@@ -15,9 +16,9 @@ macro_rules! hashmap {
         std::collections::HashMap::new()
     };
     ($($key:expr => $value:expr),+ $(,)?) => {{
-        let mut map = std::collections::HashMap::new();
-        $(map.insert($key, $value);)+
-        map
+        // TODO: insert all key/value pairs into the map.
+        let _ = ($((&$key, &$value)),+);
+        std::collections::HashMap::new()
     }};
 }
 
@@ -25,9 +26,9 @@ macro_rules! hashmap {
 #[macro_export]
 macro_rules! vec_of {
     ($($item:expr),* $(,)?) => {{
-        let mut v = Vec::new();
-        $(v.push($item);)*
-        v
+        // TODO: push all items to the vector.
+        let _ = ($(&$item),*);
+        Vec::new()
     }};
 }
 
@@ -35,54 +36,74 @@ macro_rules! vec_of {
 #[macro_export]
 macro_rules! min {
     ($x:expr) => ($x);
-    ($x:expr, $($rest:expr),+) => {
-        {
-            let x = $x;
-            let rest = min!($($rest),+);
-            if x < rest { x } else { rest }
-        }
-    };
+    ($x:expr, $($rest:expr),+ $(,)?) => {{
+        // TODO: recurse and return the minimum.
+        let _ = ($(&$rest),+);
+        $x
+    }};
 }
 
 /// A macro that returns the max of N expressions
 #[macro_export]
 macro_rules! max {
     ($x:expr) => ($x);
-    ($x:expr, $($rest:expr),+) => {
-        {
-            let x = $x;
-            let rest = max!($($rest),+);
-            if x > rest { x } else { rest }
-        }
-    };
+    ($x:expr, $($rest:expr),+ $(,)?) => {{
+        // TODO: recurse and return the maximum.
+        let _ = ($(&$rest),+);
+        $x
+    }};
+}
+
+/// Repeat a value N times into a Vec: repeat_vec![x; 3] => vec![x, x, x]
+#[macro_export]
+macro_rules! repeat_vec {
+    ($value:expr; $n:expr) => {{
+        // TODO: implement using vec![value; n].
+        let _ = (&$value, $n);
+        Vec::new()
+    }};
 }
 
 // ============================================
-// Topic 2: Repetition Patterns
-// Learn: *, +, ?, nested repetitions
+// Topic 2 (Easy -> Medium): Repetition Patterns
+// Learn: *, +, ?, nested repetition strategies
 // ============================================
 
 /// A macro that counts its arguments
 #[macro_export]
 macro_rules! count {
-    () => (0usize);
-    ($x:expr $(, $rest:expr)*) => (1usize + count!($($rest),*));
+    () => {
+        // TODO: return 0 for empty input.
+        0usize
+    };
+    ($($x:expr),+ $(,)?) => {{
+        // TODO: return number of expressions.
+        let _ = ($(&$x),+);
+        0usize
+    }};
 }
 
 /// A macro that sums its arguments
 #[macro_export]
 macro_rules! sum {
-    () => (0);
-    ($x:expr $(, $rest:expr)*) => ($x + sum!($($rest),*));
+    () => {
+        // TODO: return 0 for empty input.
+        0
+    };
+    ($($x:expr),+ $(,)?) => {{
+        // TODO: sum all expressions.
+        let _ = ($(&$x),+);
+        0
+    }};
 }
 
 /// Average of arguments (as f64)
 #[macro_export]
 macro_rules! avg {
     ($($x:expr),+ $(,)?) => {{
-        let total: f64 = 0.0 $(+ $x as f64)+;
-        let count: f64 = 0.0 $(+ { let _ = $x; 1.0 })+;
-        total / count
+        // TODO: compute total/count as f64.
+        let _ = ($(&$x),+);
+        0.0_f64
     }};
 }
 
@@ -95,37 +116,31 @@ macro_rules! newtype {
 
         impl $name {
             pub fn new(value: $inner) -> Self {
-                $name(value)
+                let _ = value;
+                todo!("Implement constructor for generated newtype")
             }
 
             pub fn value(&self) -> &$inner {
-                &self.0
+                let _ = self;
+                todo!("Return reference to inner value")
             }
         }
     };
 }
 
 // ============================================
-// Topic 3: Pattern Matching in Macros
-// Learn: Multiple macro arms, different input patterns
+// Topic 3 (Medium): Pattern Matching in Macros
+// Learn: Multiple macro arms and flexible input syntax
 // ============================================
 
 /// Conditional execution macro: `when!(condition => expression)`
 #[macro_export]
 macro_rules! when {
     ($cond:expr => $body:expr) => {
-        if $cond {
-            Some($body)
-        } else {
-            None
-        }
+        if $cond { Some($body) } else { None }
     };
     ($cond:expr => $body:expr, else => $else_body:expr) => {
-        if $cond {
-            $body
-        } else {
-            $else_body
-        }
+        if $cond { $body } else { $else_body }
     };
 }
 
@@ -133,34 +148,45 @@ macro_rules! when {
 #[macro_export]
 macro_rules! str_join {
     ($($s:expr),* $(,)?) => {{
-        let mut result = String::new();
-        $(result.push_str($s);)*
-        result
+        // TODO: join all parts directly.
+        let _ = ($(&$s),*);
+        String::new()
     }};
     ($sep:expr; $($s:expr),+ $(,)?) => {{
-        let parts: Vec<&str> = vec![$($s),+];
-        parts.join($sep)
+        // TODO: join all parts using separator.
+        let _ = (&$sep, ($(&$s),+));
+        String::new()
     }};
 }
 
 /// An assert_between macro
 #[macro_export]
 macro_rules! assert_between {
-    ($val:expr, $low:expr, $high:expr) => {
-        let val = $val;
-        assert!(
-            ($low..=$high).contains(&val),
-            "{} is not between {} and {}",
-            val,
-            $low,
-            $high
-        );
+    ($val:expr, $low:expr, $high:expr) => {{
+        // TODO: assert that val is between low and high.
+        let _ = (&$val, &$low, &$high);
+    }};
+}
+
+/// Return the first Some(...) from a list of options.
+#[macro_export]
+macro_rules! coalesce {
+    () => {
+        None
     };
+    ($single:expr $(,)?) => {
+        $single
+    };
+    ($first:expr, $($rest:expr),+ $(,)?) => {{
+        // TODO: return first Some(...) value.
+        let _ = (&$first, ($(&$rest),+));
+        None
+    }};
 }
 
 // ============================================
-// Topic 4: Struct & Enum Generation
-// Learn: Using macros to generate types and impls
+// Topic 4 (Medium -> Hard): Struct & Enum Generation
+// Learn: Generate items and impl blocks from macro input
 // ============================================
 
 /// Generate an enum with Display and from_str
@@ -174,22 +200,19 @@ macro_rules! string_enum {
 
         impl std::fmt::Display for $name {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                match self {
-                    $($name::$variant => write!(f, $str)),+
-                }
+                let _ = (self, f);
+                todo!("Implement Display for generated enum")
             }
         }
 
         impl $name {
             pub fn from_str_custom(s: &str) -> Option<Self> {
-                match s {
-                    $($str => Some($name::$variant)),+,
-                    _ => None,
-                }
+                let _ = s;
+                todo!("Implement parser for generated enum")
             }
 
             pub fn variants() -> Vec<&'static str> {
-                vec![$($str),+]
+                todo!("Return list of variant string values")
             }
         }
     };
@@ -206,15 +229,14 @@ macro_rules! builder {
 
         impl $name {
             pub fn builder() -> Self {
-                $name {
-                    $($field: $default),+
-                }
+                let _ = ($($default),+);
+                todo!("Initialize builder defaults")
             }
 
             $(
                 pub fn $field(mut self, value: $ty) -> Self {
-                    self.$field = value;
-                    self
+                    let _ = (&mut self, value);
+                    todo!("Implement generated builder setter")
                 }
             )+
         }
@@ -222,18 +244,16 @@ macro_rules! builder {
 }
 
 // ============================================
-// Topic 5: Utility Macros
-// Learn: Debug helpers, timing, error handling
+// Topic 5 (Hard): Utility Macros
+// Learn: Timing, retries, fallback matching, debug helpers
 // ============================================
 
 /// A macro that wraps a block and returns its execution time in microseconds
 #[macro_export]
 macro_rules! timed {
     ($body:expr) => {{
-        let start = std::time::Instant::now();
-        let result = $body;
-        let elapsed = start.elapsed().as_micros();
-        (result, elapsed)
+        // TODO: measure elapsed time in micros.
+        ($body, 0_u128)
     }};
 }
 
@@ -241,48 +261,54 @@ macro_rules! timed {
 #[macro_export]
 macro_rules! retry {
     ($n:expr, $body:expr) => {{
-        let mut last_err = None;
-        for _ in 0..$n {
-            match $body {
-                Ok(val) => return Ok(val),
-                Err(e) => last_err = Some(e),
-            }
+        // TODO: retry until success or attempts exhausted.
+        let _ = $n;
+        match $body {
+            Ok(value) => Ok(value),
+            Err(err) => Err(err),
         }
-        Err(last_err.unwrap())
     }};
 }
 
 /// A macro that creates a match expression with a default arm
 #[macro_export]
 macro_rules! match_or {
-    ($expr:expr, $default:expr, $($pattern:pat => $result:expr),+ $(,)?) => {
-        match $expr {
-            $($pattern => $result),+,
-            _ => $default,
-        }
-    };
+    ($expr:expr, $default:expr, $($pattern:pat => $result:expr),+ $(,)?) => {{
+        // TODO: evaluate patterns before returning default.
+        let _ = (&$expr, stringify!($($pattern => $result),+));
+        $default
+    }};
+}
+
+/// Evaluate an expression, print it, and return the value.
+#[macro_export]
+macro_rules! dbg_expr {
+    ($expr:expr) => {{
+        // TODO: print expression text and value.
+        $expr
+    }};
 }
 
 // ============================================
-// Topic 6: Advanced — Recursive Macros
-// Learn: TT munching, recursive expansion
+// Topic 6 (Hard): Advanced Recursive Patterns
+// Learn: Recursive expansion and chained method-call composition
 // ============================================
 
 /// Reverse a list of expressions
 #[macro_export]
 macro_rules! reverse_vec {
-    // Public entry point
     ($($item:expr),* $(,)?) => {{
-        let mut v = vec![$($item),*];
-        v.reverse();
-        v
+        // TODO: reverse the vector before returning.
+        vec![$($item),*]
     }};
 }
 
 /// Create nested pairs: `nest!(1, 2, 3)` => (1, (2, (3, ())))
 #[macro_export]
 macro_rules! nest {
-    () => { () };
+    () => {
+        ()
+    };
     ($first:expr $(, $rest:expr)*) => {
         ($first, nest!($($rest),*))
     };
@@ -294,15 +320,17 @@ macro_rules! chain_calls {
     ($obj:expr, $method:ident($($arg:expr),*)) => {
         $obj.$method($($arg),*)
     };
-    ($obj:expr, $method:ident($($arg:expr),*), $($rest:ident($($rarg:expr),*)),+) => {
-        chain_calls!($obj.$method($($arg),*), $($rest($($rarg),*)),+)
-    };
+    ($obj:expr, $method:ident($($arg:expr),*), $($rest:ident($($rarg:expr),*)),+ $(,)?) => {{
+        // TODO: recursively apply all remaining method calls.
+        let _ = stringify!($($rest($($rarg),*)),+);
+        $obj.$method($($arg),*)
+    }};
 }
 
-/// Compute fibonacci at compile time (for small values)
+/// Compile-time addition helper used in const contexts.
 #[macro_export]
 macro_rules! const_add {
     ($a:expr, $b:expr) => {
-        $a + $b
+        0 + (($a) - ($a)) + (($b) - ($b))
     };
 }

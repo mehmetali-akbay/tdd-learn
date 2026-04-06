@@ -1,6 +1,6 @@
 # TDD Rust Learning Path
 
-A progressive Rust learning path with hundreds of tests across **40 projects**, organized to follow [The Rust Programming Language](https://doc.rust-lang.org/book/) book chapter order. Learn by implementing functions to make failing tests pass.
+A progressive Rust learning path with hundreds of tests across **39 projects**, organized to follow [The Rust Programming Language](https://doc.rust-lang.org/book/) book chapter order. Learn by implementing functions to make failing tests pass.
 
 ## How to Use
 
@@ -43,14 +43,13 @@ Follow this order — it aligns with [The Rust Book](https://doc.rust-lang.org/b
 | 7 | `07_hashmaps` | [Ch. 8](https://doc.rust-lang.org/book/ch08-03-hash-maps.html) | HashMap, Entry API, BTreeMap |
 | 8 | `08_results` | [Ch. 9](https://doc.rust-lang.org/book/ch09-00-error-handling.html) | `Result<T,E>`, `?` operator, custom errors |
 
-### Phase 3 — Generics, Traits & Testing
+### Phase 3 — Generics, Traits & Lifetimes
 
 | # | Project | Rust Book | Concepts |
 |---|---------|-----------|----------|
-| 9 | `09_traits` | [Ch. 10](https://doc.rust-lang.org/book/ch10-02-traits.html) | Trait definition, `Display`, `Default`, `From`/`Into` |
-| 10 | `10_generics` | [Ch. 10](https://doc.rust-lang.org/book/ch10-01-generic-data-types.html) | Generic functions, structs, bounds, `where` |
+| 9 | `09_generics` | [Ch. 10](https://doc.rust-lang.org/book/ch10-01-generic-data-types.html) | Generic functions, structs, bounds, `where` |
+| 10 | `10_traits` | [Ch. 10](https://doc.rust-lang.org/book/ch10-02-traits.html) | Trait definition, `Display`, `Default`, `From`/`Into` |
 | 11 | `11_lifetimes` | [Ch. 10](https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html) | Lifetime annotations, elision, `'static` |
-| 12 | `12_testing` | [Ch. 11](https://doc.rust-lang.org/book/ch11-00-testing.html) | `#[test]`, `#[should_panic]`, test organization |
 
 ### Phase 4 — I/O & Functional Features
 
