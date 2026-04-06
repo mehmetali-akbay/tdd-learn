@@ -98,11 +98,7 @@ pub fn contains_rust(s: &str) -> bool {
 /// Borrow two strings and return a reference to the longer one
 /// If equal length, return the first
 pub fn longer_string<'a>(a: &'a str, b: &'a str) -> &'a str {
-    if a.len() >= b.len() {
-        a
-    } else {
-        b
-    }
+    if a.len() >= b.len() { a } else { b }
 }
 
 /// Borrow a vec and return a new vec with only strictly positive (> 0) elements
@@ -123,8 +119,7 @@ pub fn push_value(v: &mut Vec<i32>, value: i32) {
 
 /// Take a mutable reference to a String and make it uppercase in-place
 pub fn make_uppercase(s: &mut String) {
-   *s = s.to_uppercase();
-    
+    *s = s.to_uppercase();
 }
 
 /// Increment all elements in a vec by 1
@@ -141,9 +136,8 @@ pub fn remove_negatives(v: &mut Vec<i32>) {
             v.remove(i);
         }
     }
-    
+
     // v.retain(|&x| x >=0);
-    
 }
 
 /// Append " world" to a string via mutable reference
@@ -161,7 +155,7 @@ pub fn append_world(s: &mut String) {
 /// Example: process_and_keep("hello") => ("hello", "olleh")
 pub fn process_and_keep(s: String) -> (String, String) {
     let reversed = s.clone().chars().rev().collect();
-    (s,reversed)
+    (s, reversed)
 }
 
 /// Apply a transformation function to each element
@@ -172,7 +166,11 @@ pub fn transform_each(v: &[i32], f: fn(i32) -> i32) -> Vec<i32> {
 /// Return a reference to the longer of two string slices
 /// Returns the one with more characters; if equal length, behavior is unspecified
 pub fn longest<'a>(a: &'a str, b: &'a str) -> &'a str {
-    todo!()
+    if a.len() > b.len() {
+        return &a;
+    } else {
+        return &b;
+    }
 }
 
 /// Take a vec by value, sort it, and return it

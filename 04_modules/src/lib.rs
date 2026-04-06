@@ -737,7 +737,7 @@ mod tests {
     fn test_pub_crate_pool_size() {
         // TODO: Assert that config::database::pool_size() returns 5
         // Note: This works because we're inside the crate (pub(crate))
-        todo!()
+        assert_eq!(config::database::pool_size(), 5);
     }
 
     #[test]
